@@ -1,0 +1,30 @@
+Library
+Logs
+Temp
+[Uu]ser[Ss]ettings
+obj
+*.csproj
+*.sln
+.vsconfig
+.vs
+*.apk
+[Bb]uild/
+/[Bb]uilds/
+
+# Rider cache directory
+.idea/
+
+# Gradle cache directory
+.gradle/
+
+# Mac
+.DS_Store
+
+# Hide junk in the attic
+**/_[Aa]ttic/**
+**/_[Aa]ttic.meta
+
+Assets/Resources/buildinfo.json
+Assets/Resources/buildinfo.json.meta
+
+imgui.ini

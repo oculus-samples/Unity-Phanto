@@ -1,0 +1,111 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &131085603195575832
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 695179170006646179}
+  - component: {fileID: 8170836792747693095}
+  - component: {fileID: 7484258607795472606}
+  m_Layer: 0
+  m_Name: OVRSceneManagerVisualization
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &695179170006646179
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131085603195575832}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8170836792747693095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131085603195575832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2253d75e3ddc644b8153409c62dd74e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlanePrefab: {fileID: 3162078243991069327, guid: d99645075f009ef4ab0e187901c9dff9, type: 3}
+  VolumePrefab: {fileID: 180559299020712268, guid: 97533d490d447db409120de086fa66d7, type: 3}
+  PrefabOverrides:
+  - Prefab: {fileID: 8534500147602248020, guid: 7f54174e00a93ce4ea9287c3d0340c7b, type: 3}
+    ClassificationLabel: FLOOR
+    _editorClassificationIndex: 0
+  - Prefab: {fileID: 8534500147602248020, guid: 7f54174e00a93ce4ea9287c3d0340c7b, type: 3}
+    ClassificationLabel: CEILING
+    _editorClassificationIndex: 1
+  - Prefab: {fileID: 465581406039491281, guid: 76176f0f314cdfc49a8e800a2b17e898, type: 3}
+    ClassificationLabel: WALL_FACE
+    _editorClassificationIndex: 2
+  - Prefab: {fileID: 2643543341202705354, guid: 8691f496ac0a14b44a0c0b9b0d3a68af, type: 3}
+    ClassificationLabel: COUCH
+    _editorClassificationIndex: 4
+  - Prefab: {fileID: 4398199934016943869, guid: 5ecf13ccff8dfea4ca9808164c2569b8, type: 3}
+    ClassificationLabel: DOOR_FRAME
+    _editorClassificationIndex: 5
+  - Prefab: {fileID: 5777430413052244710, guid: 41e9477f56081954da7cde80d3af5e58, type: 3}
+    ClassificationLabel: WINDOW_FRAME
+    _editorClassificationIndex: 6
+  - Prefab: {fileID: 2466868823902253075, guid: f8a4c340f54f5fb46951c86e287c46b4, type: 3}
+    ClassificationLabel: OTHER
+    _editorClassificationIndex: 7
+  - Prefab: {fileID: 2980307226691151295, guid: 8b9b3de1232dbbb48aef658da0bbb543, type: 3}
+    ClassificationLabel: STORAGE
+    _editorClassificationIndex: 8
+  - Prefab: {fileID: 4935726634749045750, guid: c29c9f7625b15b842bd5c41df38cdcd7, type: 3}
+    ClassificationLabel: BED
+    _editorClassificationIndex: 9
+  - Prefab: {fileID: 4390948529022189268, guid: f0d13fb06396e5045bfa0afaad7249c3, type: 3}
+    ClassificationLabel: SCREEN
+    _editorClassificationIndex: 10
+  - Prefab: {fileID: 5360263676873646660, guid: b711f831eb91a75429bc8e31406f5a83, type: 3}
+    ClassificationLabel: LAMP
+    _editorClassificationIndex: 11
+  - Prefab: {fileID: 6093696085771892963, guid: 8831327439d3e694fbff97a6972151fd, type: 3}
+    ClassificationLabel: PLANT
+    _editorClassificationIndex: 12
+  - Prefab: {fileID: 2759686844504037648, guid: ec850e60a48366e4a9ff36ad3bf8952d, type: 3}
+    ClassificationLabel: TABLE
+    _editorClassificationIndex: 13
+  - Prefab: {fileID: 6876963632933953309, guid: 806ecac099527334db67ef378d318e4b, type: 3}
+    ClassificationLabel: WALL_ART
+    _editorClassificationIndex: 14
+  - Prefab: {fileID: 4430182240210341399, guid: 04c5cf7c5a181334c80ad1b5dff1433e, type: 3}
+    ClassificationLabel: GLOBAL_MESH
+    _editorClassificationIndex: 16
+  ActiveRoomsOnly: 1
+  VerboseLogging: 0
+  MaxSceneAnchorUpdatesPerFrame: 3
+  _initialAnchorParent: {fileID: 0}
+--- !u!114 &7484258607795472606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131085603195575832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1c4a1713e5d1b4409a95470bcf9e5b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

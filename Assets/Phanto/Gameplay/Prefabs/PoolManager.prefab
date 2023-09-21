@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2176316667804212580
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 83648193431631462}
+  - component: {fileID: 8387885702353795232}
+  - component: {fileID: 1570657426461186365}
+  m_Layer: 0
+  m_Name: PoolManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &83648193431631462
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2176316667804212580}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8387885702353795232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2176316667804212580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 803a2f11ef9eeab4fb0a7074285ac969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultPools:
+  - poolType: 0
+    primitive: {fileID: 5304509512996567830, guid: 05f8800570cd09c4c919400f02fb02e5, type: 3}
+    size: 32
+    callbackProviderOverride: {fileID: 0}
+  - poolType: 1
+    primitive: {fileID: 7428593279976243333, guid: 88c6afcf663a6ef429f827b21ce29616, type: 3}
+    size: 32
+    callbackProviderOverride: {fileID: 0}
+  - poolType: 1
+    primitive: {fileID: 6526438457458768122, guid: f2c6ce228d3a6ce41bb48cacbf2822e5, type: 3}
+    size: 32
+    callbackProviderOverride: {fileID: 0}
+  - poolType: 1
+    primitive: {fileID: 4078627530729038020, guid: 56cb8567d23b65949a37950567bf06ed, type: 3}
+    size: 32
+    callbackProviderOverride: {fileID: 0}
+  verbosity: 0
+--- !u!114 &1570657426461186365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2176316667804212580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05d3589ac64bb9047b99ea92a0e1a6c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

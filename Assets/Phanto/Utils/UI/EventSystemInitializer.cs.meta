@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: c5a2e30b697444c7ca198886806be148
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - runtimeEventSystemPrefab: {fileID: 3592751308586645394, guid: d30dfcb4909094a868f94abbd775fcf8, type: 3}
+  - editorEventSystemPrefab: {fileID: 3592751308586645394, guid: 23d004d8563b34906bbab0bf92c0f96e, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
