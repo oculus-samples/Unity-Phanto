@@ -8,9 +8,9 @@ Project Phanto is a Unity reference app, showcasing the latest Presence Platform
 The [scene mesh](https://developer.oculus.com/documentation/unity/unity-scene-overview/) is a low-fidelity, high-coverage artifact which describes the boundary between free and occupied space in a room. It is generated automatically during the Space Setup experience, and available for applications to query via Scene API.
 
 ## Requirements
-- Unity 2022.3.4f1
+- Recommended Unity version: 2022.3.4f1
 - Mac or Windows
-- Unity OVR Integration package v57 (included in the project)
+- Unity OVR Integration package v56 (included in the project)
 
 <br><br>
 
