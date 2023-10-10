@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "7657a2ff187069a968a26fda3321d7c08e079f0a"
+      "hash": "558f23b6ed48f7aabca66e190dac1a6bcb37bce8"
     },
     "com.meta.xr.sdk.audio": {
       "version": "57.0.0-preview",
