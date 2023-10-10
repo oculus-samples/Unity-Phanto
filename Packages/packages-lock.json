@@ -8,14 +8,14 @@
       "hash": "7657a2ff187069a968a26fda3321d7c08e079f0a"
     },
     "com.meta.xr.sdk.audio": {
-      "version": "56.0.0-preview",
+      "version": "57.0.0-preview",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://npm.developer.oculus.com"
     },
     "com.meta.xr.sdk.interaction": {
-      "version": "56.0.0-preview",
+      "version": "57.0.0-preview",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -25,17 +25,17 @@
       "url": "https://npm.developer.oculus.com"
     },
     "com.meta.xr.sdk.interaction.ovr": {
-      "version": "56.0.0-preview",
+      "version": "57.0.0-preview",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.meta.xr.sdk.interaction": "56.0.0-preview",
-        "com.meta.xr.sdk.utilities": "56.0.0-preview"
+        "com.meta.xr.sdk.interaction": "57.0.0-preview",
+        "com.meta.xr.sdk.utilities": "57.0.0-preview"
       },
       "url": "https://npm.developer.oculus.com"
     },
     "com.meta.xr.sdk.utilities": {
-      "version": "56.0.0-preview",
+      "version": "57.0.0-preview",
       "depth": 0,
       "source": "registry",
       "dependencies": {},

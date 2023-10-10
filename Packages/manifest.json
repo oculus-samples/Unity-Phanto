@@ -1,9 +1,9 @@
 {
   "dependencies": {
     "com.darktable.xrgizmos": "https://github.com/darktable/XRGizmos.git",
-    "com.meta.xr.sdk.audio": "56.0.0-preview",
-    "com.meta.xr.sdk.interaction.ovr": "56.0.0-preview",
-    "com.meta.xr.sdk.utilities": "56.0.0-preview",
+    "com.meta.xr.sdk.audio": "57.0.0-preview",
+    "com.meta.xr.sdk.interaction.ovr": "57.0.0-preview",
+    "com.meta.xr.sdk.utilities": "57.0.0-preview",
     "com.tayx.graphy": "https://github.com/Tayx94/graphy.git",
     "com.unity.ai.navigation": "1.1.4",
     "com.unity.feature.development": "1.0.1",
