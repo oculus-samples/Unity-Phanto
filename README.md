@@ -5,12 +5,12 @@
 # Project overview
 Project Phanto is a Unity reference app, showcasing the latest Presence Platform features, highlighting scene mesh, Scene Model, and Scene API objects
 
-The [scene mesh](https://developer.oculus.com/documentation/unity/unity-scene-overview/) is a low-fidelity, high-coverage artifact which describes the boundary between free and occupied space in a room. It is generated automatically during the Space Setup experience, and available for applications to query via Scene API.
+The [scene mesh](https://developer.oculus.com/documentation/unity/unity-scene-mesh/) is a low-fidelity, high-coverage artifact which describes the boundary between free and occupied space in a room. It is generated automatically during the Space Setup experience, and available for applications to query via Scene API.
 
 ## Requirements
 - Recommended Unity version: 2022.3.4f1
 - Mac or Windows
-- Unity OVR Integration package v56 (included in the project)
+- Unity OVR Integration package v57 (included in the project)
 
 <br><br>
 
@@ -138,7 +138,7 @@ The game demonstrates our recommended best practices when using the new scene me
 <br>
 
 ## The Scene Mesh
-The scene mesh is provided in the project and is accessed using **OVRSceneManager**. Each one of the sample scenes will create an **OVRSceneManager** component and automatically load the mesh and room elements captured during the space setup flow. The scene mesh will be represented as a standard Unity mesh. It can contain a collider, and will respond to raycasts. In the project, the scene mesh will be assigned the **GlobalMesh** layer mask.
+The [scene mesh](https://developer.oculus.com/documentation/unity/unity-scene-mesh/) is provided in the project and is accessed using **OVRSceneManager**. Each one of the sample scenes will create an **OVRSceneManager** component and automatically load the mesh and room elements captured during the space setup flow. The scene mesh will be represented as a standard Unity mesh. It can contain a collider, and will respond to raycasts. In the project, the scene mesh will be assigned the **GlobalMesh** layer mask.
 
 For more information on how to get started with scene mesh, visit [Meta Quest Developer Portal](https://developer.oculus.com/documentation/unity/unity-scene-overview/)
 
@@ -235,7 +235,7 @@ To enable this, you need to select **Static Mesh Data** as the **Scene Data Sour
 
 ![Static mesh off image](./Media/SceneDataLoaderStaticMeshOn.png "Static Mesh")
 
-If you are on Windows, enable [XR Simulator](https://developer.oculus.com/documentation/unity/tools-meta-xr-sim/), and press **Play**.
+If you are on Windows, enable [XR Simulator](https://developer.oculus.com/documentation/unity/xrsim-intro/), and press **Play**.
 
 <br><br>
 
