@@ -1,3 +1,4 @@
+# Unity diretories
 Library
 Logs
 Temp
@@ -10,9 +11,12 @@ obj
 *.apk
 [Bb]uild/
 /[Bb]uilds/
+Packages/packages-lock.json
+imgui.ini
 
-# Rider cache directory
+# Jetbrains cache directory
 .idea/
+_ReSharper.Caches
 
 # Gradle cache directory
 .gradle/
@@ -24,7 +28,6 @@ obj
 **/_[Aa]ttic/**
 **/_[Aa]ttic.meta
 
+# Hide build info
 Assets/Resources/buildinfo.json
 Assets/Resources/buildinfo.json.meta
-
-imgui.ini
