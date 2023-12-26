@@ -19,15 +19,9 @@ namespace Phantom.LightEffects.Scripts
         [SerializeField] private float rotateSpeed;
         private bool _active;
 
-        private Material _mat;
         private float _prevBlend;
 
         private Transform _trackingTransform;
-
-        private void Awake()
-        {
-            _mat = GetComponent<MeshRenderer>().material;
-        }
 
         private void Start()
         {
@@ -41,14 +35,14 @@ namespace Phantom.LightEffects.Scripts
 
             var blend = CrossFadePerlin(t);
 
-            _mat.SetFloat(BlendId, blend);
+            Shader.SetGlobalFloat(BlendId, blend);
 
             // change second texture on the downstroke of the blend function
             if (blend > _prevBlend)
             {
                 var rot = Quaternion.Euler(Random.Range(-180.0f, 180.0f), 0, Random.Range(-180.0f, 180.0f));
                 var m = Matrix4x4.TRS(Vector3.zero, rot, Vector3.one);
-                _mat.SetMatrix(TextureRotationId, m);
+                Shader.SetGlobalMatrix(TextureRotationId, m);
             }
 
             _prevBlend = blend;
@@ -60,7 +54,7 @@ namespace Phantom.LightEffects.Scripts
                 pos.w = _trackingTransform.gameObject.activeInHierarchy ? 1.0f : 0.0f;
             }
 
-            _mat.SetVector(SourcePosId, pos);
+            Shader.SetGlobalVector(SourcePosId, pos);
         }
 
         public void Register(Transform tracking)

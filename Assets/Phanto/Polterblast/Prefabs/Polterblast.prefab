@@ -335,7 +335,7 @@ Transform:
   m_Children:
   - {fileID: 8584299649552358312}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4649171373853758693
 MonoBehaviour:
@@ -969,9 +969,14 @@ MonoBehaviour:
   handleAnimator: {fileID: 2075286299374772553}
   ectoParticleSystem: {fileID: 1555122136077992057}
   automaticEnabled: 0
-  _triggerButton: 201326592
+  triggerButton: 201326592
   playHaptics: 1
   playAnimations: 1
+  hapticClip: {fileID: 2460798210113038985, guid: 5961a4d6cae0b054c86b646d705d239f, type: 3}
+  hapticCollection: {fileID: 11400000, guid: 92fd35dbd338da34d8af502798ce1088, type: 2}
+  hapticClipPlayerAmplitude: 0.3
+  maxPlayerAmplitudeScale: 5
+  splashScale: 0.5
 --- !u!1 &7171767182258750863
 GameObject:
   m_ObjectHideFlags: 0

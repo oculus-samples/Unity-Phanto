@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 6399122247445631449}
   - component: {fileID: 4607348665353841122}
   - component: {fileID: 5644307256743297481}
+  - component: {fileID: 3884518920117303389}
+  - component: {fileID: -1630628409463691798}
   m_Layer: 4
   m_Name: GooImpactDust
   m_TagString: Untagged
@@ -4795,3 +4797,30 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!114 &3884518920117303389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6728334359482135755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 274a64d85f5fba84590d087e68040223, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  occlusionType: 1
+--- !u!114 &-1630628409463691798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6728334359482135755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f41e8388e5af4f4887bc8e3a93ca2ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <DepthBiasValue>k__BackingField: 0.06
+  DoesAffectChildren: 1

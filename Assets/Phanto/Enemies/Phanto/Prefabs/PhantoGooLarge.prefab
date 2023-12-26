@@ -71,6 +71,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gooController: {fileID: 2141520886893791662}
   collider: {fileID: 2917659987567751436}
+  ectoBlasterLayer:
+    serializedVersion: 2
+    m_Bits: 256
   splashHitsToExtinguish: 6
   gooLoopSfx: {fileID: 7509071117491474767}
 --- !u!1001 &1830182282225356203

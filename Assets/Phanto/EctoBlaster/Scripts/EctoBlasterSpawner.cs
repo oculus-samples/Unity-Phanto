@@ -1,6 +1,9 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using System;
+using Oculus.Haptics;
 using Phanto.Audio.Scripts;
+using UnityEditor;
 using UnityEngine;
 
 namespace Phantom.EctoBlaster.Scripts
@@ -40,6 +43,13 @@ namespace Phantom.EctoBlaster.Scripts
         [Tooltip("The sound effects played when the blaster is picked up")]
         [SerializeField] private PhantoRandomOneshotSfxBehavior pickUpSFX;
 
+        [SerializeField] private HapticClip placeDownHaptic;
+        [SerializeField] private HapticClip pickUpHaptic;
+
+        [SerializeField] private Controller placementController = Controller.Left;
+
+        [SerializeField, Range(0.1f, 10.0f)] private float hapticClipPlayerAmplitude = 1.0f;
+
         // Private fields
         private GameObject _blaster;
         private GameObject _blasterPreview;
@@ -47,11 +57,26 @@ namespace Phantom.EctoBlaster.Scripts
         private bool _hasSpawned; // Flag to check if the object has been spawned already
         private EctoBlasterRangeIndicator _rangeIndicator; // Range indicator
 
+        private HapticClipPlayer _placeDownHapticPlayer;
+        private HapticClipPlayer _pickUpHapticPlayer;
+
         private void Start()
         {
             _blasterPreview = Instantiate(blasterPreviewPrefab, transform);
             _blasterRangeIndicator = Instantiate(blasterRangeIndicatorPrefab, transform);
             _rangeIndicator = _blasterRangeIndicator.GetComponentInChildren<EctoBlasterRangeIndicator>();
+
+            _placeDownHapticPlayer = new HapticClipPlayer(placeDownHaptic);
+            _placeDownHapticPlayer.amplitude = hapticClipPlayerAmplitude;
+
+            _pickUpHapticPlayer = new HapticClipPlayer(pickUpHaptic);
+            _pickUpHapticPlayer.amplitude = hapticClipPlayerAmplitude;
+        }
+
+        private void OnDestroy()
+        {
+            _placeDownHapticPlayer?.Dispose();
+            _pickUpHapticPlayer?.Dispose();
         }
 
         private void Update()
@@ -70,6 +95,7 @@ namespace Phantom.EctoBlaster.Scripts
                 _hasSpawned = false;
 
                 pickUpSFX.PlaySfxAtPosition(hit.point);
+                _pickUpHapticPlayer.Play(placementController);
             }
             else
             {
@@ -89,6 +115,7 @@ namespace Phantom.EctoBlaster.Scripts
                         _hasSpawned = true;
 
                         placeDownSFX.PlaySfxAtPosition(hit.point);
+                        _placeDownHapticPlayer.Play(placementController);
                     }
                     else
                     {
@@ -102,5 +129,25 @@ namespace Phantom.EctoBlaster.Scripts
                 }
             }
         }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (!EditorApplication.isPlaying)
+            {
+                return;
+            }
+
+            if (_placeDownHapticPlayer != null)
+            {
+                _placeDownHapticPlayer.amplitude = hapticClipPlayerAmplitude;
+            }
+
+            if (_pickUpHapticPlayer != null)
+            {
+                _pickUpHapticPlayer.amplitude = hapticClipPlayerAmplitude;
+            }
+        }
+#endif
     }
 }

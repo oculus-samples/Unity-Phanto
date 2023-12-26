@@ -104,6 +104,11 @@ public class InsideSceneDialog : MonoBehaviour
 
     private void DebugDraw()
     {
+        if (!_ready)
+        {
+            return;
+        }
+
         DebugDrawHand(_cameraRig.rightHandAnchor, _rightHandIn);
         DebugDrawHand(_cameraRig.leftHandAnchor, _leftHandIn);
     }

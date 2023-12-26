@@ -20,7 +20,7 @@ namespace Phantom.Environment.Scripts
 
         [SerializeField] private bool centerStaticMesh = true;
 
-        public string SceneJson => sceneJson.text;
+        public string SceneJson => sceneJson != null ? sceneJson.text : null;
         public bool LoadSceneOnStart => loadSceneOnStart;
         public SceneDataLoader.SceneDataSource SceneDataSource => sceneDataSource;
         public bool CenterStaticMesh => centerStaticMesh;

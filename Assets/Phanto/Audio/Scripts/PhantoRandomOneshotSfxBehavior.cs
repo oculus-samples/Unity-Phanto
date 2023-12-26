@@ -1,7 +1,10 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using System;
 using System.Collections;
+using Oculus.Haptics;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Phanto.Audio.Scripts
 {
@@ -11,22 +14,25 @@ namespace Phanto.Audio.Scripts
     [RequireComponent(typeof(AudioSource))]
     public class PhantoRandomOneshotSfxBehavior : MonoBehaviour
     {
-        public bool playOnAwake;
-        public AudioClip[] clips;
-        [Range(0.01f, 2)] public float pitchMin = 1;
-        [Range(0.01f, 2)] public float pitchMax = 1;
-        [Range(0, 100)] public int chanceToPlay = 100;
+        [SerializeField] private bool playOnAwake;
+        [SerializeField] protected AudioClip[] clips;
 
-        [Range(0, 2)] public float startDelayMin;
-        [Range(0, 2)] public float startDelayMax;
-        public AudioSource src;
+        [SerializeField][Range(0.01f, 2)] protected float pitchMin = 1;
+        [SerializeField][Range(0.01f, 2)] protected float pitchMax = 1;
+        [SerializeField][Range(0, 100)] protected int chanceToPlay = 100;
+
+        [SerializeField][Range(0, 2)] protected float startDelayMin;
+        [SerializeField][Range(0, 2)] protected float startDelayMax;
+        [SerializeField] protected AudioSource src;
+
+        public float ClipLength => src.clip.length;
 
         private void Awake()
         {
             src = GetComponent<AudioSource>();
         }
 
-        private void Start()
+        protected virtual void Start()
         {
             if (clips.Length <= 0) Debug.LogWarning("No clips proviced for RandomOneshotSfx");
             if (playOnAwake) PlaySfx();
@@ -40,10 +46,10 @@ namespace Phanto.Audio.Scripts
         }
 #endif
 
-        public void PlaySfx()
+        public virtual void PlaySfx()
         {
             if (clips.Length <= 0) return;
-            src.clip = clips[Random.Range(0, clips.Length - 1)];
+            src.clip = clips[Random.Range(0, clips.Length)];
             src.pitch = Random.Range(pitchMin, pitchMax);
             if (Random.Range(0, 100) <= chanceToPlay)
                 StartCoroutine(WaitAndPlay(Random.Range(startDelayMin, startDelayMax)));

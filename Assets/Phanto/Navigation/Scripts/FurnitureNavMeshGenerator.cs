@@ -111,7 +111,7 @@ public class FurnitureNavMeshGenerator : MonoBehaviour
             (size.y, size.z) = (size.z, size.y);
 
             var offset = volume.Offset;
-            (offset.x, offset.y, offset.z) = (offset.x, offset.z, offset.y);
+            (offset.y, offset.z) = (offset.z, offset.y);
 
             anchorPosition += offset;
             bounds.center += offset;

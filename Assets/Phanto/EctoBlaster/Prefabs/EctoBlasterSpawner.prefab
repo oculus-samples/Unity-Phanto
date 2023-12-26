@@ -76,6 +76,10 @@ MonoBehaviour:
   visualBlastRadius: 1.25
   placeDownSFX: {fileID: 444709513621813365}
   pickUpSFX: {fileID: 6582631656097463412}
+  placeDownHaptic: {fileID: 2460798210113038985, guid: 26429779f2ffcb14b8b86c045a1d6e4d, type: 3}
+  pickUpHaptic: {fileID: 2460798210113038985, guid: b8513be8f99e4b34d9f3eecc6b2d8b93, type: 3}
+  placementController: 0
+  hapticClipPlayerAmplitude: 3
 --- !u!1 &4757037656446382709
 GameObject:
   m_ObjectHideFlags: 0

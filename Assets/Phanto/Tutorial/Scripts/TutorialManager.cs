@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections;
+using Oculus.Haptics;
 using Phanto;
 using Phanto.Audio.Scripts;
 using Phantom;
@@ -16,6 +17,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class TutorialManager : MonoBehaviour
 {
+    private const string WINDOW_CLOSE_CLIP = "WindowClose";
     private const string PLAYERPREF_TURORIAL_KEY = "Tutorial";
     private const string GAME_SCENE_NAME = "GameScene";
 
@@ -45,6 +47,8 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private GameObject modalDebug;
     [SerializeField] private TextMeshProUGUI phantomsDebugModal;
     [SerializeField] private TextMeshProUGUI completeDebugModal;
+
+    [SerializeField] private HapticCollection uiHaptics;
 
     private int currentPage = -1;
     private int currentTries;
@@ -87,6 +91,8 @@ public class TutorialManager : MonoBehaviour
                     {
                         if (!pressed)
                         {
+                            PlayHaptic(WINDOW_CLOSE_CLIP, page.actionButton);
+
                             if (page.pageUI.activeSelf) page.pageUI.SetActive(false);
                             currentTries++;
                             // Debug ----
@@ -107,6 +113,8 @@ public class TutorialManager : MonoBehaviour
                     // Only for Complete Modal 00
                     if (OVRInput.GetDown(page.actionButton2) && isCompleted)
                     {
+                        PlayHaptic(WINDOW_CLOSE_CLIP, page.actionButton2);
+
                         pressed = true;
                         OnTutorialComplete();
                     }
@@ -287,6 +295,26 @@ public class TutorialManager : MonoBehaviour
     {
         if (!soundManager) soundManager = FindAnyObjectByType<PhantoGooSfxManager>();
         return soundManager != null;
+    }
+
+    private void PlayHaptic(string clip, OVRInput.RawButton button)
+    {
+        if (uiHaptics.TryGetPlayer(clip, out var player))
+        {
+            var controller = Controller.Right;
+
+            if ((button & (OVRInput.RawButton.LHandTrigger
+                           | OVRInput.RawButton.LIndexTrigger
+                           | OVRInput.RawButton.X
+                           | OVRInput.RawButton.Y
+                           | OVRInput.RawButton.Start
+                           | OVRInput.RawButton.LThumbstick)) != 0)
+            {
+                controller = Controller.Left;
+            }
+
+            player.Play(controller);
+        }
     }
 
     #endregion

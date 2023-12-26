@@ -56,6 +56,54 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1715025049699459765, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1715025049699459765, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2231263596899507115, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2231263596899507115, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7439643730179347946, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7439643730179347946, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7548077147987711649, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7548077147987711649, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7748333722765061972, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7748333722765061972, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7899504722698110106, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7899504722698110106, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

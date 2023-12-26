@@ -173,7 +173,7 @@ namespace Phanto.Audio.Scripts
                 phantoHurtVO[phantoHurtInstanceCount].transform.position = position;
                 phantoHurtVO[phantoHurtInstanceCount].PlaySfx();
 
-                StartCoroutine(WaitForClipToEnd(phantoHurtVO[phantoHurtInstanceCount].src.clip.length));
+                StartCoroutine(WaitForClipToEnd(phantoHurtVO[phantoHurtInstanceCount].ClipLength));
                 hurtVoActive = true;
             }
 

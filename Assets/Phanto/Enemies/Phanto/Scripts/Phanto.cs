@@ -55,6 +55,8 @@ namespace Phanto
         [Tooltip("The list of possible goo  prefabs.")]
         [SerializeField] private GameObject[] gooPrefabs;
 
+        [SerializeField] private LayerMask ectoBlasterLayer;
+
         private readonly List<ParticleCollisionEvent> pces = new(1024);
         private IDamageable[] _damageables;
         private PhantoLightEffect _phantoLightEffect;
@@ -107,6 +109,13 @@ namespace Phanto
                 damageable.TakeDamage(accumulatedDamage, avgPCIntersection, avgPCNormal);
 
             enemy.rigidbody.AddForce(sumPCVelocity * splash);
+
+            var isEctoBlaster = ectoBlasterLayer == (ectoBlasterLayer | (1 << other.layer));
+
+            if (!isEctoBlaster)
+            {
+                PolterblastTrigger.DamageNotification(accumulatedDamage, avgPCIntersection, avgPCNormal);
+            }
         }
 
         public event Action OnWaveAdvance;

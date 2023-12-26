@@ -68,6 +68,8 @@ MonoBehaviour:
   continueButton: {fileID: 888497426571568158}
   useButtonAction: 0
   restartGameButton: 0
+  hapticCollection: {fileID: 0}
+  hapticController: 1
 --- !u!1 &881013306291393659
 GameObject:
   m_ObjectHideFlags: 0
@@ -805,6 +807,9 @@ MonoBehaviour:
   phantoPooFx: {fileID: 0}
   soundManager: {fileID: 0}
   wavePopupSound: {fileID: 5767012674544375983}
+  wavePopupHaptic: {fileID: 2460798210113038985, guid: 98239bacb0d13e948a52dd154e7736c9, type: 3}
+  hapticController: 2
+  phantoDefeatCollection: {fileID: 11400000, guid: 559992615344bd9438cf5d74d9362548, type: 2}
 --- !u!114 &2896204925246995742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2196,6 +2201,8 @@ MonoBehaviour:
   continueButton: {fileID: 886751753419993680}
   useButtonAction: 0
   restartGameButton: 0
+  hapticCollection: {fileID: 0}
+  hapticController: 1
 --- !u!114 &160372054035130176
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2280,6 +2287,8 @@ MonoBehaviour:
   continueButton: {fileID: 5552084578268184390}
   useButtonAction: 1
   restartGameButton: -1
+  hapticCollection: {fileID: 0}
+  hapticController: 1
 --- !u!1 &6102387672106765322
 GameObject:
   m_ObjectHideFlags: 0
@@ -2733,6 +2742,8 @@ MonoBehaviour:
   continueButton: {fileID: 1456985085342843520}
   useButtonAction: 1
   restartGameButton: -1
+  hapticCollection: {fileID: 0}
+  hapticController: 1
 --- !u!1 &8926656705342366266
 GameObject:
   m_ObjectHideFlags: 0

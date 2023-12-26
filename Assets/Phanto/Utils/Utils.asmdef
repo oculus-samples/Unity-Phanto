@@ -6,7 +6,8 @@
         "Unity.TextMeshPro",
         "Oculus.VR",
         "Oculus.Interaction.OVR",
-        "darktable.xrgizmos"
+        "darktable.xrgizmos",
+        "depthapi"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

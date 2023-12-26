@@ -3,6 +3,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
@@ -239,6 +240,11 @@ namespace Phantom.Environment.Scripts
 
             var fallbackInstance = Instantiate(sceneMeshPrefab);
             var go = SceneMesher.CreateMesh(ovrSceneRoom, fallbackInstance.gameObject, 0.01f, true);
+
+            if (go.TryGetComponent<OVRSceneAnchor>(out var anchor))
+            {
+                SceneDataLoader.AddAnchorReferenceCount(anchor);
+            }
 
             return go.GetComponent<OVRSemanticClassification>();
         }

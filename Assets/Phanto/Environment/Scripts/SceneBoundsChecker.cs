@@ -2,9 +2,11 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Debug = UnityEngine.Debug;
 
 namespace Phantom.Environment.Scripts
 {
@@ -141,7 +143,16 @@ namespace Phantom.Environment.Scripts
                 _room = FindObjectOfType<OVRSceneRoom>();
             } while (_room == null);
 
-            while (_room.Walls.Length == 0) yield return null;
+            var timeoutStopwatch = Stopwatch.StartNew();
+            while (_room.Walls.Length == 0)
+            {
+                if (timeoutStopwatch.ElapsedMilliseconds > 3000)
+                {
+                    Debug.LogWarning("Timed out waiting for walls in scene. Walls missing?");
+                    break;
+                }
+                yield return null;
+            }
 
             var sceneAnchors = _room.GetComponentsInChildren<OVRSceneAnchor>();
             var sceneAnchorCount = sceneAnchors.Length;

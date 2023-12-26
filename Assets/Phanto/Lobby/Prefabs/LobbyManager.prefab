@@ -273,6 +273,7 @@ MonoBehaviour:
   NoSceneModelParent: {fileID: 8448071217569509431}
   StartGameButton: 201326592
   RescanButton: 805306368
+  uiHaptics: {fileID: 11400000, guid: a7ef0db33f71f704f8309f69667f63a1, type: 2}
 --- !u!1 &6540979880228153565
 GameObject:
   m_ObjectHideFlags: 0
@@ -821,6 +822,10 @@ PrefabInstance:
       value: Looks like you are missing a scene model, please scan your room to start
         the game
       objectReference: {fileID: 0}
+    - target: {fileID: 5773616573751098692, guid: d41d030dde1c18646836b9675ad54311, type: 3}
+      propertyPath: hapticController
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5799274988593465588, guid: d41d030dde1c18646836b9675ad54311, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
@@ -828,6 +833,10 @@ PrefabInstance:
     - target: {fileID: 5799274988593465588, guid: d41d030dde1c18646836b9675ad54311, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -350.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5872090095886016799, guid: d41d030dde1c18646836b9675ad54311, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1014,6 +1023,10 @@ PrefabInstance:
       propertyPath: m_text
       value: Have a look at your room representation. If things changed, please rescan.
       objectReference: {fileID: 0}
+    - target: {fileID: 5773616573751098692, guid: d41d030dde1c18646836b9675ad54311, type: 3}
+      propertyPath: hapticController
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5799274988593465588, guid: d41d030dde1c18646836b9675ad54311, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
@@ -1021,6 +1034,10 @@ PrefabInstance:
     - target: {fileID: 5799274988593465588, guid: d41d030dde1c18646836b9675ad54311, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -350.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5872090095886016799, guid: d41d030dde1c18646836b9675ad54311, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1195,6 +1212,10 @@ PrefabInstance:
 
 
         Enjoy!'
+      objectReference: {fileID: 0}
+    - target: {fileID: 5872090095886016799, guid: d41d030dde1c18646836b9675ad54311, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1384,6 +1405,10 @@ PrefabInstance:
     - target: {fileID: 5073968392854921143, guid: d41d030dde1c18646836b9675ad54311, type: 3}
       propertyPath: m_text
       value: Have a look at your room representation. If things changed, please rescan.
+      objectReference: {fileID: 0}
+    - target: {fileID: 5773616573751098692, guid: d41d030dde1c18646836b9675ad54311, type: 3}
+      propertyPath: hapticController
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5799274988593465588, guid: d41d030dde1c18646836b9675ad54311, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -1710,6 +1735,10 @@ PrefabInstance:
 
         Please
         grant permissions to continue'
+      objectReference: {fileID: 0}
+    - target: {fileID: 5872090095886016799, guid: d41d030dde1c18646836b9675ad54311, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -45,16 +45,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2253d75e3ddc644b8153409c62dd74e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlanePrefab: {fileID: 3162078243991069327, guid: 971d7a9facfab554aab5fdf2d8a7f3ef, type: 3}
-  VolumePrefab: {fileID: 180559299020712268, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
+  PlanePrefab: {fileID: 4942890925560137935, guid: 971d7a9facfab554aab5fdf2d8a7f3ef, type: 3}
+  VolumePrefab: {fileID: 5805981955114608310, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
   PrefabOverrides:
   - Prefab: {fileID: 4430182240210341399, guid: 5d07255aabd787d42946fa90c375e3bb, type: 3}
     ClassificationLabel: GLOBAL_MESH
     _editorClassificationIndex: 16
-  - Prefab: {fileID: 102490448831091297, guid: a18203aef9f1a974e933a7c66bdd8251, type: 3}
+  - Prefab: {fileID: 2517829481823597454, guid: a18203aef9f1a974e933a7c66bdd8251, type: 3}
     ClassificationLabel: WALL_ART
     _editorClassificationIndex: 14
-  - Prefab: {fileID: 6659745440635211275, guid: ce327112ff92e8d42bd31867b502183e, type: 3}
+  - Prefab: {fileID: 1044746447884124657, guid: ce327112ff92e8d42bd31867b502183e, type: 3}
     ClassificationLabel: COUCH
     _editorClassificationIndex: 4
   - Prefab: {fileID: 3162078243991069327, guid: 7e13f7eb4830a584f910e037ce672273, type: 3}
@@ -63,7 +63,7 @@ MonoBehaviour:
   - Prefab: {fileID: 3162078243991069327, guid: 7e13f7eb4830a584f910e037ce672273, type: 3}
     ClassificationLabel: CEILING
     _editorClassificationIndex: 1
-  - Prefab: {fileID: 3162078243991069327, guid: 3207a9fa181b40647b386a6eb72735e0, type: 3}
+  - Prefab: {fileID: 4795010734887376439, guid: 3207a9fa181b40647b386a6eb72735e0, type: 3}
     ClassificationLabel: WALL_FACE
     _editorClassificationIndex: 2
   ActiveRoomsOnly: 1

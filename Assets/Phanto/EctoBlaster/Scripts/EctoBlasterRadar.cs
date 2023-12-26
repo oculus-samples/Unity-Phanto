@@ -47,7 +47,7 @@ namespace Phantom.EctoBlaster.Scripts
                                   Vector3.Distance(blasterBaseTransform.position, target.HeadPosition) < BlastRadius;
 
                 //Ecto blaster if a target was found and start rotation
-                _blasterTrigger.automaticEnabled = targetFound;
+                _blasterTrigger.AutomaticEnabled = targetFound;
                 if (targetFound)
                     yield return StartCoroutine(RotateToDirection(blasterBaseTransform, target.HeadPosition,
                         rotationSpeed));

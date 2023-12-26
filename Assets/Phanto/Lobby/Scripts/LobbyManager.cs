@@ -1,18 +1,19 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Oculus.Haptics;
 using Phantom.Environment.Scripts;
 using PhantoUtils;
 using PhantoUtils.VR;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Android;
-using UnityEngine.Serialization;
 
 /// <summary>
 /// Manages the state of the Lobby UI
 /// </summary>
 public class LobbyManager : MonoBehaviour
 {
+    private const string WINDOW_CLOSE_CLIP = "WindowClose";
+
     // Permission string for requesting scene data permission
     private static readonly string SCENE_PERMISSION = "com.oculus.permission.USE_SCENE";
 
@@ -27,11 +28,19 @@ public class LobbyManager : MonoBehaviour
     // Assigned buttons to operate the menus
     [SerializeField] private OVRInput.RawButton StartGameButton;
     [SerializeField] private OVRInput.RawButton RescanButton;
+
+    [SerializeField] private HapticCollection uiHaptics;
+
     private SceneDataLoader _dataLoader;
     private SceneLoader _sceneLoader;
 
+    private bool _permissionGranted = false;
+    private bool _boundsSet = false;
+
     private void Awake()
     {
+        ScenePermissionGrantedBroadcaster.PermissionGrantedEvent += ActOnPermissionGranted;
+
         if (ApplicationUtils.IsVR())
         {
             SceneApiDataLoaderReference.SetActive(false); // Turn off scene related stuff until permission is granted
@@ -41,12 +50,31 @@ public class LobbyManager : MonoBehaviour
             ActOnPermissionGranted();
     }
 
+    private void OnEnable()
+    {
+        SceneBoundsChecker.BoundsChanged += OnBoundsChanged;
+    }
+
+    private void OnDisable()
+    {
+        SceneBoundsChecker.BoundsChanged -= OnBoundsChanged;
+    }
+
+    private void OnDestroy()
+    {
+        ScenePermissionGrantedBroadcaster.PermissionGrantedEvent -= ActOnPermissionGranted;
+    }
+
     private void Update()
     {
         // Handle cases when the user does not granted scene data permission
         if (PermissionParent.activeSelf)
         {
-            if (OVRInput.GetDown(StartGameButton) || Input.GetKeyDown(KeyCode.Space)) RequestScenePermission();
+            if (OVRInput.GetDown(StartGameButton) || Input.GetKeyDown(KeyCode.Space))
+            {
+                PlayHaptic(WINDOW_CLOSE_CLIP, StartGameButton);
+                RequestScenePermission();
+            }
         }
 
         // Handle cases when the user does not have a space setup
@@ -56,7 +84,11 @@ public class LobbyManager : MonoBehaviour
             if (_sceneLoader == null) _sceneLoader = GameSceneLoaderReference.GetComponent<SceneLoader>();
 
             // Handle notification where no scene model is present
-            if (OVRInput.GetDown(RescanButton) || Input.GetKeyDown(KeyCode.R)) _dataLoader.Rescan();
+            if (OVRInput.GetDown(RescanButton) || Input.GetKeyDown(KeyCode.R))
+            {
+                PlayHaptic(WINDOW_CLOSE_CLIP, RescanButton);
+                _dataLoader.Rescan();
+            }
         }
 
         // If permission is granted and there is a scene model, show the lobby menu
@@ -68,14 +100,36 @@ public class LobbyManager : MonoBehaviour
 
             if (OVRInput.GetDown(StartGameButton) || Input.GetKeyDown(KeyCode.Space))
             {
+                PlayHaptic(WINDOW_CLOSE_CLIP, StartGameButton);
                 InstructionsPrefab.SetActive(false);
                 _sceneLoader.LoadScene();
             }
 
             if (OVRInput.GetDown(RescanButton) || Input.GetKeyDown(KeyCode.R))
             {
+                PlayHaptic(WINDOW_CLOSE_CLIP, RescanButton);
                 _dataLoader.Rescan();
             }
+        }
+    }
+
+    private void PlayHaptic(string clip, OVRInput.RawButton button)
+    {
+        if (uiHaptics.TryGetPlayer(clip, out var player))
+        {
+            var controller = Controller.Right;
+
+            if ((button & (OVRInput.RawButton.LHandTrigger
+                           | OVRInput.RawButton.LIndexTrigger
+                           | OVRInput.RawButton.X
+                           | OVRInput.RawButton.Y
+                           | OVRInput.RawButton.Start
+                           | OVRInput.RawButton.LThumbstick)) != 0)
+            {
+                controller = Controller.Left;
+            }
+
+            player.Play(controller);
         }
     }
 
@@ -120,15 +174,33 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
+    private void OnBoundsChanged(Bounds bounds)
+    {
+        _boundsSet = true;
+        ShowInstructions();
+    }
+
     /// <summary>
     /// Show lobby when permission is granted
     /// </summary>
     private void ActOnPermissionGranted()
     {
-        PermissionParent.SetActive(false);
-        PermissionDontAskAgain.SetActive(false);
+        _permissionGranted = true;
         SceneApiDataLoaderReference.SetActive(true);// Set this to true
         GameSceneLoaderReference.SetActive(true);// Set this to true
+
+        ShowInstructions();
+    }
+
+    private void ShowInstructions()
+    {
+        if (!_boundsSet || !_permissionGranted)
+        {
+            return;
+        }
+
+        PermissionParent.SetActive(false);
+        PermissionDontAskAgain.SetActive(false);
         InstructionsPrefab.SetActive(true);// Set this to true
         NoSceneModelParent.SetActive(false);
     }

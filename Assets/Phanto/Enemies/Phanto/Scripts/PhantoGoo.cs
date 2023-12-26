@@ -17,6 +17,8 @@ public class PhantoGoo : MonoBehaviour
     [Tooltip("The collider this Goo uses to detect collisions.")]
     [SerializeField] private new Collider collider;
 
+    [SerializeField] private LayerMask ectoBlasterLayer;
+
     public int splashHitsToExtinguish = 20;
     public PhantoLoopSfxBehavior gooLoopSfx;
     public static IReadOnlyCollection<PhantoGoo> ActiveGoos => GooCollection;
@@ -62,6 +64,13 @@ public class PhantoGoo : MonoBehaviour
         if (_splashHits >= splashHitsToExtinguish)
         {
             Extinguish();
+        }
+
+        var isEctoBlaster = ectoBlasterLayer == (ectoBlasterLayer | (1 << other.layer));
+
+        if (!isEctoBlaster)
+        {
+            PolterblastTrigger.SplashHitNotification();
         }
     }
 

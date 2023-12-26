@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Oculus.Haptics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -27,10 +28,22 @@ public class TutorialContinueButton : MonoBehaviour
     private float currentAnimTime;
     private float currentButtonTime;
 
+    [SerializeField] private HapticCollection hapticCollection;
+
+    [SerializeField] private Controller hapticController = Controller.Right;
+
+    private bool hapticsAvailable = false;
+
     private void Start()
     {
         InitialConfiguration();
+
+        hapticsAvailable = hapticCollection != null;
     }
+
+    private bool _hapticPlayed = false;
+
+    private const string WINDOW_OPEN_CLIP = "WindowOpen";
 
     private void Update()
     {
@@ -39,9 +52,25 @@ public class TutorialContinueButton : MonoBehaviour
             currentAnimTime += Time.deltaTime;
             var t = currentAnimTime / animationTime;
             transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one * scaleButtonMultiplier, t);
+
+            if (!_hapticPlayed && hapticsAvailable)
+            {
+                // start a haptic effect when the scale animation starts.
+                _hapticPlayed = true;
+
+                if (hapticCollection.TryGetPlayer(WINDOW_OPEN_CLIP, out var player))
+                {
+                    player.Play(hapticController);
+                }
+                else
+                {
+                    Debug.LogWarning($"No player found for clip name: {WINDOW_OPEN_CLIP}");
+                }
+            }
         }
         else
         {
+            _hapticPlayed = false;
             currentButtonTime += Time.deltaTime;
             if (currentButtonTime >= showButtonTime)
             {
@@ -74,9 +103,10 @@ public class TutorialContinueButton : MonoBehaviour
 
     private void CheckButtonAction()
     {
-        if (useButtonAction)
-            if (OVRInput.GetDown(restartGameButton) || Input.GetKeyDown(KeyCode.R))
-                SceneManager.LoadScene(RESTART_SCENE);
+        if (useButtonAction && (OVRInput.GetDown(restartGameButton) || Input.GetKeyDown(KeyCode.R)))
+        {
+            SceneManager.LoadScene(RESTART_SCENE);
+        }
     }
 
     #endregion

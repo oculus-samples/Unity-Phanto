@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7912803727231614162}
   - component: {fileID: 5469748698168249699}
   - component: {fileID: 8240846031980305207}
+  - component: {fileID: 8086279307380133264}
   m_Layer: 6
   m_Name: Wireframe
   m_TagString: Untagged
@@ -115,6 +116,19 @@ MonoBehaviour:
   _baseColor: {r: 0.0709623, g: 0.30887568, b: 0.9811321, a: 0}
   _frequency: 1
   _amplitude: 0.5
+--- !u!114 &8086279307380133264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3248984871486542091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 274a64d85f5fba84590d087e68040223, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  occlusionType: 1
 --- !u!1 &3254348751681064241
 GameObject:
   m_ObjectHideFlags: 0
@@ -214,20 +228,20 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3254348751681064241}
-  m_Enabled: 0
-  m_CastShadows: 1
+  m_Enabled: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_MotionVectors: 2
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: dd302b87af4f4df4eb3e159e516b1689, type: 2}
+  - {fileID: 2100000, guid: 64d097b6feedb3249b315632450559ae, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

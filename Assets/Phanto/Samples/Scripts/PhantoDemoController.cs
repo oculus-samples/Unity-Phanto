@@ -11,13 +11,15 @@ public class PhantoDemoController : MonoBehaviour
 {
     [SerializeField] private Transform phanto;
 
+    [SerializeField] private bool debugDraw = true;
+
     private Bounds? _bounds;
 
     private void Awake()
     {
         SceneBoundsChecker.BoundsChanged += OnBoundsChanged;
 
-        DebugDrawManager.DebugDraw = true;
+        DebugDrawManager.DebugDraw = debugDraw;
     }
 
     private void OnDestroy()

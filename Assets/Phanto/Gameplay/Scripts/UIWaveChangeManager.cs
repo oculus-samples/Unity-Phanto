@@ -1,6 +1,8 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using System;
 using System.Collections;
+using Oculus.Haptics;
 using Phanto.Audio.Scripts;
 using Phantom;
 using PhantoUtils.VR;
@@ -34,6 +36,13 @@ public class UIWaveChangeManager : MonoBehaviour
     [SerializeField] private GameObject phantoPooFx;
     [SerializeField] private PhantoGooSfxManager soundManager;
     [SerializeField] private AudioSource wavePopupSound;
+
+    [SerializeField] private HapticClip wavePopupHaptic;
+
+    [SerializeField] private Controller hapticController = Controller.Both;
+
+    [SerializeField] private HapticCollection phantoDefeatCollection;
+
     private GameObject _phanto;
     private bool _started;
     private bool _startMusic;
@@ -44,9 +53,21 @@ public class UIWaveChangeManager : MonoBehaviour
     private int  _showUIWave = 0;
     private int _showUIWaveMem = -1;
 
+    private HapticClipPlayer _hapticPlayer;
+
     private void Awake()
     {
         wavePopup.SetActive(false);
+
+        if (wavePopupHaptic != null)
+        {
+            _hapticPlayer = new HapticClipPlayer(wavePopupHaptic);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        _hapticPlayer?.Dispose();
     }
 
     private void LateUpdate()
@@ -78,6 +99,11 @@ public class UIWaveChangeManager : MonoBehaviour
             if (_phanto != null && _started) ShowPhanto(false);
             // Show wave popup
             StartCoroutine(ShowAgainPhanto(_waveCounter));
+        }
+
+        if (_waveCounter > 1)
+        {
+            PlayPhantoDefeatHaptic();
         }
     }
 
@@ -123,6 +149,7 @@ public class UIWaveChangeManager : MonoBehaviour
             wavePanelText.text = $"WAVE {waveNum}";
             wavePopup.SetActive(true);
             wavePopupSound.Play();
+            _hapticPlayer?.Play(hapticController);
         }
     }
 
@@ -145,5 +172,12 @@ public class UIWaveChangeManager : MonoBehaviour
     {
         if (!soundManager) soundManager = FindAnyObjectByType<PhantoGooSfxManager>();
         return soundManager != null;
+    }
+
+    private void PlayPhantoDefeatHaptic()
+    {
+        var player = phantoDefeatCollection.GetRandomPlayer();
+
+        player?.Play(hapticController);
     }
 }

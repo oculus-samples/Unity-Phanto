@@ -5,17 +5,42 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "558f23b6ed48f7aabca66e190dac1a6bcb37bce8"
+      "hash": "7657a2ff187069a968a26fda3321d7c08e079f0a"
+    },
+    "com.meta.xr.depthapi": {
+      "version": "https://github.com/oculus-samples/Unity-DepthAPI.git?path=/Packages/com.meta.xr.depthapi",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.xr.oculus": "4.2.0-exp-env-depth.2"
+      },
+      "hash": "f42a6275f117cacba1863cdd11fd349ebf7ee6c3"
     },
     "com.meta.xr.sdk.audio": {
-      "version": "57.0.0-preview",
+      "version": "60.0.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://npm.developer.oculus.com"
     },
+    "com.meta.xr.sdk.core": {
+      "version": "60.0.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://npm.developer.oculus.com"
+    },
+    "com.meta.xr.sdk.haptics": {
+      "version": "60.0.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.meta.xr.sdk.core": "60.0.0"
+      },
+      "url": "https://npm.developer.oculus.com"
+    },
     "com.meta.xr.sdk.interaction": {
-      "version": "57.0.0-preview",
+      "version": "60.0.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -25,20 +50,13 @@
       "url": "https://npm.developer.oculus.com"
     },
     "com.meta.xr.sdk.interaction.ovr": {
-      "version": "57.0.0-preview",
+      "version": "60.0.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.meta.xr.sdk.interaction": "57.0.0-preview",
-        "com.meta.xr.sdk.utilities": "57.0.0-preview"
+        "com.meta.xr.sdk.interaction": "60.0.0",
+        "com.meta.xr.sdk.core": "60.0.0"
       },
-      "url": "https://npm.developer.oculus.com"
-    },
-    "com.meta.xr.sdk.utilities": {
-      "version": "57.0.0-preview",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {},
       "url": "https://npm.developer.oculus.com"
     },
     "com.tayx.graphy": {
@@ -49,7 +67,7 @@
       "hash": "7b634c383ae631e7f4efaf08235c2d829a7d3ecc"
     },
     "com.unity.ai.navigation": {
-      "version": "1.1.4",
+      "version": "1.1.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -86,7 +104,7 @@
       }
     },
     "com.unity.ide.rider": {
-      "version": "3.0.24",
+      "version": "3.0.27",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -95,7 +113,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.18",
+      "version": "2.0.22",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -162,7 +180,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.7.5",
+      "version": "1.7.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -203,8 +221,8 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.xr.management": {
-      "version": "4.3.3",
-      "depth": 0,
+      "version": "4.4.0",
+      "depth": 2,
       "source": "registry",
       "dependencies": {
         "com.unity.modules.subsystems": "1.0.0",
@@ -215,11 +233,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.xr.oculus": {
-      "version": "4.0.0",
-      "depth": 0,
+      "version": "4.2.0-exp-env-depth.2",
+      "depth": 1,
       "source": "registry",
       "dependencies": {
-        "com.unity.xr.management": "4.2.0"
+        "com.unity.xr.management": "4.4.0"
       },
       "url": "https://packages.unity.com"
     },

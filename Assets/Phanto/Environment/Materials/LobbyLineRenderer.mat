@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: LobbyLineRenderer
-  m_Shader: {fileID: 4800000, guid: 1b17772d18f8856418f7d8c6db2489df, type: 3}
+  m_Shader: {fileID: 4800000, guid: a65cf2e2762ad8d419721d1dda959d09, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -69,6 +69,7 @@ Material:
     - _ColorMode: 0
     - _Cull: 2
     - _Cutoff: 0.5
+    - _DepthBias: 0.06
     - _DetailNormalMapScale: 1
     - _DistortionBlend: 0.5
     - _DistortionEnabled: 0

@@ -389,8 +389,19 @@ namespace Phantom
                 yield return null;
             }
 
+            // Make sure the end point of the hop is on the navmesh.
+            if (NavMesh.SamplePosition(end, out var navMeshHit, 1.0f, NavMesh.AllAreas))
+            {
+                end = navMeshHit.position;
+            }
+
             transform.position = end;
+            // this *should* place the agent at the end point of the OffMeshLink
+            // but if the end point is under the navmesh a teleport to 0,0,0 will happen.
             navMeshAgent.CompleteOffMeshLink();
+            // warp to make sure the navMeshAgent position agrees with the transform's position.
+            navMeshAgent.Warp(end);
+
             animator.SetBool(OnGroundId, true);
             _phantomBehaviour.SetOnGround(true);
             yield return null;

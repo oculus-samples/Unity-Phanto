@@ -67,6 +67,7 @@ Material:
     m_Floats:
     - _BumpScale: 1
     - _Cutoff: 0.5
+    - _DepthBias: 0.1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _Falloff: 25
@@ -95,5 +96,5 @@ Material:
     - _Highlight: {r: 0.9387136, g: 0.48584908, b: 1, a: 1}
     - _Lowlight: {r: 0.6442178, g: 0.15566039, b: 1, a: 1}
     - _Midlight: {r: 0.91355044, g: 0.2971698, b: 1, a: 1}
-    - _SourcePos: {r: -0.3, g: 0.25, b: 0, a: 0}
+    - _SourcePos: {r: -0.3, g: 0.25, b: 0, a: 1}
   m_BuildTextureStacks: []

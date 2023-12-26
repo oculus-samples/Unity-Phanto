@@ -56,8 +56,9 @@ namespace Phantom.Environment.Scripts
             Assert.IsNotNull(sceneRoot, $"{nameof(sceneRoot)} cannot be null.");
         }
 
-        private void Start()
+        private IEnumerator Start()
         {
+            yield return null;
             LoadMeshes();
         }
 
@@ -79,6 +80,14 @@ namespace Phantom.Environment.Scripts
             if (settings.LoadSceneOnStart)
             {
                 Debug.Log($"{Application.productName}: Loading scene.");
+#if UNITY_EDITOR
+                if (!OVRManager.isHmdPresent && !string.IsNullOrEmpty(settings.SceneJson))
+                {
+                    LoadStaticMesh(settings.SceneJson);
+                    return;
+                }
+#endif
+
                 switch (settings.SceneDataSource)
                 {
                     // Scene API data.
@@ -629,6 +638,24 @@ namespace Phantom.Environment.Scripts
             }
 
             return null;
+        }
+
+        public static void AddAnchorReferenceCount(OVRSceneAnchor anchor)
+        {
+            var anchorReferenceCountDictionary = typeof(OVRSceneAnchor).GetField("AnchorReferenceCountDictionary",
+                BindingFlags.NonPublic | BindingFlags.Static);
+
+            if (anchorReferenceCountDictionary != null)
+            {
+                var refCountStaticField = anchorReferenceCountDictionary.GetValue(null);
+
+                if (refCountStaticField is Dictionary<OVRSpace, int> refCountDictionary)
+                {
+                    refCountDictionary[anchor.Space] = 1;
+
+                    anchorReferenceCountDictionary.SetValue(null, refCountDictionary);
+                }
+            }
         }
     }
 }

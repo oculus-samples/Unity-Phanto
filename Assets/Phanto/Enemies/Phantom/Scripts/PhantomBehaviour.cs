@@ -150,11 +150,13 @@ namespace Phantom
             var avgPCNormal = new Vector3();
             var sumPCVelocity = new Vector3();
 
+            var isEctoBlaster = specialLayer == (specialLayer | (1 << other.layer));
+
             for (var i = 0; i < count; i++)
             {
                 var pce = _pces[i];
 
-                if (specialLayer == (specialLayer | (1 << other.layer))) // Additional damage for a special layer (in this case - the blaster)
+                if (isEctoBlaster) // Additional damage for a special layer (in this case - the blaster)
                 {
                     accumulatedDamage += splashDamage * specialLayerDamageScale;
                 }
@@ -172,8 +174,12 @@ namespace Phantom
 
             foreach (var damageable in _damageables)
                 damageable.TakeDamage(accumulatedDamage, avgPCIntersection, avgPCNormal);
-        }
 
+            if (!isEctoBlaster)
+            {
+                PolterblastTrigger.DamageNotification(accumulatedDamage, avgPCIntersection, avgPCNormal);
+            }
+        }
 
         private void OnTriggerEnter(Collider other)
         {

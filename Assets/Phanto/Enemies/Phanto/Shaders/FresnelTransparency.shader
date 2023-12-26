@@ -34,6 +34,10 @@ Shader "Phanto/FresnelTransparency"
         // Physically based Standard lighting model, and enable shadows on all light types
         #pragma surface surf Standard fullforwardshadows alpha
 
+        #pragma multi_compile _ HARD_OCCLUSION SOFT_OCCLUSION
+
+        #include "UnityCG.cginc"
+        #include "Packages/com.meta.xr.depthapi/Runtime/BiRP/EnvironmentOcclusionBiRP.cginc"
         // Use shader model 3.0 target, to get nicer looking lighting
         #pragma target 3.0
 
@@ -43,6 +47,8 @@ Shader "Phanto/FresnelTransparency"
             float2 uv_EmissiveTex;
             float2 uv_RimTex;
             float3 viewDir;
+
+            float3 worldPos;
         };
 
         fixed4 _Color;
@@ -64,10 +70,15 @@ Shader "Phanto/FresnelTransparency"
 
             o.Normal = float3(0, 0, 1);
 
+
             half rimTerm = 1.0 - saturate(dot(normalize(IN.viewDir), o.Normal));
             o.Emission = tex2D(_EmissiveTex, IN.uv_EmissiveTex)
                 + _RimColor * tex2D(_RimTex, IN.uv_RimTex) * smoothstep(0.0, 1.0, rimTerm * _RimIntensity);
 
+            float occlusionValue = META_DEPTH_GET_OCCLUSION_VALUE_WORLDPOS(IN.worldPos, 0);
+
+            o.Alpha *= occlusionValue;
+            o.Emission *= occlusionValue;
         }
         ENDCG
     }

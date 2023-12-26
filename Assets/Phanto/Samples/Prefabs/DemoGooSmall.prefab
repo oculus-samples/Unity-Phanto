@@ -262,6 +262,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   impactDustPS: {fileID: 8787992293636345603}
+  extinguishAccelerationSpeed: 2.5
 --- !u!1001 &8772200818590380020
 PrefabInstance:
   m_ObjectHideFlags: 0

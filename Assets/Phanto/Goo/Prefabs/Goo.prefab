@@ -4806,6 +4806,8 @@ GameObject:
   - component: {fileID: 7225710383188223948}
   - component: {fileID: 4057078303207472395}
   - component: {fileID: 7946935155400344568}
+  - component: {fileID: 1188227606412459471}
+  - component: {fileID: 7181785813032709234}
   m_Layer: 0
   m_Name: Goo
   m_TagString: Untagged
@@ -9649,6 +9651,33 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!114 &1188227606412459471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1338487401568366684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 274a64d85f5fba84590d087e68040223, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  occlusionType: 1
+--- !u!114 &7181785813032709234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1338487401568366684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f41e8388e5af4f4887bc8e3a93ca2ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <DepthBiasValue>k__BackingField: 0.06
+  DoesAffectChildren: 1
 --- !u!1 &1619072075061935086
 GameObject:
   m_ObjectHideFlags: 0
