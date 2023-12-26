@@ -8,9 +8,9 @@ Project Phanto is a Unity reference app, showcasing the latest Presence Platform
 The [scene mesh](https://developer.oculus.com/documentation/unity/unity-scene-mesh/) is a low-fidelity, high-coverage artifact which describes the boundary between free and occupied space in a room. It is generated automatically during the Space Setup experience, and available for applications to query via Scene API.
 
 ## Requirements
-- Recommended Unity version: 2022.3.4f1
+- Recommended Unity version: 2022.16f1
 - Mac or Windows
-- Unity OVR Integration package v57 (included in the project)
+- Unity OVR Integration package v60 (included in the project)
 
 <br><br>
 
@@ -184,7 +184,7 @@ The Ecto Blaster is allows you to defeat the Phantoms. Place it in your room and
 ## Prerequisites
 1. Clone the project using:
 `git clone https://github.com/oculus-samples/Unity-Phanto`
-2. Recommended Unity version - 2022.3.4f1.
+2. Recommended Unity version - 2022.16f1.
 
 ## Using the project's scenes
 
