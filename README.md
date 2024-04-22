@@ -419,7 +419,7 @@ mesh and scene elements, managed by the **SceneDataLoader** component.
 
 |                     Welcome                     |                     Polterblast                     |                   Goo                   |                  Ecto Blaster                   |                    Phantoms                     |                   Start Game                    |
 | :---------------------------------------------: | :---------------------------------------------: | :---------------------------------------------: | :---------------------------------------------: | :---------------------------------------------: | :---------------------------------------------: |
-| ![Tutorial0](./Media/Tutorial1.PNG 'Tutorial0')| ![Tutorial1](./Media/Tutorial1.PNG 'Tutorial1') | ![Tutorial2](./Media/Tutorial2.PNG 'Tutorial2') | ![Tutorial3](./Media/Tutorial3.PNG 'Tutorial3') | ![Tutorial4](./Media/Tutorial4.PNG 'Tutorial4') | ![Tutorial5](./Media/Tutorial5.PNG 'Tutorial5') |
+| ![Tutorial0](./Media/Tutorial0.PNG 'Tutorial0')| ![Tutorial1](./Media/Tutorial1.PNG 'Tutorial1') | ![Tutorial2](./Media/Tutorial2.PNG 'Tutorial2') | ![Tutorial3](./Media/Tutorial3.PNG 'Tutorial3') | ![Tutorial4](./Media/Tutorial4.PNG 'Tutorial4') | ![Tutorial5](./Media/Tutorial5.PNG 'Tutorial5') |
 
 <br><br>
 
