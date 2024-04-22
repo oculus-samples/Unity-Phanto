@@ -1,0 +1,330 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7da193a789a0e9f4d97c93332cf9ba88, type: 3}
+  m_Name: TutorialSettings
+  m_EditorClassIdentifier: 
+  waveSettings:
+  - winCondition: 0
+    guiSettings:
+      isEnabled: 0
+      WaveTitle: Tutorial Intro
+      WaveObjective: 
+      popupDelayShowTime: 5
+      showBackPhantoWaveTime: 0
+    phantoSetting:
+      isEnabled: 0
+      splashDamage: 0.1
+      splashAmount: 0.4
+      gooBallSpeed: {x: 2, y: 5}
+      novaSettings:
+        preCastTimePerWave: 2
+        castTimePerWave: 5
+        postCastTimePerWave: 0.3
+        numTrailsPerWave: 3
+      spitGooBallSettings:
+        weaponSpreadPerWave: {x: 0.01, y: 0.05}
+        weaponNumProjPerWave: 2
+        preAttackTimePerWave: 0.16
+        refireTimePerWave: 0.5
+        postAttackTimePerWave: 0.3
+        numVolleysPerWave: 1
+      painSettings:
+        painChancePerWave: 0.1
+        painTimePerWave: 0.11
+      goEtherealSettings:
+        castTimePerWave: 3
+      dodgeSettings:
+        dodgeChancePerWave: 0.3
+      roamSettings:
+        thinkTimePerWave: 0.6
+        speedScalePerWave: 0.3
+        painTimePerWave: 1.5
+    phantomSetting:
+      isEnabled: 0
+      Speed: 1
+      FleeSpeedMultiplier: 1
+      Quantity: 0
+      SpawnRate: 0
+      SpawnPoints: 1
+      AttackDelay: 1
+      RangedAttackDelay: 1.5
+      blasterHands: 0
+  - winCondition: 0
+    guiSettings:
+      isEnabled: 0
+      WaveTitle: Polterblast 3000
+      WaveObjective: 
+      popupDelayShowTime: 5
+      showBackPhantoWaveTime: 0
+    phantoSetting:
+      isEnabled: 0
+      splashDamage: 0.03
+      splashAmount: 0.4
+      gooBallSpeed: {x: 2, y: 5}
+      novaSettings:
+        preCastTimePerWave: 0
+        castTimePerWave: 0
+        postCastTimePerWave: 0
+        numTrailsPerWave: 0
+      spitGooBallSettings:
+        weaponSpreadPerWave: {x: 0, y: 0}
+        weaponNumProjPerWave: 0
+        preAttackTimePerWave: 0
+        refireTimePerWave: 0
+        postAttackTimePerWave: 0
+        numVolleysPerWave: 0
+      painSettings:
+        painChancePerWave: 0
+        painTimePerWave: 0
+      goEtherealSettings:
+        castTimePerWave: 0
+      dodgeSettings:
+        dodgeChancePerWave: 0
+      roamSettings:
+        thinkTimePerWave: 0
+        speedScalePerWave: 0
+        painTimePerWave: 0
+    phantomSetting:
+      isEnabled: 0
+      Speed: 0.45
+      FleeSpeedMultiplier: 1.5
+      Quantity: 30
+      SpawnRate: 1
+      SpawnPoints: 3
+      AttackDelay: 0.2
+      RangedAttackDelay: 0.2
+      blasterHands: 2
+  - winCondition: 0
+    guiSettings:
+      isEnabled: 0
+      WaveTitle: Waiting defeat Phanto
+      WaveObjective: 
+      popupDelayShowTime: 5
+      showBackPhantoWaveTime: 0
+    phantoSetting:
+      isEnabled: 1
+      splashDamage: 0.1
+      splashAmount: 0.4
+      gooBallSpeed: {x: 2, y: 5}
+      novaSettings:
+        preCastTimePerWave: 1
+        castTimePerWave: 3
+        postCastTimePerWave: 0.25
+        numTrailsPerWave: 4
+      spitGooBallSettings:
+        weaponSpreadPerWave: {x: 0.02, y: 0.06}
+        weaponNumProjPerWave: 3
+        preAttackTimePerWave: 0.08
+        refireTimePerWave: 0.2
+        postAttackTimePerWave: 0.25
+        numVolleysPerWave: 2
+      painSettings:
+        painChancePerWave: 0.07
+        painTimePerWave: 0.08
+      goEtherealSettings:
+        castTimePerWave: 2
+      dodgeSettings:
+        dodgeChancePerWave: 0.6
+      roamSettings:
+        thinkTimePerWave: 0.2
+        speedScalePerWave: 0.5
+        painTimePerWave: 2
+    phantomSetting:
+      isEnabled: 0
+      Speed: 1
+      FleeSpeedMultiplier: 1
+      Quantity: 4
+      SpawnRate: 2
+      SpawnPoints: 1
+      AttackDelay: 1
+      RangedAttackDelay: 1.5
+      blasterHands: 0
+  - winCondition: 0
+    guiSettings:
+      isEnabled: 0
+      WaveTitle: EctoBlaster
+      WaveObjective: 
+      popupDelayShowTime: 5
+      showBackPhantoWaveTime: 0
+    phantoSetting:
+      isEnabled: 0
+      splashDamage: 0.03
+      splashAmount: 0.4
+      gooBallSpeed: {x: 2, y: 5}
+      novaSettings:
+        preCastTimePerWave: 0
+        castTimePerWave: 0
+        postCastTimePerWave: 0
+        numTrailsPerWave: 0
+      spitGooBallSettings:
+        weaponSpreadPerWave: {x: 0, y: 0}
+        weaponNumProjPerWave: 0
+        preAttackTimePerWave: 0
+        refireTimePerWave: 0
+        postAttackTimePerWave: 0
+        numVolleysPerWave: 0
+      painSettings:
+        painChancePerWave: 0
+        painTimePerWave: 0
+      goEtherealSettings:
+        castTimePerWave: 0
+      dodgeSettings:
+        dodgeChancePerWave: 0
+      roamSettings:
+        thinkTimePerWave: 0
+        speedScalePerWave: 0
+        painTimePerWave: 0
+    phantomSetting:
+      isEnabled: 0
+      Speed: 0.55
+      FleeSpeedMultiplier: 1.5
+      Quantity: 60
+      SpawnRate: 0.5
+      SpawnPoints: 3
+      AttackDelay: 0.2
+      RangedAttackDelay: 0.2
+      blasterHands: 0
+  - winCondition: 0
+    guiSettings:
+      isEnabled: 0
+      WaveTitle: Defeat Phantoms
+      WaveObjective: 
+      popupDelayShowTime: 5
+      showBackPhantoWaveTime: 0
+    phantoSetting:
+      isEnabled: 0
+      splashDamage: 0.8
+      splashAmount: 0.4
+      gooBallSpeed: {x: 2, y: 5}
+      novaSettings:
+        preCastTimePerWave: 0.5
+        castTimePerWave: 2
+        postCastTimePerWave: 0.05
+        numTrailsPerWave: 6
+      spitGooBallSettings:
+        weaponSpreadPerWave: {x: 0.035, y: 0.07}
+        weaponNumProjPerWave: 1
+        preAttackTimePerWave: 0.04
+        refireTimePerWave: 0.01
+        postAttackTimePerWave: 0.05
+        numVolleysPerWave: 3
+      painSettings:
+        painChancePerWave: 0.04
+        painTimePerWave: 0.066667
+      goEtherealSettings:
+        castTimePerWave: 1
+      dodgeSettings:
+        dodgeChancePerWave: 0.9
+      roamSettings:
+        thinkTimePerWave: 0.083
+        speedScalePerWave: 0.7
+        painTimePerWave: 2.5
+    phantomSetting:
+      isEnabled: 0
+      Speed: 1
+      FleeSpeedMultiplier: 1
+      Quantity: 16
+      SpawnRate: 2
+      SpawnPoints: 1
+      AttackDelay: 1
+      RangedAttackDelay: 1.5
+      blasterHands: 0
+  - winCondition: 1
+    guiSettings:
+      isEnabled: 0
+      WaveTitle: Waiting defeat Phantoms
+      WaveObjective: 
+      popupDelayShowTime: 5
+      showBackPhantoWaveTime: 0
+    phantoSetting:
+      isEnabled: 0
+      splashDamage: 0.03
+      splashAmount: 0.4
+      gooBallSpeed: {x: 2, y: 5}
+      novaSettings:
+        preCastTimePerWave: 0
+        castTimePerWave: 0
+        postCastTimePerWave: 0
+        numTrailsPerWave: 0
+      spitGooBallSettings:
+        weaponSpreadPerWave: {x: 0, y: 0}
+        weaponNumProjPerWave: 0
+        preAttackTimePerWave: 0
+        refireTimePerWave: 0
+        postAttackTimePerWave: 0
+        numVolleysPerWave: 0
+      painSettings:
+        painChancePerWave: 0
+        painTimePerWave: 0
+      goEtherealSettings:
+        castTimePerWave: 0
+      dodgeSettings:
+        dodgeChancePerWave: 0
+      roamSettings:
+        thinkTimePerWave: 0
+        speedScalePerWave: 0
+        painTimePerWave: 0
+    phantomSetting:
+      isEnabled: 1
+      Speed: 0.55
+      FleeSpeedMultiplier: 1.5
+      Quantity: 60
+      SpawnRate: 0.5
+      SpawnPoints: 3
+      AttackDelay: 0.2
+      RangedAttackDelay: 0.2
+      blasterHands: 0
+  - winCondition: 0
+    guiSettings:
+      isEnabled: 0
+      WaveTitle: Tutorial completed
+      WaveObjective: 
+      popupDelayShowTime: 5
+      showBackPhantoWaveTime: 0
+    phantoSetting:
+      isEnabled: 0
+      splashDamage: 0.03
+      splashAmount: 0.4
+      gooBallSpeed: {x: 2, y: 5}
+      novaSettings:
+        preCastTimePerWave: 0
+        castTimePerWave: 0
+        postCastTimePerWave: 0
+        numTrailsPerWave: 0
+      spitGooBallSettings:
+        weaponSpreadPerWave: {x: 0, y: 0}
+        weaponNumProjPerWave: 0
+        preAttackTimePerWave: 0
+        refireTimePerWave: 0
+        postAttackTimePerWave: 0
+        numVolleysPerWave: 0
+      painSettings:
+        painChancePerWave: 0
+        painTimePerWave: 0
+      goEtherealSettings:
+        castTimePerWave: 0
+      dodgeSettings:
+        dodgeChancePerWave: 0
+      roamSettings:
+        thinkTimePerWave: 0
+        speedScalePerWave: 0
+        painTimePerWave: 0
+    phantomSetting:
+      isEnabled: 0
+      Speed: 0.55
+      FleeSpeedMultiplier: 1.5
+      Quantity: 60
+      SpawnRate: 0.5
+      SpawnPoints: 3
+      AttackDelay: 0.2
+      RangedAttackDelay: 0.2
+      blasterHands: 0

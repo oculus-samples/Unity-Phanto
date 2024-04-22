@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8296821287357421177}
   - component: {fileID: 4014341437880758335}
   - component: {fileID: 2108646853413920765}
+  - component: {fileID: 5130440767633878256}
   m_Layer: 0
   m_Name: LobbyOVRSceneManager
   m_TagString: Untagged
@@ -25,13 +26,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3610238575619966178}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4014341437880758335
 MonoBehaviour:
@@ -66,6 +67,12 @@ MonoBehaviour:
   - Prefab: {fileID: 4795010734887376439, guid: 3207a9fa181b40647b386a6eb72735e0, type: 3}
     ClassificationLabel: WALL_FACE
     _editorClassificationIndex: 2
+  - Prefab: {fileID: 2517829481823597454, guid: d703b3fd1f6065748895954444a29a16, type: 3}
+    ClassificationLabel: DOOR_FRAME
+    _editorClassificationIndex: 5
+  - Prefab: {fileID: 2517829481823597454, guid: b42b859bb73f73f4da07a554d25053e2, type: 3}
+    ClassificationLabel: WINDOW_FRAME
+    _editorClassificationIndex: 6
   ActiveRoomsOnly: 1
   VerboseLogging: 0
   MaxSceneAnchorUpdatesPerFrame: 3
@@ -80,5 +87,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f1c4a1713e5d1b4409a95470bcf9e5b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5130440767633878256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3610238575619966178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef344c68ec169d948bd82b071d0764aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

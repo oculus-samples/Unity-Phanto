@@ -9,6 +9,7 @@ using Phanto.Enemies.DebugScripts;
 using PhantoUtils;
 using UnityEngine;
 using Utilities.XR;
+using Debug = UnityEngine.Debug;
 
 namespace Phantom
 {
@@ -17,7 +18,6 @@ namespace Phantom
     /// </summary>
     public partial class PhantomBehaviour : EnemyBehaviour<PhantomBehaviour>
     {
-
         public enum StateID
         {
             Roam,
@@ -29,6 +29,8 @@ namespace Phantom
             Die,
             Spawn,
             DemoRoam,
+            CrystalRoam,
+            CrystalChase,
             NumStates
         }
 
@@ -43,7 +45,7 @@ namespace Phantom
 
         [SerializeField] private GameObject gooBallPrefab;
 
-        [SerializeField]private float splashDamage = 0.0052f;
+        [SerializeField] private float splashDamage = 0.0052f;
 
         [SerializeField] private AnimationCurve spawnCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
@@ -55,8 +57,12 @@ namespace Phantom
 
         [SerializeField] private bool playSounds = true;
 
+        [SerializeField] private ThoughtBubbleController thoughtBubbleController;
+
         //TODO: this could be handled on the extinguisher/weapon side of things so that the weapon dictates damage & particle mass/strength
         private readonly List<ParticleCollisionEvent> _pces = new(1024);
+
+        private PhantomTarget _previousTarget;
 
         private readonly IEnemyState<PhantomBehaviour>[] _states =
         {
@@ -68,7 +74,9 @@ namespace Phantom
             new Pain(),
             new Die(),
             new Spawn(),
-            new DemoRoam()
+            new DemoRoam(),
+            new CrystalRoam(),
+            new CrystalChase(),
         };
 
         private readonly HashSet<PhantomTarget> _targetsInRange = new();
@@ -78,6 +86,10 @@ namespace Phantom
 
         private Vector3? _furnitureDestination;
         private bool _onGround = true;
+
+        private int _launchesWithoutHit = 0;
+        private PhantoGooSfxManager _sfxManager;
+        private bool _sfxManagerReady = false;
 
         public Vector3 Position => phantomController.Position;
         public Vector3 HeadPosition => phantomController.HeadPosition;
@@ -89,11 +101,7 @@ namespace Phantom
 
         protected override uint InitialState => (uint)initialState;
 
-        public bool Tutorial
-        {
-            get;
-            internal set;
-        } = false;
+        public bool Tutorial { get; internal set; } = false;
 
         protected override void Awake()
         {
@@ -112,6 +120,9 @@ namespace Phantom
 
         private void OnEnable()
         {
+            _sfxManager = PhantoGooSfxManager.Instance;
+            _sfxManagerReady = _sfxManager != null;
+
             phantomController.DestinationReached += OnDestinationReached;
             phantomController.PathingFailed += OnPathingFailed;
 
@@ -136,12 +147,13 @@ namespace Phantom
             phantomController.PathingFailed -= OnPathingFailed;
 
             DebugDrawManager.DebugDrawEvent -= DebugDraw;
+
+            _launchesWithoutHit = 0;
         }
 
         private void OnParticleCollision(GameObject other)
         {
-            ParticleSystem ps;
-            if (!other.TryGetComponent(out ps)) return;
+            if (!other.TryGetComponent(out ParticleSystem ps)) return;
 
             var count = ps.GetCollisionEvents(gameObject, _pces);
 
@@ -164,6 +176,7 @@ namespace Phantom
                 {
                     accumulatedDamage += splashDamage * splashDamageScale;
                 }
+
                 avgPCNormal += pce.normal;
                 avgPCIntersection += pce.intersection;
                 sumPCVelocity += pce.velocity;
@@ -173,7 +186,7 @@ namespace Phantom
             avgPCNormal /= count;
 
             foreach (var damageable in _damageables)
-                damageable.TakeDamage(accumulatedDamage, avgPCIntersection, avgPCNormal);
+                damageable.TakeDamage(accumulatedDamage, avgPCIntersection, avgPCNormal, other);
 
             if (!isEctoBlaster)
             {
@@ -218,12 +231,15 @@ namespace Phantom
                 {
                     case Flee:
                     case Chase:
+                    case CrystalChase:
                     case DirectAttack:
                     case RangedAttack:
-                        SwitchState(StateID.Roam);
+                        SwitchToRoamState();
                         break;
                 }
             }
+
+            _launchesWithoutHit = 0;
         }
 
         public override uint GetNumStates()
@@ -248,7 +264,7 @@ namespace Phantom
         }
 
         public override void TakeDamage(float damage, Vector3 position, Vector3 normal,
-            IDamageable.DamageCallback callback = null)
+            GameObject damageSource = null, IDamageable.DamageCallback callback = null)
         {
             if (e.Health <= 0 || e.invulnerable)
             {
@@ -263,7 +279,10 @@ namespace Phantom
             var ray = new Ray(phantomPos, damageVector);
             var ouchPoint = ray.GetPoint(0.02f);
 
-            PhantomManager.Instance.SpawnOuch(ouchPoint);
+            if (PolterblastTrigger.TryGetPolterblaster(damageSource, out var trigger))
+            {
+                phantomController.SpawnOuch(ouchPoint, phantomPos - trigger.Position);
+            }
 
             switch (curState)
             {
@@ -286,9 +305,28 @@ namespace Phantom
 
         public void SetOnGround(bool onGround)
         {
-            if (!onGround && playSounds) PhantoGooSfxManager.Instance.PlayMinionJumpVo(Position);
+            if (!onGround && playSounds && _sfxManagerReady) _sfxManager.PlayPhantomJumpVo(Position);
 
             _onGround = onGround;
+        }
+
+        public void ResetState()
+        {
+            if (CurrentTarget != null)
+            {
+                CurrentTarget.Forget -= OnForgetTarget;
+            }
+
+            CurrentTarget = null;
+
+            foreach (var target in _targetsInRange)
+            {
+                target.Forget -= OnForgetTarget;
+            }
+
+            _targetsInRange.Clear();
+
+            SwitchToRoamState();
         }
 
         private void SetInvulnerable(bool invulnerable)
@@ -303,20 +341,65 @@ namespace Phantom
 
         private void CheckForTargets()
         {
-            // Check neighborhood for attack/flee targets that would change state
-            if (_targetsInRange.Count > 0 && _onGround) SelectTarget();
+            var winCondition = phantomController.WinCondition;
+
+            switch (winCondition)
+            {
+                case GameplaySettings.WinCondition.DefeatPhanto:
+                    // Check neighborhood for attack/flee targets that would change state
+                    if (_targetsInRange.Count > 0 && _onGround) SelectTarget();
+                    break;
+                case GameplaySettings.WinCondition.DefeatAllPhantoms:
+                    if (CurrentTarget != null && CurrentTarget.Valid)
+                    {
+                        SwitchState(StateID.CrystalChase);
+                    }
+                    else
+                    {
+                        phantomController.RequestCrystalTarget();
+                    }
+                    break;
+            }
         }
 
         private void SelectTarget()
         {
-            PhantomTarget closest = null;
-            var minDistance = float.MaxValue;
-
             var position = phantomController.Position;
+            PhantomTarget target = null;
 
+            target = ClosestDetectedTarget(position);
+
+            if (target == null) return;
+
+            switch (target)
+            {
+                case PhantomFleeTarget fleeTarget:
+                    // so we can remember what we were doing before getting scared.
+                    if (CurrentTarget is not PhantomFleeTarget)
+                    {
+                        _previousTarget = CurrentTarget;
+                    }
+
+                    CurrentTarget = fleeTarget;
+
+                    SwitchState(StateID.Flee);
+                    break;
+                default:
+                    CurrentTarget = target;
+
+                    if (!Tutorial)
+                        SwitchState(StateID.Chase);
+                    break;
+            }
+        }
+
+        private PhantomTarget ClosestDetectedTarget(Vector3 position)
+        {
+            float minDistance = float.MaxValue;
+            PhantomTarget closest = null;
             foreach (var target in _targetsInRange)
             {
-                if (!target.Valid) continue;
+                if (target==null || !target.Valid) continue;
 
                 var distance = Vector3.Distance(target.Position, position);
                 if (distance < minDistance)
@@ -326,15 +409,7 @@ namespace Phantom
                 }
             }
 
-            if (closest == null) return;
-
-            CurrentTarget = closest;
-
-            // selected behavior will be running away.
-            if (CurrentTarget.Flee)
-                SwitchState(StateID.Flee);
-            else if (!Tutorial)
-                SwitchState(StateID.Chase);
+            return closest;
         }
 
         private void OnPathingFailed()
@@ -349,33 +424,54 @@ namespace Phantom
             StartCoroutine(WaitAFrame());
         }
 
-        private void OnDestinationReached()
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="inRange">if true phantom should be able to attack its target</param>
+        private void OnDestinationReached(bool inRange)
         {
             EvaluateState();
         }
 
         private void EvaluateState()
         {
+            var winCondition = phantomController.WinCondition;
+
+            Vector3 target;
+            Vector3 delta;
+            float range3d;
+            float range2d;
+
             switch (curState)
             {
                 case Roam roamState:
                 case Flee fleeState:
-                    if (_targetsInRange.Count > 0)
-                        SelectTarget();
-                    else
-                        // Pick another random location.
-                        SwitchState(StateID.Roam);
-
+                    switch (winCondition)
+                    {
+                        case GameplaySettings.WinCondition.DefeatPhanto:
+                            if (_targetsInRange.Count > 0)
+                            {
+                                SelectTarget();
+                            }
+                            else
+                            {
+                                SwitchToRoamState();
+                            }
+                            break;
+                        case GameplaySettings.WinCondition.DefeatAllPhantoms:
+                            SwitchToRoamState();
+                            break;
+                    }
                     break;
                 case Chase chaseState:
                     // close enough to attack?
-                    var target = _currentDestination.GetValueOrDefault(CurrentTarget.Position);
+                    target = _currentDestination.GetValueOrDefault(CurrentTarget.Position);
 
                     // 2D distance to target.
-                    var delta = target - Position;
+                    delta = target - Position;
 
-                    var range3d = delta.magnitude;
-                    var range2d = Vector3.ProjectOnPlane(delta, Vector3.up).magnitude;
+                    range3d = delta.magnitude;
+                    range2d = Vector3.ProjectOnPlane(delta, Vector3.up).magnitude;
 
                     switch (CurrentTarget)
                     {
@@ -383,7 +479,7 @@ namespace Phantom
                             if (range2d <= spitRange)
                                 SwitchState(StateID.RangedAttack);
                             else
-                                SwitchState(StateID.Roam);
+                                SwitchToRoamState();
 
                             break;
                         default:
@@ -392,8 +488,7 @@ namespace Phantom
                             else if (range2d <= spitRange)
                                 SwitchState(StateID.RangedAttack);
                             else
-                                SwitchState(StateID.Roam);
-
+                                SwitchToRoamState();
                             break;
                     }
 
@@ -401,6 +496,39 @@ namespace Phantom
                 case DemoRoam demoRoam:
                     // Pick another random location.
                     SwitchState(StateID.DemoRoam);
+                    break;
+                case CrystalRoam crystalRoam:
+                    // this state shouldn't do anything except select a crystal.
+                    break;
+                case CrystalChase crystalChase:
+                    // close enough to attack?
+                    target = _currentDestination.GetValueOrDefault(CurrentTarget.Position);
+
+                    // 2D distance to target.
+                    delta = target - Position;
+
+                    range3d = delta.magnitude;
+                    range2d = Vector3.ProjectOnPlane(delta, Vector3.up).magnitude;
+
+                    switch (CurrentTarget)
+                    {
+                        case RangedFurnitureTarget _:
+                            if (range2d <= spitRange)
+                                SwitchState(StateID.RangedAttack);
+                            else
+                                SwitchToRoamState();
+
+                            break;
+                        default:
+                            if (range3d <= meleeRange)
+                                SwitchState(StateID.DirectAttack);
+                            else if (range2d <= spitRange)
+                                SwitchState(StateID.RangedAttack);
+                            else
+                                SwitchToRoamState();
+                            break;
+                    }
+
                     break;
             }
         }
@@ -421,6 +549,11 @@ namespace Phantom
                 // don't attempt to flee if you're invulnerable or airborne.
                 if (target == CurrentTarget || !target.Flee || e.invulnerable || !_onGround) continue;
 
+                if (CurrentTarget is not PhantomFleeTarget)
+                {
+                    _previousTarget = CurrentTarget;
+                }
+
                 CurrentTarget = target;
                 SwitchState(StateID.Flee);
                 return true;
@@ -433,11 +566,47 @@ namespace Phantom
         {
             if (!TargetIsValid())
             {
-                SwitchState(StateID.Roam);
+                SwitchToRoamState();
                 return true;
             }
 
             return false;
+        }
+
+        private void SwitchToRoamState()
+        {
+            switch (phantomController.WinCondition)
+            {
+                case GameplaySettings.WinCondition.DefeatPhanto:
+                    SwitchState(StateID.Roam);
+                    break;
+                case GameplaySettings.WinCondition.DefeatAllPhantoms:
+                    SwitchState(StateID.CrystalRoam);
+                    _launchesWithoutHit = 0;
+                    break;
+            }
+        }
+
+        public void SetCrystalTarget(PhantomTarget target)
+        {
+            if (CurrentTarget == target)
+            {
+                return;
+            }
+
+            if (CurrentTarget != null)
+            {
+                OnForgetTarget(CurrentTarget);
+            }
+
+            CurrentTarget = target;
+            _launchesWithoutHit = 0;
+        }
+
+        public void SuccessfulLaunch()
+        {
+            // hit your target, so reset the count.
+            _launchesWithoutHit = 0;
         }
 
         private void AttackComplete(IEnemyState<PhantomBehaviour> attack)
@@ -445,7 +614,7 @@ namespace Phantom
             phantomController.AttackAnimation();
             CurrentTarget.TakeDamage(1.0f);
 
-            if (playSounds) PhantoGooSfxManager.Instance.PlayMinionLaughVo(Position);
+            if (playSounds && _sfxManagerReady) _sfxManager.PlayPhantomLaughVo(Position);
         }
 
         private void SpitAtTarget(IEnemyState<PhantomBehaviour> attack)
@@ -460,17 +629,43 @@ namespace Phantom
                 HeadPosition,
                 transform.rotation);
 
-            projectile.GetComponent<Rigidbody>().LaunchProjectile(launchPoint, launchVector);
+            if (projectile.TryGetComponent<PhantoGooBall>(out var gooBall))
+            {
+                var winCondition = phantomController.WinCondition;
+
+                // pass win condition to the projectile to control its behavior.
+                gooBall.LaunchProjectile(launchPoint, launchVector, winCondition, this);
+
+                switch (winCondition)
+                {
+                    case GameplaySettings.WinCondition.DefeatAllPhantoms:
+                        _launchesWithoutHit++;
+
+                        if (_launchesWithoutHit > 4)
+                        {
+                            // probably can't hit the target from here.
+                            // pick a new standing position.
+                            SwitchToRoamState();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                Debug.LogError("projectile prefab has no PhantoGooBall component,");
+            }
 
             CurrentTarget.TakeDamage(1.0f);
 
-            if (playSounds) PhantoGooSfxManager.Instance.PlayMinionLaughVo(Position);
+            if (playSounds && _sfxManagerReady) _sfxManager.PlayPhantomLaughVo(Position);
         }
 
-        private void SetDestination(Vector3 destination)
+        private void SetDestination(PhantomTarget target, Vector3 destination)
         {
             _currentDestination = destination;
-            phantomController.SetDestination(destination);
+            phantomController.SetDestination(target, destination);
 
             if (CurrentTarget is RangedFurnitureTarget)
                 _furnitureDestination = destination;
@@ -484,11 +679,13 @@ namespace Phantom
             _targetsInRange.Remove(target);
 
             phantomController.Fleeing(true);
-            phantomController.SetDestination(destination);
+            phantomController.SetDestination(target, destination);
         }
 
         private void CancelFlee()
         {
+            CurrentTarget = _previousTarget;
+
             phantomController.Fleeing(false);
         }
 
@@ -505,6 +702,82 @@ namespace Phantom
         private void ReturnToPool()
         {
             phantomController.ReturnToPool();
+            phantomController.DecrementPhantom();
+        }
+
+        private void ShowThought(Thought thought)
+        {
+            thoughtBubbleController.ShowThought(thought);
+            if (playSounds && _sfxManagerReady) _sfxManager.PlayPhantomThoughtBubbleAppear(transform.position);
+        }
+
+        private void PlayEmote(Thought thought)
+        {
+            phantomController.PlayEmote(thought);
+        }
+
+        private void ShowTargetThought(PhantomTarget target)
+        {
+            Thought thought = Thought.None;
+            string label = null;
+
+            switch (target)
+            {
+                case PhantomChaseTarget chaseTarget:
+                    if (SceneQuery.TryGetClosestSemanticClassification(chaseTarget.GetAttackPoint(), Vector3.up, out var classification))
+                    {
+                        label = classification.Labels[0];
+                    }
+                    break;
+                case RangedFurnitureTarget furnitureTarget:
+                    label = furnitureTarget.Classification;
+                    break;
+                case PhantomFleeTarget fleeTarget:
+                    thoughtBubbleController.ShowThought(Thought.Alert);
+                    return;
+            }
+
+            switch (label)
+            {
+                case OVRSceneManager.Classification.Couch:
+                    thought = Thought.Couch;
+                    break;
+                case OVRSceneManager.Classification.Other:
+                    thought = Thought.Other;
+                    break;
+                case OVRSceneManager.Classification.Storage:
+                    thought = Thought.Storage;
+                    break;
+                case OVRSceneManager.Classification.Bed:
+                    thought = Thought.Bed;
+                    break;
+                case OVRSceneManager.Classification.Table:
+                    thought = Thought.Table;
+                    break;
+                case OVRSceneManager.Classification.DoorFrame:
+                    thought = Thought.Door;
+                    break;
+                case OVRSceneManager.Classification.WindowFrame:
+                    thought = Thought.Window;
+                    break;
+                case OVRSceneManager.Classification.Screen:
+                    thought = Thought.Screen;
+                    break;
+                case OVRSceneManager.Classification.Lamp:
+                    thought = Thought.Lamp;
+                    break;
+                case OVRSceneManager.Classification.Plant:
+                    thought = Thought.Plant;
+                    break;
+                case OVRSceneManager.Classification.WallArt:
+                    thought = Thought.WallArt;
+                    break;
+                default:
+                    thought = Thought.Angry;
+                    break;
+            }
+
+            thoughtBubbleController.ShowThought(thought);
         }
 
         private void DebugDraw()

@@ -15,7 +15,7 @@ namespace Phanto.Haptic.Scripts
     ///     Play a random oneshot sfx on Start.
     /// </summary>
     [RequireComponent(typeof(AudioSource))]
-    public class PhantoRandomOneshotHapticSfxBehavior : PhantoRandomOneshotSfxBehavior
+    public class PhantoRandomOneshotHapticSfxBehavior : PhantoRandomOneShotSfxBehavior
     {
         [Serializable]
         public class AudioHapticPair

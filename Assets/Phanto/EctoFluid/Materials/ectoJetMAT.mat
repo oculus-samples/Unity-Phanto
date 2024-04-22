@@ -106,6 +106,7 @@ Material:
     - _DstBlend: 10
     - _Emission: 2
     - _EmissionEnabled: 0
+    - _EnvironmentDepthBias: 0
     - _FlipbookMode: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5

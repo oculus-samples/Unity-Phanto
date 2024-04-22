@@ -16,7 +16,8 @@ using static NavMeshGenerateLinks;
 /// </summary>
 public class FurnitureNavMeshGenerator : MonoBehaviour
 {
-    private static readonly List<FurnitureNavMeshGenerator> FurnitureNavMesh = new();
+    private static readonly List<FurnitureNavMeshGenerator> furnitureNavMesh = new();
+    public static IReadOnlyList<FurnitureNavMeshGenerator> FurnitureNavMesh => furnitureNavMesh;
 
     [SerializeField] private NavMeshSurface navMeshSurface;
 
@@ -29,12 +30,15 @@ public class FurnitureNavMeshGenerator : MonoBehaviour
     private int _areaMask;
     private List<List<Vector3>> _loops;
     private List<NavMeshTriangle> _navMeshTriangles;
+    private readonly List<NavMeshTriangle> _shuffledTriangles = new();
 
     private Bounds _objectBounds;
 
     private Transform _transform;
 
-    private bool HasNavMesh => _validTriangles.Count > 0;
+    public bool HasNavMesh => _validTriangles.Count > 0;
+
+    public OVRSemanticClassification Classification { get; private set; }
 
     private void Awake()
     {
@@ -44,14 +48,14 @@ public class FurnitureNavMeshGenerator : MonoBehaviour
 
     private void OnEnable()
     {
-        FurnitureNavMesh.Add(this);
+        furnitureNavMesh.Add(this);
 
         DebugDrawManager.DebugDrawEvent += OnDebugDraw;
     }
 
     private void OnDisable()
     {
-        FurnitureNavMesh.Remove(this);
+        furnitureNavMesh.Remove(this);
 
         DebugDrawManager.DebugDrawEvent -= OnDebugDraw;
     }
@@ -67,6 +71,8 @@ public class FurnitureNavMeshGenerator : MonoBehaviour
 
     public bool Initialize(OVRSemanticClassification classification)
     {
+        Classification = classification;
+
         var anchorTransform = classification.transform;
 
         var anchorPosition = anchorTransform.position;
@@ -147,7 +153,7 @@ public class FurnitureNavMeshGenerator : MonoBehaviour
         _navMeshTriangles = navMeshSurface.GenerateNavMeshTriangles();
 
         var success = _navMeshTriangles != null;
-        if (success) GenerateLinks();
+        if (success) GenerateLinks(bounds);
 
         return success;
     }
@@ -168,7 +174,9 @@ public class FurnitureNavMeshGenerator : MonoBehaviour
 
         if (_validTriangles.Count == 0)
         {
-            Debug.LogWarning("furniture is entirely covered.");
+            // This can happen if, for example, a ceiling fan or chandelier is directly over a table.
+            var parent = transform.parent;
+            Debug.LogWarning($"furniture is entirely covered (under other object?). [{parent.name}]", parent);
             _validTriangles.AddRange(_navMeshTriangles);
         }
     }
@@ -190,7 +198,7 @@ public class FurnitureNavMeshGenerator : MonoBehaviour
     }
 
     // Create a link from the navmesh on the furniture to the floor.
-    private bool GenerateLinks()
+    private bool GenerateLinks(Bounds bounds)
     {
         // Get rid of previous links.
         foreach (var prevLink in _navMeshLinks) prevLink.Destruct();
@@ -204,8 +212,11 @@ public class FurnitureNavMeshGenerator : MonoBehaviour
         var forward = _transform.forward;
         var ray = new Ray(pos, forward);
 
-        NavMesh.Raycast(pos, ray.GetPoint(10.0f), out navMeshHit, _areaMask);
+        // Cast a navmesh ray forward from the top center of the volume to try and find the front edge of the object's surface.
+        var topExtent = Mathf.Max(bounds.extents.x, bounds.extents.z);
+        NavMesh.Raycast(pos, ray.GetPoint(topExtent), out navMeshHit, _areaMask);
 
+        // Back away from the edge a small amount. This with be the hop destination.
         var edgePoint = navMeshHit.position;
         var endPoint = ray.GetPoint(navMeshHit.distance * 0.9f);
 
@@ -217,12 +228,14 @@ public class FurnitureNavMeshGenerator : MonoBehaviour
 
         var floorPoint = dropPoint;
 
+        // Sphere cast downwards over the edge to find a point on the floor. This will be the hop starting point.
         if (Physics.SphereCast(dropPoint, TennisBall, Vector3.down, out var raycastHit, 10.0f, SceneMeshLayerMask,
                 QueryTriggerInteraction.Ignore)) floorPoint = raycastHit.point;
 
-        if (!NavMesh.SamplePosition(floorPoint, out navMeshHit, 10.0f, NavMesh.AllAreas))
+        if (!NavMesh.SamplePosition(floorPoint, out navMeshHit, 10.0f, FloorAreaMask))
         {
-            Debug.LogError("There's no floor?");
+            // This is an indication that the scene mesh failed to load.
+            Debug.LogError($"There's no floor? [{transform.parent.name}]", this);
             return false;
         }
 
@@ -242,30 +255,23 @@ public class FurnitureNavMeshGenerator : MonoBehaviour
         GenInternalLinks(_navMeshTriangles, navMeshLinkPrefab, transform);
     }
 
-    private static bool TryGetRandomFurniture(out FurnitureNavMeshGenerator furniture)
+    public Vector3 RandomPoint(float padding = 0.025f)
     {
-        if (FurnitureNavMesh.Count == 0)
+        if (_validTriangles.Count == 0) ValidateTriangles();
+
+        _shuffledTriangles.Clear();
+        _shuffledTriangles.AddRange(_validTriangles);
+
+        _shuffledTriangles.Shuffle();
+        NavMeshBookKeeper.FindMatchingPoint(_shuffledTriangles, out var result, PaddingFromEdge);
+
+        return result;
+
+        bool PaddingFromEdge(Vector3 point, NavMeshTriangle tri)
         {
-            furniture = null;
-            return false;
+            // get the distance from point to edge of the surface.
+            return NavMesh.FindClosestEdge(point, out var navMeshHit, tri.AreaMask) && navMeshHit.distance <= padding;
         }
-
-        furniture = FurnitureNavMesh.RandomElement();
-        Assert.IsNotNull(furniture);
-
-        return true;
-    }
-
-    public static Vector3 RandomPointOnFurniture()
-    {
-        NavMeshTriangle randomTriangle;
-
-        if (TryGetRandomFurniture(out var furniture) && furniture.HasNavMesh)
-            randomTriangle = furniture.RandomTriangle();
-        else
-            randomTriangle = NavMeshGenerator.Instance.RandomFloorTriangle();
-
-        return randomTriangle.GetRandomPoint();
     }
 
     private NavMeshTriangle RandomTriangle()

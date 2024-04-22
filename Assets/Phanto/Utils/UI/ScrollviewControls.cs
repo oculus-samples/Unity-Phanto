@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using System;
 using Oculus.Interaction;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -20,28 +21,7 @@ namespace PhantoUtils.VR
 
         private RayInteractable _rayInteractable;
 
-        private void Awake()
-        {
-            Assert.IsNotNull(InteractionRig.Instance, $"{nameof(InteractionRig.Instance)} cannot be null.");
-        }
-
-        private void Update()
-        {
-            var scrollInput = GetScrollInputVector();
-
-            if (!scrollRect.horizontal) scrollInput.x = 0.0f;
-
-            if (!scrollRect.vertical) scrollInput.y = 0.0f;
-
-            if (scrollInput.sqrMagnitude > InputDeadzone * InputDeadzone)
-            {
-                scrollRect.content.transform.localPosition -= new Vector3(scrollInput.x, scrollInput.y, 0.0f) *
-                                                              (scrollSpeed * Time.deltaTime);
-                scrollRect.horizontalNormalizedPosition = Mathf.Clamp01(scrollRect.horizontalNormalizedPosition);
-                scrollRect.verticalNormalizedPosition = Mathf.Clamp01(scrollRect.verticalNormalizedPosition);
-                OnScroll?.Invoke();
-            }
-        }
+        private InteractionRig _interactionRig;
 
         private void OnEnable()
         {
@@ -60,6 +40,20 @@ namespace PhantoUtils.VR
             }
         }
 
+        private void Start()
+        {
+            _interactionRig = CameraRig.Instance.InteractionRig;
+
+            Assert.IsNotNull(_interactionRig, $"{nameof(InteractionRig)} cannot be null.");
+        }
+
+        private void Update()
+        {
+            var scrollInput = GetScrollInputVector();
+
+            SetScroll(scrollInput);
+        }
+
 #if UNITY_EDITOR
         private void OnValidate()
         {
@@ -67,14 +61,32 @@ namespace PhantoUtils.VR
         }
 #endif
 
+        internal void SetScroll(Vector2 scrollInput)
+        {
+            if (!scrollRect.horizontal) scrollInput.x = 0.0f;
+
+            if (!scrollRect.vertical) scrollInput.y = 0.0f;
+
+            if (scrollInput.sqrMagnitude < InputDeadzone * InputDeadzone)
+            {
+                return;
+            }
+
+            scrollRect.content.transform.localPosition -= new Vector3(scrollInput.x, scrollInput.y, 0.0f) *
+                                                          (scrollSpeed * Time.deltaTime);
+            scrollRect.horizontalNormalizedPosition = Mathf.Clamp01(scrollRect.horizontalNormalizedPosition);
+            scrollRect.verticalNormalizedPosition = Mathf.Clamp01(scrollRect.verticalNormalizedPosition);
+            OnScroll?.Invoke();
+        }
+
         private Vector2 GetScrollInputVector()
         {
             var scrollInput = Vector2.zero;
 
             var leftRayInteractor =
-                InteractionRig.Instance.GetRayInteractor(InteractionRig.InteractorType.LeftControllerInteractor);
+                _interactionRig.GetRayInteractor(InteractionRig.InteractorType.LeftControllerInteractor);
             var rightRayInteractor =
-                InteractionRig.Instance.GetRayInteractor(InteractionRig.InteractorType.RightControllerInteractor);
+                _interactionRig.GetRayInteractor(InteractionRig.InteractorType.RightControllerInteractor);
 
             if (leftRayInteractor != null && _rayInteractable.IsInteractorHovering(leftRayInteractor))
                 scrollInput += NormalizeInput(OVRInput.Get(OVRInput.RawAxis2D.LThumbstick), InputDeadzone);

@@ -12,13 +12,13 @@ namespace Phanto.Audio.Scripts
     ///     Play a random oneshot sfx on Start.
     /// </summary>
     [RequireComponent(typeof(AudioSource))]
-    public class PhantoRandomOneshotSfxBehavior : MonoBehaviour
+    public class PhantoRandomOneShotSfxBehavior : MonoBehaviour
     {
         [SerializeField] private bool playOnAwake;
         [SerializeField] protected AudioClip[] clips;
 
-        [SerializeField][Range(0.01f, 2)] protected float pitchMin = 1;
-        [SerializeField][Range(0.01f, 2)] protected float pitchMax = 1;
+        [SerializeField][Range(0.01f, 3)] public float pitchMin = 1;
+        [SerializeField][Range(0.01f, 3)] public float pitchMax = 1;
         [SerializeField][Range(0, 100)] protected int chanceToPlay = 100;
 
         [SerializeField][Range(0, 2)] protected float startDelayMin;
@@ -34,10 +34,10 @@ namespace Phanto.Audio.Scripts
 
         protected virtual void Start()
         {
-            if (clips.Length <= 0) Debug.LogWarning("No clips proviced for RandomOneshotSfx");
+            if (clips.Length <= 0) Debug.LogWarning("No clips provided for RandomOneShotSfx", this);
             if (playOnAwake) PlaySfx();
+            Random.InitState((int)System.DateTime.Now.Ticks);
         }
-
 
 #if UNITY_EDITOR
         private void OnValidate()
@@ -49,6 +49,7 @@ namespace Phanto.Audio.Scripts
         public virtual void PlaySfx()
         {
             if (clips.Length <= 0) return;
+
             src.clip = clips[Random.Range(0, clips.Length)];
             src.pitch = Random.Range(pitchMin, pitchMax);
             if (Random.Range(0, 100) <= chanceToPlay)

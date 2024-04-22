@@ -103,9 +103,9 @@ public class TutorialContinueButton : MonoBehaviour
 
     private void CheckButtonAction()
     {
-        if (useButtonAction && (OVRInput.GetDown(restartGameButton) || Input.GetKeyDown(KeyCode.R)))
+        if (useButtonAction && (OVRInput.GetDown(restartGameButton) || Input.GetKeyDown(TutorialManager.ACTION_KEY)))
         {
-            SceneManager.LoadScene(RESTART_SCENE);
+            SceneManager.LoadSceneAsync(RESTART_SCENE);
         }
     }
 

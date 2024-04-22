@@ -1,9 +1,12 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using Phanto.Audio.Scripts;
 using UnityEngine;
 using Oculus.Haptics;
+using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 /// <summary>
@@ -11,6 +14,9 @@ using Random = UnityEngine.Random;
 /// </summary>
 public class PolterblastTrigger : MonoBehaviour
 {
+    private static readonly Dictionary<Object, PolterblastTrigger> triggerDictionary =
+        new Dictionary<Object, PolterblastTrigger>();
+
     private static readonly int ActivateID = Animator.StringToHash("ACTIVATE");
     private static float _accumulatedDamage = 0.0f;
     private static float _accumulatedSplash = 0.0f;
@@ -53,6 +59,9 @@ public class PolterblastTrigger : MonoBehaviour
         set => automaticEnabled = value;
     }
 
+    public ParticleSystem EctoParticleSystem => ectoParticleSystem;
+    public Vector3 Position => transform.position;
+
     private void Awake()
     {
         _transform = transform;
@@ -74,9 +83,19 @@ public class PolterblastTrigger : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        if (!triggerDictionary.TryAdd(ectoParticleSystem.gameObject, this))
+        {
+            Debug.LogWarning("double registering particle system");
+        }
+    }
+
     private void OnDisable()
     {
         StopHapticLoop();
+
+        triggerDictionary.Remove(ectoParticleSystem.gameObject);
     }
 
     private void OnDestroy()
@@ -233,7 +252,6 @@ public class PolterblastTrigger : MonoBehaviour
     {
         StopHose();
     }
-
     /// <summary>
     /// Used to provide haptic feedback when you damage an enemy
     /// </summary>
@@ -248,5 +266,10 @@ public class PolterblastTrigger : MonoBehaviour
     public static void SplashHitNotification()
     {
         _accumulatedSplash++;
+    }
+
+    public static bool TryGetPolterblaster(Object other, out PolterblastTrigger trigger)
+    {
+        return triggerDictionary.TryGetValue(other, out trigger);
     }
 }

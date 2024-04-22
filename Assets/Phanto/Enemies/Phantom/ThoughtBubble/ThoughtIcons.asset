@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88548c60154f4404cbb1df56e516446e, type: 3}
+  m_Name: ThoughtIcons
+  m_EditorClassIdentifier: 
+  thoughtIcons:
+  - name: Couch
+    thought: 1
+    sprite: {fileID: 21300000, guid: f397595b8453088478387fbcb1872364, type: 3}
+  - name: Door
+    thought: 2
+    sprite: {fileID: 21300000, guid: 20222786dc5db0b47a648fb4c4933fc0, type: 3}
+  - name: Window
+    thought: 3
+    sprite: {fileID: 21300000, guid: 99831cce46f235c43b3c28db1f97e1fa, type: 3}
+  - name: Other
+    thought: 4
+    sprite: {fileID: 21300000, guid: 9f5df5125c988b94aa9ade993a21e8a4, type: 3}
+  - name: Storage
+    thought: 5
+    sprite: {fileID: 21300000, guid: a6f7ebf4677080045859314b3b8b9424, type: 3}
+  - name: Bed
+    thought: 6
+    sprite: {fileID: 21300000, guid: 44584e68a9e00c44ebb6b725b383afb0, type: 3}
+  - name: Screen
+    thought: 7
+    sprite: {fileID: 21300000, guid: 60700c003953cd7449067f6768f558f4, type: 3}
+  - name: Lamp
+    thought: 8
+    sprite: {fileID: 21300000, guid: 9605d21bf9e471843bc615aee7cf8fad, type: 3}
+  - name: Plant
+    thought: 9
+    sprite: {fileID: 21300000, guid: 8a61b6702d413ec4a841e64e523f3d15, type: 3}
+  - name: Table
+    thought: 10
+    sprite: {fileID: 21300000, guid: 86f4cd6aae48ce44d881b0905d2e56fb, type: 3}
+  - name: WallArt
+    thought: 11
+    sprite: {fileID: 21300000, guid: 613da29f0a0b1824faf5cc16bbdc0080, type: 3}
+  - name: Question
+    thought: 12
+    sprite: {fileID: 21300000, guid: f60948cf56592174b9a0d1f929ab0523, type: 3}
+  - name: Exclamation
+    thought: 13
+    sprite: {fileID: 21300000, guid: f60948cf56592174b9a0d1f929ab0523, type: 3}
+  - name: Ghost
+    thought: 14
+    sprite: {fileID: 21300000, guid: 9dcc5ca902764c045868173d5aa5b326, type: 3}
+  - name: Surprise
+    thought: 15
+    sprite: {fileID: 21300000, guid: 76a1e6ff58286be40b0f7c763253fdb8, type: 3}
+  - name: Alert
+    thought: 16
+    sprite: {fileID: 21300000, guid: 54387bbcc7a95f840b42db303aa2d075, type: 3}
+  - name: Angry
+    thought: 17
+    sprite: {fileID: 21300000, guid: 24df8137d6b40184aaf3e57caa519dad, type: 3}

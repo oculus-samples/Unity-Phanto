@@ -26,13 +26,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3518633956749948532}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4561105161870248102
 MonoBehaviour:
@@ -48,12 +48,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playOnAwake: 0
   clips:
-  - {fileID: 8300000, guid: 700620d072cd6904f83f44c6b6828da6, type: 3}
-  - {fileID: 8300000, guid: e1f0e6701afd484449348ab5cdf57b16, type: 3}
-  - {fileID: 8300000, guid: 99fd34f80eeebab46956ce114b727a8d, type: 3}
-  - {fileID: 8300000, guid: 4d5268337750aa84fa66451ecd7b1331, type: 3}
-  - {fileID: 8300000, guid: fa31c4d8a7e288d4bbaeacb335020574, type: 3}
-  - {fileID: 8300000, guid: 9648818b32c9c864fad31ba04cc53c63, type: 3}
+  - {fileID: 8300000, guid: 6fbfe2827082c6e439bc691db653b66b, type: 3}
+  - {fileID: 8300000, guid: 21d0225b72ec7fa409a2f016bbd2961c, type: 3}
+  - {fileID: 8300000, guid: 1cae146821603bd4f91a048e1b48ac57, type: 3}
+  - {fileID: 8300000, guid: 6d82c53d24e8a244f9373b210513dc09, type: 3}
+  - {fileID: 8300000, guid: 1be72768441ca6f4eb608748fe710e76, type: 3}
+  - {fileID: 8300000, guid: cabfe7a3fab0e144bb39a02e3629e3ca, type: 3}
+  - {fileID: 8300000, guid: 81110509b5142bc4da58f0406151b657, type: 3}
+  - {fileID: 8300000, guid: 49c82986d58c5ef439ee246cbf43d6f9, type: 3}
+  - {fileID: 8300000, guid: abdeb5197318b1747936e6109b9bbb74, type: 3}
+  - {fileID: 8300000, guid: 01badca54fa36b4409a63fe10259e202, type: 3}
   pitchMin: 1.2
   pitchMax: 1.3
   chanceToPlay: 100
@@ -69,11 +73,11 @@ AudioSource:
   m_GameObject: {fileID: 3518633956749948532}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: -5918671688248155985, guid: 1dd706bb85d8aef4e83a6229dbd62c36, type: 2}
+  OutputAudioMixerGroup: {fileID: -6049054017482126911, guid: 1dd706bb85d8aef4e83a6229dbd62c36, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
-  m_Pitch: 1
+  m_Pitch: 1.26
   Loop: 0
   Mute: 0
   Spatialize: 1

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections;
+using System.Linq;
 using Phanto.Enemies.DebugScripts;
 using UnityEngine;
 using Utilities.XR;
@@ -10,6 +11,9 @@ namespace Phantom
 {
     public class PhantomFleeTarget : PhantomTarget
     {
+        private static readonly SpatialHash<PhantomFleeTarget> FleeTargetHash =
+         new SpatialHash<PhantomFleeTarget>(NavMeshConstants.OneFoot);
+
         [SerializeField] private bool decay;
         [SerializeField] private float decayDuration = 2.0f;
         [SerializeField] private SphereCollider _sphereCollider;
@@ -19,6 +23,9 @@ namespace Phantom
         private Transform _transform;
 
         public override bool Flee => true;
+
+        public Vector3 FleeVector => _fleeVector;
+        private Vector3 _fleeVector = Vector3.zero;
 
         public override Vector3 Position
         {
@@ -34,7 +41,7 @@ namespace Phantom
             _initialScale = _transform.localScale;
         }
 
-        private void OnEnable()
+        protected override void OnEnable()
         {
             Register(this, _sphereCollider);
 
@@ -53,6 +60,8 @@ namespace Phantom
 
             Unregister(this, _sphereCollider);
             DebugDrawManager.DebugDrawEvent -= DebugDraw;
+
+            FleeTargetHash.Remove(this);
         }
 
         public bool IsInBounds(Vector3 point)
@@ -80,6 +89,23 @@ namespace Phantom
             Hide();
         }
 
+        public override void Initialize(OVRSemanticClassification classification, OVRSceneRoom _)
+        {
+
+        }
+
+        public void SetPositionAndDirection(Vector3 position, Vector3 normal)
+        {
+            _fleeVector = normal;
+            Position = position;
+            FleeTargetHash.Add(position, this);
+        }
+
+        public void UpdateDirection(Vector3 normal)
+        {
+            _fleeVector = (_fleeVector + normal) * 0.5f;
+        }
+
         public override void TakeDamage(float f)
         {
         }
@@ -89,7 +115,7 @@ namespace Phantom
             return transform.position;
         }
 
-        public override Vector3 GetDestination(Vector3 point)
+        public override Vector3 GetDestination(Vector3 point, float min = 0.0f, float max = 0.0f)
         {
             return Position;
         }
@@ -114,15 +140,30 @@ namespace Phantom
             }
         }
 
+        public static bool TryGetFleeTarget(Vector3 position, out PhantomFleeTarget result)
+        {
+            // check spatial hash to see if there's an active ouch near position.
+            if (FleeTargetHash.TryGetCell(position, out var targets) && targets.Count > 0)
+            {
+                result = targets.First();
+                return true;
+            }
+
+            result = null;
+            return false;
+        }
+
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
+            Gizmos.color = Color.red;
+            Gizmos.DrawRay(transform.position, _fleeVector);
+
             if (TryGetComponent(out SphereCollider collider))
             {
                 var matrix = transform.localToWorldMatrix;
 
                 Gizmos.matrix = matrix;
-                Gizmos.color = Color.red;
                 Gizmos.DrawWireSphere(collider.center, collider.radius);
             }
         }

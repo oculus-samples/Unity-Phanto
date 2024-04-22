@@ -2,6 +2,7 @@
 
 using Phanto;
 using Phanto.Audio.Scripts;
+using PhantoUtils;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Assertions;
@@ -45,6 +46,8 @@ namespace Phantom
             public override void EnterState(PhantomBehaviour b, IEnemyState<PhantomBehaviour> lastState)
             {
                 b.SetRandomDestination();
+                b.ShowThought(Thought.Question);
+                b.PlayEmote(Thought.Alert);
             }
 
             public override void OnCollisionStay(PhantomBehaviour b, Collision c)
@@ -84,8 +87,105 @@ namespace Phantom
             public override void EnterState(PhantomBehaviour b, IEnemyState<PhantomBehaviour> lastState)
             {
                 _target = b.CurrentTarget;
-                var destination = _target.GetDestination(b.Position);
-                b.SetDestination(destination);
+
+                if (_target == null)
+                {
+                    Debug.LogWarning("Started chasing a null target");
+                    return;
+                }
+
+                var destination =
+                    _target.GetDestination(b.Position, b.MeleeRange * 0.5f, Mathf.Max(0, b.SpitRange - 0.03f));
+                b.SetDestination(_target, destination);
+
+                b.ShowTargetThought(_target);
+                b.PlayEmote(Thought.Exclamation);
+            }
+
+            public override void OnCollisionStay(PhantomBehaviour b, Collision c)
+            {
+            }
+
+            public override void OnProximityStay(PhantomBehaviour b, Collider c)
+            {
+            }
+
+            public override void UpdateState(PhantomBehaviour b)
+            {
+                if (!b._onGround) return;
+
+                b.SetRoamIfInvalidTarget();
+            }
+
+            public override void ExitState(PhantomBehaviour b, IEnemyState<PhantomBehaviour> nextState)
+            {
+            }
+
+            public override void DebugDraw(PhantomBehaviour b)
+            {
+                DrawCubeOverHead(b, Color.green);
+                if (_target != null)
+                    XRGizmos.DrawPointer(b.HeadPosition, _target.Position - b.HeadPosition, Color.green, 0.3f);
+            }
+        }
+
+        private class CrystalRoam : BasePhantomState
+        {
+            public override uint GetStateID()
+            {
+                return (uint)StateID.CrystalRoam;
+            }
+
+            public override void EnterState(PhantomBehaviour b, IEnemyState<PhantomBehaviour> lastState)
+            {
+                b.ShowThought(Thought.Question);
+                b.PlayEmote(Thought.Alert);
+            }
+
+            public override void OnCollisionStay(PhantomBehaviour b, Collision c)
+            {
+            }
+
+            public override void OnProximityStay(PhantomBehaviour b, Collider c)
+            {
+            }
+
+            public override void UpdateState(PhantomBehaviour b)
+            {
+                if (!b._onGround) return;
+
+                b.CheckForTargets();
+            }
+
+            public override void ExitState(PhantomBehaviour b, IEnemyState<PhantomBehaviour> nextState)
+            {
+            }
+
+            public override void DebugDraw(PhantomBehaviour b)
+            {
+                DrawCubeOverHead(b, MSPalette.Salmon);
+            }
+        }
+
+        private class CrystalChase : BasePhantomState
+        {
+            private PhantomTarget _target;
+
+            public override uint GetStateID()
+            {
+                return (uint)StateID.CrystalChase;
+            }
+
+            public override void EnterState(PhantomBehaviour b, IEnemyState<PhantomBehaviour> lastState)
+            {
+                _target = b.CurrentTarget;
+                var destination =
+                    _target.GetDestination(b.Position, b.MeleeRange * 0.5f, Mathf.Max(0, b.SpitRange - 0.03f));
+
+                b.SetDestination(_target, destination);
+
+                b.ShowTargetThought(_target);
+                b.PlayEmote(Thought.Exclamation);
             }
 
             public override void OnCollisionStay(PhantomBehaviour b, Collision c)
@@ -131,9 +231,16 @@ namespace Phantom
 
                 Assert.IsNotNull(_target);
 
-                var startPosition = b.Position;
-                var originalFleeVector =
-                    Vector3.ProjectOnPlane(startPosition - _target.Position, Vector3.up).normalized;
+                var startPosition = _target.Position;
+                var fleeRay = new Ray(startPosition, Vector3.forward);
+
+                var originalFleeVector = _target.FleeVector;
+                // Zero flee vector indicates a point you should run away from (turret)
+                if (originalFleeVector == Vector3.zero)
+                {
+                    originalFleeVector = Vector3.ProjectOnPlane(b.Position - _target.Position, Vector3.up).normalized;
+                }
+
                 var fleeVector = originalFleeVector;
                 var maxDistance = 0.0f;
 
@@ -143,8 +250,9 @@ namespace Phantom
                 // pick the longest one.
                 for (var i = 0; i < 8; i++)
                 {
-                    var fleeRay = new Ray(startPosition, fleeVector);
-                    var endPoint = fleeRay.GetPoint(1.0f);
+                    fleeRay.direction = fleeVector;
+
+                    var endPoint = fleeRay.GetPoint(NavMeshConstants.OneFoot * 2.0f);
 
                     // navmesh raycast away from flee target.
                     NavMesh.Raycast(startPosition, endPoint, out var navMeshHit, NavMesh.AllAreas);
@@ -152,7 +260,7 @@ namespace Phantom
 
                     var distance = Vector3.Distance(startPosition, destination);
 
-                    if (maxDistance < distance)
+                    if (distance > maxDistance)
                     {
                         maxDistance = distance;
                         finalDestination = destination;
@@ -169,7 +277,12 @@ namespace Phantom
                     fleeVector = Quaternion.AngleAxis(Random.Range(-60.0f, 60.0f), Vector3.up) * originalFleeVector;
                 }
 
-                if (finalDestination.HasValue) b.FleeFromTarget(_target, finalDestination.Value);
+                if (finalDestination.HasValue)
+                {
+                    b.FleeFromTarget(_target, finalDestination.Value);
+                    b.ShowThought(Thought.Alert);
+                    b.PlayEmote(Thought.Surprise);
+                }
             }
 
             public override void OnCollisionStay(PhantomBehaviour b, Collision c)
@@ -214,6 +327,8 @@ namespace Phantom
             public override void EnterState(PhantomBehaviour b, IEnemyState<PhantomBehaviour> lastState)
             {
                 _startTime = Time.time;
+                b.ShowThought(Thought.Angry);
+                b.PlayEmote(Thought.Angry);
             }
 
             public override void OnCollisionStay(PhantomBehaviour b, Collision c)
@@ -262,6 +377,8 @@ namespace Phantom
             public override void EnterState(PhantomBehaviour b, IEnemyState<PhantomBehaviour> lastState)
             {
                 _startTime = Time.time;
+                b.ShowThought(Thought.Angry);
+                b.PlayEmote(Thought.Angry);
             }
 
             public override void OnCollisionStay(PhantomBehaviour b, Collision c)
@@ -350,7 +467,7 @@ namespace Phantom
                 _spawnCurve = b.spawnCurve;
 
                 _transform.localScale = Vector3.one;
-                PhantoGooSfxManager.Instance.PlayMinionDieVo(b.Position);
+                PhantoGooSfxManager.Instance.PlayPhantomDieVo(b.Position);
             }
 
             public override void OnCollisionStay(PhantomBehaviour b, Collision c)
@@ -407,7 +524,7 @@ namespace Phantom
                 _spawnCurve = b.spawnCurve;
 
                 _transform.localScale = Vector3.zero;
-                PhantoGooSfxManager.Instance.PlayMinionSpawnVo(b.Position);
+                PhantoGooSfxManager.Instance.PlayPhantomSpawnVo(b.Position);
             }
 
             public override void OnCollisionStay(PhantomBehaviour b, Collision c)
@@ -429,7 +546,7 @@ namespace Phantom
                     return;
                 }
 
-                b.SwitchState(StateID.Roam);
+                b.SwitchToRoamState();
             }
 
             public override void ExitState(PhantomBehaviour b, IEnemyState<PhantomBehaviour> nextState)
@@ -453,6 +570,7 @@ namespace Phantom
 
             public override void EnterState(PhantomBehaviour b, IEnemyState<PhantomBehaviour> lastState)
             {
+                b.ShowThought(Thought.Question);
                 b.SetRandomDestination();
             }
 

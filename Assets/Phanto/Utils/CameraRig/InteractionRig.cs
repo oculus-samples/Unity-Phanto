@@ -7,9 +7,8 @@ using UnityEngine;
 
 namespace PhantoUtils.VR
 {
-    [SingletonMonoBehaviour.InstantiationSettings(dontDestroyOnLoad = true)]
     [DefaultExecutionOrder(-10)]
-    public sealed class InteractionRig : SingletonMonoBehaviour<InteractionRig>
+    public sealed class InteractionRig : MonoBehaviour
     {
         public enum InteractorType
         {
@@ -65,9 +64,8 @@ namespace PhantoUtils.VR
             }
         }
 
-        protected override void Awake()
+        private void Awake()
         {
-            base.Awake();
             FindDependencies();
         }
 

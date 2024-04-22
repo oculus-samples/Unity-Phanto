@@ -17,7 +17,7 @@ namespace Phantom
     /// <summary>
     ///     Spawns and keeps track of a flock of phantoms.
     /// </summary>
-    public class PhantomDemoManager : SingletonMonoBehaviour<PhantomDemoManager>, IPhantomManager
+    public class PhantomDemoManager : MonoBehaviour, IPhantomManager
     {
         [SerializeField] private PhantomController phantomPrefab;
         [SerializeField] private PhantomDemoChaseTarget chasePrefab;
@@ -26,6 +26,8 @@ namespace Phantom
 
         [SerializeField] private Transform leftHand;
         [SerializeField] private Transform rightHand;
+
+        [SerializeField] protected bool debugDraw = true;
 
         private readonly HashSet<PhantomController> _activePhantoms = new();
 
@@ -46,54 +48,11 @@ namespace Phantom
 
         private Coroutine _targetSpawnerCoroutine;
 
-        protected override void Awake()
+        public GameplaySettings.WinCondition WinCondition => GameplaySettings.WinCondition.DefeatPhanto;
+
+        private void Awake()
         {
-            base.Awake();
-
-            DebugDrawManager.DebugDraw = true;
-        }
-
-        private IEnumerator Start()
-        {
-            _chaseTargetInstance = Instantiate(chasePrefab, transform);
-            _chaseTargetInstance.Hide();
-
-            while (_navMeshGenerator == null)
-            {
-                yield return null;
-                _navMeshGenerator = FindObjectOfType<NavMeshGenerator>();
-            }
-
-            for (var i = 0; i < spawnCount; i++)
-            {
-                // spawn npc at point.
-                var phantom = Instantiate(phantomPrefab, Vector3.zero,
-                    Quaternion.AngleAxis(Random.Range(0.0f, 360.0f), Vector3.up));
-                phantom.Initialize(this);
-                _phantoms.Add(phantom);
-                ReturnToPool(phantom);
-            }
-
-            _started = true;
-        }
-
-        private void Update()
-        {
-            XRGizmos.DrawPointer(leftHand.position, leftHand.forward, Color.blue, 0.5f);
-            XRGizmos.DrawPointer(rightHand.position, rightHand.forward, Color.red, 0.5f);
-
-            if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch))
-            {
-                var ray = new Ray(leftHand.position, leftHand.forward);
-
-                SpawnTarget(ray);
-            }
-            else if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch))
-            {
-                var ray = new Ray(rightHand.position, rightHand.forward);
-
-                SpawnTarget(ray);
-            }
+            DebugDrawManager.DebugDraw = debugDraw;
         }
 
         private void OnEnable()
@@ -122,23 +81,54 @@ namespace Phantom
             DebugDrawManager.DebugDrawEvent -= DebugDraw;
         }
 
-        protected override void OnDestroy()
+        private IEnumerator Start()
+        {
+            _chaseTargetInstance = Instantiate(chasePrefab, transform);
+            _chaseTargetInstance.Hide();
+
+            while (_navMeshGenerator == null)
+            {
+                yield return null;
+                _navMeshGenerator = FindObjectOfType<NavMeshGenerator>();
+            }
+
+            for (var i = 0; i < spawnCount; i++)
+            {
+                // spawn npc at point.
+                var phantom = Instantiate(phantomPrefab, Vector3.zero,
+                    Quaternion.AngleAxis(Random.Range(0.0f, 360.0f), Vector3.up));
+                phantom.Initialize(this);
+                _phantoms.Add(phantom);
+                ReturnToPool(phantom);
+            }
+
+            _started = true;
+        }
+
+        protected void OnDestroy()
         {
             foreach (var target in allPhantomTargets) target.Destruct();
 
             allPhantomTargets.Clear();
-
-            base.OnDestroy();
         }
 
-        public Vector3 RandomPointOnFloor(Vector3 position, float minDistance, bool verifyOpenArea = true)
+        private void Update()
         {
-            return _navMeshGenerator.RandomPointOnFloor(position, minDistance, verifyOpenArea);
-        }
+            XRGizmos.DrawPointer(leftHand.position, leftHand.forward, Color.blue, 0.5f);
+            XRGizmos.DrawPointer(rightHand.position, rightHand.forward, Color.red, 0.5f);
 
-        public Vector3 RandomPointOnFurniture(Vector3 position, float minDistance)
-        {
-            return FurnitureNavMeshGenerator.RandomPointOnFurniture();
+            if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.LTouch))
+            {
+                var ray = new Ray(leftHand.position, leftHand.forward);
+
+                SpawnTarget(ray);
+            }
+            else if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch))
+            {
+                var ray = new Ray(rightHand.position, rightHand.forward);
+
+                SpawnTarget(ray);
+            }
         }
 
         /// <summary>
@@ -163,7 +153,7 @@ namespace Phantom
                     _chaseTargetInstance.Position = point;
                     _chaseTargetInstance.Show();
 
-                    foreach (var phantom in _activePhantoms) phantom.SetDestination(point);
+                    foreach (var phantom in _activePhantoms) phantom.SetDestination(_chaseTargetInstance, point);
                 }
 
                 _pointQueue.Enqueue((point, validPoint, _queueTimer.ElapsedMilliseconds));
@@ -175,7 +165,12 @@ namespace Phantom
             _sceneReady = true;
         }
 
-        private void ReturnToPool(PhantomController phantom)
+        public void CreateNavMeshLink(Vector3[] pathCorners, int pathCornerCount, Vector3 destination, int areaId)
+        {
+            _navMeshGenerator.CreateNavMeshLink(pathCorners, pathCornerCount, destination, areaId);
+        }
+
+        public void ReturnToPool(PhantomController phantom)
         {
             _activePhantoms.Remove(phantom);
 
@@ -202,14 +197,22 @@ namespace Phantom
                 if (!_phantomPool.TryDequeue(out var phantom)) continue;
 
                 var position = Random.value > 0.5f
-                    ? RandomPointOnFloor(headPosition, 0.5f)
-                    : RandomPointOnFurniture(headPosition, 0.5f);
+                    ? SceneQuery.RandomPointOnFloor(headPosition, 0.5f)
+                    : SceneQuery.RandomPointOnFurniture(headPosition, 0.5f);
 
                 phantom.Respawn(position);
                 _activePhantoms.Add(phantom);
             }
 
             _phantomSpawnerCoroutine = null;
+        }
+
+        public void SpawnOuch(Vector3 position, Vector3 normal)
+        {
+        }
+
+        public void DecrementPhantom()
+        {
         }
 
         private void DebugDraw()

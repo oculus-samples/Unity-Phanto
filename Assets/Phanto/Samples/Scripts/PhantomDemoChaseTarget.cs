@@ -26,7 +26,7 @@ public class PhantomDemoChaseTarget : PhantomTarget
         _colliders = GetComponentsInChildren<Collider>();
     }
 
-    private void OnEnable()
+    protected override void OnEnable()
     {
         Register(this, _colliders);
         DebugDrawManager.DebugDrawEvent += DebugDraw;
@@ -55,6 +55,10 @@ public class PhantomDemoChaseTarget : PhantomTarget
     }
 #endif
 
+    public override void Initialize(OVRSemanticClassification classification, OVRSceneRoom _)
+    {
+    }
+
     public override void TakeDamage(float f)
     {
         Hide();
@@ -65,7 +69,7 @@ public class PhantomDemoChaseTarget : PhantomTarget
         return transform.position;
     }
 
-    public override Vector3 GetDestination(Vector3 point)
+    public override Vector3 GetDestination(Vector3 point, float min = 0.0f, float max = 0.0f)
     {
         var destination = Position;
         if (_colliders.Length != 0) destination = _colliders[0].ClosestPoint(point);

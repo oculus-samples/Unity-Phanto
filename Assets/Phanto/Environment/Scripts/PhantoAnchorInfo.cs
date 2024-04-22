@@ -13,6 +13,7 @@ namespace Phantom.Environment.Scripts
     public class PhantoAnchorInfo : MonoBehaviour
     {
         private OVRSceneAnchor _sceneAnchor;
+        private OVRSemanticClassification semanticClassification;
 
         private void Awake()
         {
@@ -39,9 +40,8 @@ namespace Phantom.Environment.Scripts
                 yield return null;
             }
 
-            while (_sceneAnchor.Uuid == Guid.Empty) yield return null;
+            while (!_sceneAnchor.IsTracked) yield return null;
 
-            OVRSemanticClassification semanticClassification;
             while (!TryGetComponent(out semanticClassification)) yield return null;
 
             var handle = (ushort)_sceneAnchor.Space.Handle;

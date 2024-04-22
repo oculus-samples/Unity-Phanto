@@ -1,6 +1,7 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using System.Collections;
+using System.Collections.Generic;
 using Phanto;
 using Phanto.Enemies.DebugScripts;
 using Phantom;
@@ -17,7 +18,8 @@ public class PhantomChaseTarget : PhantomTarget
     [SerializeField] private GameObject gooPrefab;
     [SerializeField] private float lifeSpan = 10.0f;
 
-    private Collider[] _colliders;
+    protected Collider[] _colliders;
+    private readonly List<NavMeshTriangle> _triangles = new List<NavMeshTriangle>(32);
 
     public override bool Flee => false;
 
@@ -34,7 +36,7 @@ public class PhantomChaseTarget : PhantomTarget
         _colliders = GetComponentsInChildren<Collider>();
     }
 
-    private void OnEnable()
+    protected override void OnEnable()
     {
         Register(this, _colliders);
         StartCoroutine(LifetimeTimer(lifeSpan));
@@ -64,6 +66,10 @@ public class PhantomChaseTarget : PhantomTarget
     }
 #endif
 
+    public override void Initialize(OVRSemanticClassification classification, OVRSceneRoom _)
+    {
+    }
+
     public override void TakeDamage(float f)
     {
         PoolManagerSingleton.Instance.Create(gooPrefab, Position, Quaternion.LookRotation(Vector3.up));
@@ -75,12 +81,31 @@ public class PhantomChaseTarget : PhantomTarget
         return transform.position;
     }
 
-    public override Vector3 GetDestination(Vector3 point)
+    public override Vector3 GetDestination(Vector3 point, float min, float max)
     {
         var destination = Position;
         if (_colliders.Length != 0) destination = _colliders[0].ClosestPoint(point);
-        if (NavMesh.SamplePosition(destination, out var navMeshHit, 1.0f, NavMesh.AllAreas))
+
+        // Select a point that's on a circle around the point. because sometimes standing directly
+        // on top of the target isn't viable (cluttered table).
+        var distance = Random.Range(min, max);
+        var count = NavMeshBookKeeper.TrianglesOnCircle(destination, distance, true, _triangles);
+
+        if (count > 0)
+        {
+            var tri = _triangles.RandomElement();
+
+            var randomPoint = tri.GetRandomPoint();
+
+            var ray = new Ray(destination, Vector3.ProjectOnPlane(destination - randomPoint, Vector3.up));
+            destination = ray.GetPoint(distance);
+        }
+
+        if (NavMesh.SamplePosition(destination, out var navMeshHit, NavMeshConstants.OneFoot, NavMesh.AllAreas))
+        {
             destination = navMeshHit.position;
+        }
+
         return destination;
     }
 

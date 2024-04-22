@@ -1,5 +1,7 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using System;
+using System.Collections;
 using UnityEngine;
 using Logger = PhantoUtils.Logger;
 
@@ -39,7 +41,7 @@ namespace Phanto
 
         public abstract void Heal(float healing, IDamageable.DamageCallback callback = null);
 
-        public abstract void TakeDamage(float damage, Vector3 position, Vector3 normal,
+        public abstract void TakeDamage(float damage, Vector3 position, Vector3 normal, GameObject damageSource = null,
             IDamageable.DamageCallback callback = null);
 
         public void OnProximityStay(Collider c)
@@ -67,6 +69,15 @@ namespace Phanto
 
             var nextState = GetState(nextStateID);
             var lastState = curState;
+
+            if (nextState == lastState)
+            {
+#if DEBUG && VERBOSE_DEBUG
+                Debug.LogWarning($"Self state transition {nextState.GetType().Name}=>{lastState.GetType().Name}");
+#endif
+                return;
+            }
+
             exitingState = true;
             curState?.ExitState((B)this, nextState);
             exitingState = false;

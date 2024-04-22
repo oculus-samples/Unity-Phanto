@@ -10,7 +10,7 @@ public class BouncingPhantomController : MonoBehaviour
     private readonly WaitForSeconds _lifeSpan = new(5.0f);
 
     private Coroutine _lifeCoroutine;
-    private CollisionDemoManager _manager;
+    private ICollisionDemo _manager;
     private Rigidbody _rigidbody;
 
     private Transform _transform;
@@ -23,12 +23,12 @@ public class BouncingPhantomController : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        _manager.SpawnGoo(other);
+        _manager.RenderCollision(other);
     }
 
-    public void Initialize(CollisionDemoManager collisionDemoManager)
+    public void Initialize(ICollisionDemo collisionDemo)
     {
-        _manager = collisionDemoManager;
+        _manager = collisionDemo;
     }
 
     public void Show(bool visible = true)

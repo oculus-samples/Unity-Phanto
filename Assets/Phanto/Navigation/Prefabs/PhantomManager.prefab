@@ -24,13 +24,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 468488057730662527}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &862779744930300093
 MonoBehaviour:
@@ -45,13 +45,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   phantomPrefab: {fileID: 2238294749957172385, guid: 827c480e0b47f004abfc249d6353ab15, type: 3}
-  spawnCount: 16
   fleaTargetPrefab: {fileID: -8950208645891419957, guid: e31675425c04435439bbaa643fa1fb0a, type: 3}
   chaseTargetPrefabPrefab: {fileID: -3616764773922306906, guid: 3f226919e0783ac4887c9e9672377e91, type: 3}
   chaseInstances: 3
   fleeInstances: 8
   targetRefreshRate: 2
-  phantomRefreshRate: 2
   phanto: {fileID: 0}
-  phantomsPerWave: 040000000800000010000000
   _waveChangeManager: {fileID: 0}
+  tableCrystalPrefab: {fileID: 7798820278772747606, guid: 2ed7b60fdcf64a34a8616eaaddd6ade5, type: 3}
+  originCrystalPrefab: {fileID: -1131595893942247611, guid: 30a9d43804c634b498a4d2509ae9b0c2, type: 3}
+  settingsManager: {fileID: 0}

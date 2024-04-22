@@ -1,7 +1,8 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
-
+using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Phanto.Audio.Scripts
 {
@@ -29,6 +30,8 @@ namespace Phanto.Audio.Scripts
 
         [SerializeField] protected float bufferStartTime;
 
+        public UnityEvent loopBeginEvent = new UnityEvent();
+
         /// <summary>
         /// Play a sound when receiving a 'PhantoLoopSfx
         /// </summary>
@@ -39,7 +42,7 @@ namespace Phanto.Audio.Scripts
             var startBuffer = AudioSettings.dspTime + bufferStartTime;
             if (startSrc && gameObject.activeInHierarchy && starts.Length > 0)
             {
-                startSrc.clip = starts[Random.Range(0, starts.Length)];
+                startSrc.clip = starts[UnityEngine.Random.Range(0, starts.Length)];
                 startSrc.volume = startVolume;
                 if (bufferStartTime != 0)
                     startSrc.PlayScheduled(startBuffer);
@@ -50,21 +53,41 @@ namespace Phanto.Audio.Scripts
             if (loopSrc && gameObject.activeInHierarchy && loops.Length > 0)
             {
                 loopSrc.Stop();
-                loopSrc.clip = loops[Random.Range(0, loops.Length)];
+                loopSrc.clip = loops[UnityEngine.Random.Range(0, loops.Length)];
                 double waitTime = 0;
                 if (waitForIntroToEnd) waitTime = (double)startSrc.clip.samples / startSrc.clip.frequency;
 
                 if (bufferStartTime != 0)
+                {
                     loopSrc.PlayScheduled(startBuffer + waitTime);
+                    StartCoroutine(WaitAndFireEvent(bufferStartTime+waitTime));
+                }
                 else
+                {
                     loopSrc.PlayScheduled(AudioSettings.dspTime + waitTime);
-
+                    StartCoroutine(WaitAndFireEvent(waitTime));
+                }
                 if (randomStartPosition)
-                    loopSrc.time = Random.Range(0, loopSrc.clip.length);
+                    loopSrc.time = UnityEngine.Random.Range(0, loopSrc.clip.length);
                 StartCoroutine(Fade(0, loopVolume, loopFadeInTime, loopSrc));
             }
         }
 
+        private IEnumerator FireLoopEvent(float waitTime)
+        {
+            yield return new WaitForSeconds(waitTime);
+            loopBeginEvent.Invoke();
+        }
+
+        private IEnumerator WaitAndFireEvent(double waitTime)
+        {
+            double startTime = AudioSettings.dspTime;
+            while (AudioSettings.dspTime - startTime < waitTime)
+            {
+                yield return null;
+            }
+            loopBeginEvent.Invoke();
+        }
         /// <summary>
         /// Stop playing the sound when receiving a 'PhantoLoopSfx
         /// </summary>
@@ -72,20 +95,27 @@ namespace Phanto.Audio.Scripts
         {
             isOn = false;
             StopAllCoroutines();
-            if (startSrc.isPlaying) StartCoroutine(Fade(startSrc.volume, 0, loopFadeOutTime, startSrc));
-            if (loopSrc.isPlaying) StartCoroutine(Fade(loopSrc.volume, 0, loopFadeOutTime, loopSrc));
-            if (stopSrc && gameObject.activeInHierarchy && stops.Length > 0)
+            if (starts.Length > 0 && startSrc != null)
+                if (startSrc.isPlaying) StartCoroutine(Fade(startSrc.volume, 0, loopFadeOutTime, startSrc));
+            if (loops.Length > 0 &&  loopSrc != null)
+                if (loopSrc.isPlaying) StartCoroutine(Fade(loopSrc.volume, 0, loopFadeOutTime, loopSrc));
+            if (stops.Length > 0 && stopSrc != null)
             {
-                stopSrc.clip = stops[Random.Range(0, stops.Length)];
-                stopSrc.volume = stopVolume;
-                stopSrc.Play();
+                if (stopSrc && gameObject.activeInHierarchy && stops.Length > 0)
+                {
+                    stopSrc.clip = stops[UnityEngine.Random.Range(0, stops.Length)];
+                    stopSrc.volume = stopVolume;
+                    stopSrc.Play();
+                }
             }
         }
 
         public void ForceStop()
         {
-            startSrc.Stop();
-            loopSrc.Stop();
+            if(startSrc != null)
+                startSrc.Stop();
+            if (loopSrc != null)
+                loopSrc?.Stop();
         }
 
         /// <summary>

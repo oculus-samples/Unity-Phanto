@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: PhantomLegMask
+  m_Mask: 01000000000000000000000001000000010000000000000000000000000000000000000000000000000000000000000000000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: DeformationSystem
+    m_Weight: 1
+  - m_Path: DeformationSystem/Root_M
+    m_Weight: 1
+  - m_Path: DeformationSystem/Root_M/Hip_L
+    m_Weight: 1
+  - m_Path: DeformationSystem/Root_M/Hip_L/HipPart1_L
+    m_Weight: 1
+  - m_Path: DeformationSystem/Root_M/Hip_L/HipPart1_L/Knee_L
+    m_Weight: 1
+  - m_Path: DeformationSystem/Root_M/Hip_L/HipPart1_L/Knee_L/KneePart1_L
+    m_Weight: 1
+  - m_Path: DeformationSystem/Root_M/Hip_L/HipPart1_L/Knee_L/KneePart1_L/Ankle_L
+    m_Weight: 1
+  - m_Path: DeformationSystem/Root_M/Hip_L/HipPart1_L/Knee_L/KneePart1_L/Ankle_L/Toes_L
+    m_Weight: 1
+  - m_Path: DeformationSystem/Root_M/Hip_L/HipPart1_L/Knee_L/KneePart1_L/Ankle_L/Toes_L/ToesEnd_L
+    m_Weight: 1
+  - m_Path: DeformationSystem/Root_M/Hip_R
+    m_Weight: 1
+  - m_Path: DeformationSystem/Root_M/Hip_R/HipPart1_R
+    m_Weight: 1
+  - m_Path: DeformationSystem/Root_M/Hip_R/HipPart1_R/Knee_R
+    m_Weight: 1
+  - m_Path: DeformationSystem/Root_M/Hip_R/HipPart1_R/Knee_R/KneePart1_R
+    m_Weight: 1
+  - m_Path: DeformationSystem/Root_M/Hip_R/HipPart1_R/Knee_R/KneePart1_R/Ankle_R
+    m_Weight: 1
+  - m_Path: DeformationSystem/Root_M/Hip_R/HipPart1_R/Knee_R/KneePart1_R/Ankle_R/Toes_R
+    m_Weight: 1
+  - m_Path: DeformationSystem/Root_M/Hip_R/HipPart1_R/Knee_R/KneePart1_R/Ankle_R/Toes_R/ToesEnd_R
+    m_Weight: 1
+  - m_Path: DeformationSystem/Root_M/Spine1_M
+    m_Weight: 0
+  - m_Path: DeformationSystem/Root_M/Spine1_M/Eye_L
+    m_Weight: 0
+  - m_Path: DeformationSystem/Root_M/Spine1_M/Eye_R
+    m_Weight: 0
+  - m_Path: DeformationSystem/Root_M/Spine1_M/Spine2_M
+    m_Weight: 0
+  - m_Path: DeformationSystem/Root_M/Spine1_M/Spine2_M/Head_M
+    m_Weight: 0
+  - m_Path: DeformationSystem/Root_M/Spine1_M/Spine2_M/Head_M/HeadEnd_M
+    m_Weight: 0
+  - m_Path: Geometry
+    m_Weight: 0
+  - m_Path: Geometry/geo
+    m_Weight: 1
+  - m_Path: Geometry/geo/Smokie
+    m_Weight: 1

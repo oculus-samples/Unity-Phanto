@@ -7,20 +7,18 @@ using Phanto.Audio.Scripts;
 using Phantom.LightEffects.Scripts;
 using PhantoUtils;
 using UnityEngine;
-using UnityEngine.Serialization;
+using UnityEngine.Assertions;
 using Random = UnityEngine.Random;
 
 namespace Phanto
 {
     [RequireComponent(typeof(Enemy))]
-    [SingletonMonoBehaviour.InstantiationSettings(dontDestroyOnLoad = false)]
-    public class Phanto : SingletonMonoBehaviour<Phanto>
+    public class Phanto : MonoBehaviour
     {
         public const string HIT = "HIT";
         private const string SPIT_PARAM = "Spit";
         private const string HIT_PARAM = "Hit";
 
-        public const int MAX_WAVES = 3;
         public const int MAX_TRAILS = 32;
 
         public static readonly int spitParamId = Animator.StringToHash(SPIT_PARAM);
@@ -32,50 +30,45 @@ namespace Phanto
         private static readonly Vector3[] trailLastHits = new Vector3[MAX_TRAILS];
         private static readonly Vector3 forwardDown = (Vector3.forward + Vector3.down).normalized;
 
-        [Tooltip("The amount of damage to apply to the enemy.")]
-        [SerializeField] private float splashDamage = 0.0052f;
-
-        [Tooltip("Splash amount")]
-        [SerializeField] private float splash = 0.4f;
-
-        [Tooltip("Splash damage scale")]
-        [SerializeField] private float splashDamageScale = 10.0f;
-
         [Tooltip("The reference to the GooBall prefab.")]
         [SerializeField] private GameObject gooBallPrefab;
 
         [Tooltip("The reference to the mouth transform.")]
         [SerializeField] private Transform mouth;
 
-        [Tooltip("Sets the speed of the projectile.")]
-        [SerializeField] private Vector2 gooBallSpeed = new(2f, 5f);
-
         [SerializeField] internal Animator animator;
 
-        [Tooltip("The list of possible goo  prefabs.")]
-        [SerializeField] private GameObject[] gooPrefabs;
-
         [SerializeField] private LayerMask ectoBlasterLayer;
+
+        [SerializeField] private GameplaySettingsManager settingsManager;
 
         private readonly List<ParticleCollisionEvent> pces = new(1024);
         private IDamageable[] _damageables;
         private PhantoLightEffect _phantoLightEffect;
         private SkinnedMeshRenderer[] _skinnedMeshRenderers;
         private Enemy enemy;
-        public int Wave { get; private set; }
 
-        protected override void Awake()
+        public int Wave => settingsManager.Wave;
+
+        public GameObject GooBallPrefab => gooBallPrefab;
+
+        private PoolManagerSingleton poolManager;
+
+        private void Awake()
         {
-            base.Awake();
             enemy = GetComponent<Enemy>();
             _damageables = GetComponents<IDamageable>();
             _skinnedMeshRenderers = GetComponentsInChildren<SkinnedMeshRenderer>();
             StartCoroutine(GetShadow());
         }
 
-        protected override void OnDestroy()
+        private void Start()
         {
-            base.OnDestroy();
+            poolManager = PoolManagerSingleton.Instance;
+        }
+
+        private void OnDestroy()
+        {
             if (_phantoLightEffect != null)
             {
                 _phantoLightEffect.Unregister(transform);
@@ -96,7 +89,7 @@ namespace Phanto
             {
                 var pce = pces[i];
 
-                accumulatedDamage += splashDamage * splashDamageScale;
+                accumulatedDamage += GameplaySettingsManager.Instance.gameplaySettings.CurrentPhantoSetting.splashDamage;
                 avgPCNormal += pce.normal;
                 avgPCIntersection += pce.intersection;
                 sumPCVelocity += pce.velocity;
@@ -108,7 +101,7 @@ namespace Phanto
             foreach (var damageable in _damageables)
                 damageable.TakeDamage(accumulatedDamage, avgPCIntersection, avgPCNormal);
 
-            enemy.rigidbody.AddForce(sumPCVelocity * splash);
+            enemy.rigidbody.AddForce(sumPCVelocity * GameplaySettingsManager.Instance.gameplaySettings.CurrentPhantoSetting.splashAmount);
 
             var isEctoBlaster = ectoBlasterLayer == (ectoBlasterLayer | (1 << other.layer));
 
@@ -117,8 +110,6 @@ namespace Phanto
                 PolterblastTrigger.DamageNotification(accumulatedDamage, avgPCIntersection, avgPCNormal);
             }
         }
-
-        public event Action OnWaveAdvance;
 
         private IEnumerator GetShadow()
         {
@@ -133,25 +124,14 @@ namespace Phanto
 
         public void AdvanceWave()
         {
-            if (Player.gameOver) return;
-
-            Wave = Mathf.Min(Wave + 1, MAX_WAVES);
-            if (Wave >= MAX_WAVES) Wave = MAX_WAVES;
-            if (Wave <= 0) Wave = 0;
-            OnWaveAdvance?.Invoke();
-        }
-
-        public void StartGoo(Vector3 pos, Quaternion rot)
-        {
-            var index = Random.Range(0, gooPrefabs.Length);
-            PoolManagerSingleton.Instance.Create(gooPrefabs[index], pos, rot);
+            settingsManager.AdvanceWave();
         }
 
         public void ShootGooball(uint numGooballs, Vector2 spread)
         {
             var shotOrigin = mouth.position;
             PhantoGooSfxManager.Instance.PlayGooBallShootSound(shotOrigin);
-            PhantoGooSfxManager.Instance.PlayGooBallShootVO(shotOrigin);
+            PhantoGooSfxManager.Instance.PlayGooBallShootVo(shotOrigin);
 
             animator.SetTrigger(spitParamId);
 
@@ -163,7 +143,7 @@ namespace Phanto
                 var projectile = PoolManagerSingleton.Instance.Create(gooBallPrefab,
                     shotOrigin,
                     q);
-
+                var gooBallSpeed = GameplaySettingsManager.Instance.gameplaySettings.CurrentPhantoSetting.gooBallSpeed;
                 projectile.GetComponent<Rigidbody>().LaunchProjectile(shotOrigin, q * Vector3.forward * Random.Range(gooBallSpeed.x, gooBallSpeed.y));
             }
         }
@@ -262,7 +242,7 @@ namespace Phanto
                             QueryTriggerInteraction.Ignore) &&
                         (hit.point - trailLastHits[i]).sqrMagnitude > minSqrDist)
                     {
-                        StartGoo(hit.point, Quaternion.identity);
+                        poolManager.StartGoo(hit.point, Quaternion.identity);
                         trailLastHits[i] = hit.point;
                         yield return null;
                     }
@@ -309,7 +289,7 @@ namespace Phanto
                             QueryTriggerInteraction.Ignore) &&
                         (hit.point - trailLastHits[i]).sqrMagnitude > minSqrDist)
                     {
-                        StartGoo(hit.point, Quaternion.identity);
+                        poolManager.StartGoo(hit.point, Quaternion.identity);
                         trailLastHits[i] = hit.point;
                         yield return null;
                     }
@@ -342,7 +322,7 @@ namespace Phanto
                             layerMask,
                             QueryTriggerInteraction.Ignore))
                     {
-                        StartGoo(hit.point, Quaternion.identity);
+                        poolManager.StartGoo(hit.point, Quaternion.identity);
                         yield return null;
                     }
                 }

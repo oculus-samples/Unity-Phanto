@@ -3,10 +3,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+using PhantoUtils;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
+using Classification = OVRSceneManager.Classification;
 
 namespace Phantom.Environment.Scripts
 {
@@ -15,19 +16,28 @@ namespace Phantom.Environment.Scripts
     /// </summary>
     public class PhantoScenePostProcessor : MonoBehaviour
     {
+        // Items in the room probably large enough for phantoms to hop on
         private static readonly string[] WalkableFurniture =
         {
-            OVRSceneManager.Classification.Table, OVRSceneManager.Classification.Couch,
-            OVRSceneManager.Classification.Other, OVRSceneManager.Classification.Storage,
-            OVRSceneManager.Classification.Bed
+            Classification.Table, Classification.Couch,
+            Classification.Other, Classification.Storage,
+            Classification.Bed,
         };
 
+        // Items in the room that phantoms shouldn't hop on
         private static readonly string[] RangedTargets =
         {
-            OVRSceneManager.Classification.Screen,
-            OVRSceneManager.Classification.Lamp,
-            OVRSceneManager.Classification.Plant,
-            OVRSceneManager.Classification.WallArt
+            Classification.Screen,
+            Classification.Lamp,
+            Classification.Plant,
+        };
+
+        // Items in the room that phantoms can spit goo at
+        private static readonly string[] WallMountedTargets =
+        {
+            Classification.WallArt,
+            Classification.WindowFrame,
+            Classification.DoorFrame,
         };
 
         [SerializeField] private NavMeshGenerator navMeshGeneratorPrefab;
@@ -90,7 +100,6 @@ namespace Phantom.Environment.Scripts
 
             Debug.Log("Post-processing scene.");
             var semanticClassifications = room.GetComponentsInChildren<OVRSemanticClassification>();
-            var sceneVolumes = room.GetComponentsInChildren<OVRSceneVolume>();
 
             // Keep track of meshes and bounding boxes separately
             List<OVRSceneVolume> sceneBoundingBoxes = new();
@@ -102,10 +111,17 @@ namespace Phantom.Environment.Scripts
 
             Bounds sceneMeshBounds = default;
 
+            if (!room.TryGetComponent<SceneQuery>(out var sceneQuery))
+            {
+                sceneQuery = room.gameObject.AddComponent<SceneQuery>();
+            }
+
+            sceneQuery.Initialize(semanticClassifications);
+
             // All the scene objects we care about should have a semantic classification, regardless of type
             foreach (var semanticObject in semanticClassifications)
             {
-                if (semanticObject.Contains(OVRSceneManager.Classification.GlobalMesh))
+                if (semanticObject.Contains(Classification.GlobalMesh))
                 {
                     // To support using static mesh on device.
                     if (semanticObject.TryGetComponent<OVRSceneVolumeMeshFilter>(out var volumeMeshFilter)
@@ -143,10 +159,15 @@ namespace Phantom.Environment.Scripts
                     continue;
                 }
 
-                if (WalkableFurniture.Contains(semanticObject.Labels[0]))
+                if (semanticObject.ContainsAny(WalkableFurniture))
+                {
                     // Need to make sure floor is set up before furniture is set up.
                     walkableFurniture.Add(semanticObject);
-                else if (RangedTargets.Contains(semanticObject.Labels[0])) targetableFurniture.Add(semanticObject);
+                }
+                else if (semanticObject.ContainsAny(RangedTargets) || semanticObject.ContainsAny(WallMountedTargets))
+                {
+                    targetableFurniture.Add(semanticObject);
+                }
 
                 if (semanticObject.TryGetComponent<OVRSceneVolume>(out var sceneVolume))
                     sceneBoundingBoxes.Add(sceneVolume);
@@ -174,6 +195,9 @@ namespace Phantom.Environment.Scripts
                         sceneMeshBounds = GetMeshBounds(meshFilter.transform, vertices);
                     }
                 }
+
+                // give the new mesh colliders time to bake
+                yield return new WaitForFixedUpdate();
             }
 
             if (hideSceneMesh && sceneMeshes.Count > 0)
@@ -201,7 +225,7 @@ namespace Phantom.Environment.Scripts
 
                 foreach (var furniture in walkableFurniture)
                 {
-                    Debug.Log($"Preparing furniture for: {string.Join("", furniture.Labels)}");
+                    Debug.Log($"Preparing furniture for: {string.Join(",", furniture.Labels)}");
                     if (!PrepareFurniture(furniture))
                     {
                         // no navmesh was generated for this piece of furniture.
@@ -215,7 +239,7 @@ namespace Phantom.Environment.Scripts
                     }
                 }
 
-                foreach (var furniture in targetableFurniture) PrepareTargetableFurniture(furniture);
+                foreach (var furniture in targetableFurniture) PrepareTargetableFurniture(furniture, room);
 
                 // At this point all furniture is set up and we can validate reachability.
                 yield return StartCoroutine(NavMeshBookKeeper.ValidateScene(room));
@@ -246,13 +270,21 @@ namespace Phantom.Environment.Scripts
                 SceneDataLoader.AddAnchorReferenceCount(anchor);
             }
 
+            go.transform.SetParent(ovrSceneRoom.transform);
+
             return go.GetComponent<OVRSemanticClassification>();
         }
 
-        private void PrepareTargetableFurniture(OVRSemanticClassification classification)
+        private void PrepareTargetableFurniture(OVRSemanticClassification classification, OVRSceneRoom room)
         {
-            var targetable = Instantiate(rangedFurnitureTargetPrefab, classification.transform);
-            targetable.Initialize(classification);
+            PhantomTarget targetable;
+
+            if (!classification.TryGetComponent(out targetable))
+            {
+                targetable = Instantiate(rangedFurnitureTargetPrefab, classification.transform);
+            }
+
+            targetable.Initialize(classification, room);
         }
 
         private bool PrepareFurniture(OVRSemanticClassification classification)

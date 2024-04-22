@@ -8,7 +8,7 @@ namespace PhantoUtils
 {
     public static class ListExtensions
     {
-        public static T RandomElement<T>(this IList<T> list)
+        public static T RandomElement<T>(this IReadOnlyList<T> list)
         {
             if (list == null || list.Count == 0) return default;
 
@@ -23,6 +23,19 @@ namespace PhantoUtils
                     return true;
 
             return false;
+        }
+
+        public static void Shuffle<T>(this IList<T> list)
+        {
+            var count = list.Count;
+            // Fisher-Yates shuffle.
+            for (var i = count - 1; i > 0; i--)
+            {
+                var randomIndex = Random.Range(0, i + 1);
+
+                // swap elements
+                (list[i], list[randomIndex]) = (list[randomIndex], list[i]);
+            }
         }
     }
 }

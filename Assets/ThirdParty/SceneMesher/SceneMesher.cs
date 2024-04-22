@@ -26,6 +26,8 @@ using UnityEngine.Assertions;
 
 public static class SceneMesher
 {
+    private const MeshColliderCookingOptions COOKING_OPTIONS = MeshColliderCookingOptions.UseFastMidphase | MeshColliderCookingOptions.CookForFasterSimulation | MeshColliderCookingOptions.WeldColocatedVertices | MeshColliderCookingOptions.EnableMeshCleaning;
+
     public static GameObject CreateMesh(OVRSceneRoom sceneRoom, GameObject sceneGameObject, float borderSize = 0.1f, bool worldUnits = false)
     {
         Assert.IsNotNull(sceneRoom);
@@ -459,7 +461,7 @@ public static class SceneMesher
 
         if (sceneGameObject.TryGetComponent<MeshCollider>(out var meshCollider))
         {
-            Physics.BakeMesh(sceneMesh.GetInstanceID(), false);
+            Physics.BakeMesh(sceneMesh.GetInstanceID(), false, COOKING_OPTIONS);
             meshCollider.sharedMesh = sceneMesh;
         }
 

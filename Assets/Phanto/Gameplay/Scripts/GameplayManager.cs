@@ -1,12 +1,15 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Events;
 
 public class GameplayManager : MonoBehaviour
 {
     [Header("Logic points")]
-    [SerializeField] private int maxGoos = 110;
+    [SerializeField] private int maxGoos = 150;
 
     public UnityEvent OnGameWon;
     public UnityEvent OnGameLost;

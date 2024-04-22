@@ -72,6 +72,10 @@ PrefabInstance:
       propertyPath: m_ReceiveShadows
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7071516059734796515, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
+      propertyPath: m_Name
+      value: LobbyCouchOverride
+      objectReference: {fileID: 0}
     - target: {fileID: 7439643730179347946, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
       propertyPath: m_CastShadows
       value: 0
@@ -87,6 +91,10 @@ PrefabInstance:
     - target: {fileID: 7548077147987711649, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
       propertyPath: m_ReceiveShadows
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7706411332235612422, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
+      propertyPath: _offsetChildren
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7748333722765061972, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
       propertyPath: m_CastShadows
@@ -107,27 +115,5 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 367623080227869462, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7394347398867094520}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
---- !u!1 &6626868413646287953 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 367623080227869462, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
-  m_PrefabInstance: {fileID: 6840214154399393607}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &7394347398867094520
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6626868413646287953}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c4c07da5cd8e024e81c2b08152058fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _scaleChildren: 1
-  _offsetChildren: 1

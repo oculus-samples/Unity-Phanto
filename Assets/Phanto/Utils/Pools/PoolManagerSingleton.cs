@@ -2,6 +2,7 @@
 
 using PhantoUtils;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Phanto
 {
@@ -9,12 +10,19 @@ namespace Phanto
     [SingletonMonoBehaviour.InstantiationSettings(dontDestroyOnLoad = false)]
     public class PoolManagerSingleton : SingletonMonoBehaviour<PoolManagerSingleton>
     {
+        [Tooltip("The list of possible goo  prefabs.")]
+        [SerializeField] private GameObject[] gooPrefabs;
+
         private PoolManagerComponent poolManagerComponent;
         public PoolManager<GameObject, Pool<GameObject>> poolManager => poolManagerComponent.poolManager;
 
-        private void Start()
+        protected override void Awake()
         {
             poolManagerComponent = GetComponent<PoolManagerComponent>();
+
+            Assert.IsNotNull(poolManagerComponent);
+
+            base.Awake();
         }
 
         /*
@@ -70,6 +78,12 @@ namespace Phanto
         public void Discard(GameObject go)
         {
             poolManagerComponent.Discard(go);
+        }
+
+        public GameObject StartGoo(Vector3 pos, Quaternion rot)
+        {
+            var index = Random.Range(0, gooPrefabs.Length);
+            return PoolManagerSingleton.Instance.Create(gooPrefabs[index], pos, rot);
         }
     }
 }

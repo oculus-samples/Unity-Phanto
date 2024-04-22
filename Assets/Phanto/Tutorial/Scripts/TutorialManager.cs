@@ -3,13 +3,13 @@
 using System;
 using System.Collections;
 using Oculus.Haptics;
-using Phanto;
 using Phanto.Audio.Scripts;
 using Phantom;
-using Phantom.EctoBlaster.Scripts;
 using PhantoUtils.VR;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Assertions;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 /// <summary>
@@ -17,6 +17,9 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class TutorialManager : MonoBehaviour
 {
+    public const KeyCode ACTION_KEY = KeyCode.Alpha1;
+    private const KeyCode ACTION2_KEY = KeyCode.Alpha2;
+
     private const string WINDOW_CLOSE_CLIP = "WindowClose";
     private const string PLAYERPREF_TURORIAL_KEY = "Tutorial";
     private const string GAME_SCENE_NAME = "GameScene";
@@ -26,7 +29,6 @@ public class TutorialManager : MonoBehaviour
 
     [SerializeField] private float changeDelayTime = 1.0f;
     [SerializeField] private TutorialPageData[] tutorialPages;
-    [SerializeField] private Enemy[] phantoms;
 
     [Space(10)] [Header("Page configuration")] [SerializeField]
     private float overrideEnableAnimTime = 0.15f;
@@ -50,12 +52,17 @@ public class TutorialManager : MonoBehaviour
 
     [SerializeField] private HapticCollection uiHaptics;
 
+    [SerializeField] private UnityEvent<int, bool> showTutorialPage;
+
     private int currentPage = -1;
     private int currentTries;
     private bool isCompleted;
     private bool pressed = true;
 
     private Transform head;
+
+    private TutorialPhantomManager _phantomManager;
+    private GameplaySettingsManager _gameplaySettingsManager;
 
     private void Awake()
     {
@@ -64,6 +71,12 @@ public class TutorialManager : MonoBehaviour
 
     private IEnumerator Start()
     {
+        do
+        {
+            _phantomManager = PhantomManager.Instance as TutorialPhantomManager;
+            yield return null;
+        } while (_phantomManager == null);
+
         CleanTutorial();
         // Debug ----------
         if (modalDebug) modalDebug.SetActive(showDebug);
@@ -75,6 +88,11 @@ public class TutorialManager : MonoBehaviour
         }
 
         head = CameraRig.Instance.CenterEyeAnchor;
+
+        PhantoGooSfxManager.Instance.StartTutorialMusic();
+
+        _gameplaySettingsManager = GameplaySettingsManager.Instance;
+        Assert.IsNotNull(_gameplaySettingsManager);
     }
 
     private void Update()
@@ -87,7 +105,7 @@ public class TutorialManager : MonoBehaviour
                 // Regular tutorial page
                 if (page.pageUI.GetComponent<TutorialContinueButton>().GetButtonActive())
                 {
-                    if (OVRInput.GetDown(page.actionButton) || Input.GetKeyDown(KeyCode.R))
+                    if (OVRInput.GetDown(page.actionButton) || Input.GetKeyDown(ACTION_KEY))
                     {
                         if (!pressed)
                         {
@@ -111,7 +129,7 @@ public class TutorialManager : MonoBehaviour
                     }
 
                     // Only for Complete Modal 00
-                    if (OVRInput.GetDown(page.actionButton2) && isCompleted)
+                    if ((OVRInput.GetDown(page.actionButton2) || Input.GetKeyDown(ACTION2_KEY)) && isCompleted)
                     {
                         PlayHaptic(WINDOW_CLOSE_CLIP, page.actionButton2);
 
@@ -123,9 +141,7 @@ public class TutorialManager : MonoBehaviour
             else
             {
                 // Waiting for Phatoms hidden page
-                float globalLive = 0;
-                foreach (var phantom in phantoms) globalLive += phantom.Health;
-                if (globalLive <= 0)
+                if (_phantomManager.MobTutorialComplete)
                 {
                     page.waitForPhantoms = false;
                     SetNextTutorial();
@@ -133,7 +149,7 @@ public class TutorialManager : MonoBehaviour
                 else if (phantomsDebugModal)
                 {
                     // Debug ----
-                    if (showDebug) phantomsDebugModal.text = phantoms.Length + "\n" + globalLive;
+                    if (showDebug) phantomsDebugModal.text = $"{_phantomManager.ActivePhantoms.Count:00}";
                     // ----------
                 }
             }
@@ -183,7 +199,7 @@ public class TutorialManager : MonoBehaviour
                 page.pageUI.GetComponent<TutorialContinueButton>().SetButtonBlinkTime(overrideButtonBlinkTime);
             }
 
-        ShowPhantoms(false);
+        ActivateMobTutorial(false);
     }
 
     private void SetNextTutorial()
@@ -210,17 +226,25 @@ public class TutorialManager : MonoBehaviour
                     PlaySound(hidePageSound);
             }
 
+            var waveSettings = _gameplaySettingsManager.GetWaveSettings(currentPage);
+
             tutorialPages[currentPage].visible = visible;
-            ShowPhantoms(tutorialPages[currentPage].waitForPhantoms);
+            ActivateMobTutorial(tutorialPages[currentPage].waitForPhantoms && visible, waveSettings.winCondition);
 
             // Stop music at the end of the Tutorial
             if (currentPage + 1 == tutorialPages.Length)
+            {
                 // Stop music
                 if (CheckSoundManager())
                 {
                     soundManager.StopMusic(true);
                     tutorialCompletedSound.Play();
                 }
+
+                return;
+            }
+
+            showTutorialPage?.Invoke(currentPage, visible);
         }
         else if (visible && currentPage >= tutorialPages.Length)
         {
@@ -251,29 +275,10 @@ public class TutorialManager : MonoBehaviour
         SetTutorialPage(true);
     }
 
-    private void ShowPhantoms(bool visible)
+    private void ActivateMobTutorial(bool visible,
+        GameplaySettings.WinCondition winCondition = GameplaySettings.WinCondition.DefeatAllPhantoms)
     {
-        var _phantomManager = FindAnyObjectByType<PhantomManager>();
-
-        foreach (var phantom in phantoms)
-        {
-            if (!phantom.TryGetComponent<PhantomController>(out var phantomController))
-            {
-                Debug.LogWarning("Invalid phantom in enemies array.");
-                continue;
-            }
-
-            phantomController.Initialize(_phantomManager, true);
-
-            if (visible)
-            {
-                var nPos = _phantomManager.RandomPointOnFloor(head.position, 0.6f);
-                phantomController.transform.position = nPos;
-            }
-
-            phantomController.Show(visible);
-            _phantomManager.TutorialRegisterPhantoms(phantomController, visible);
-        }
+        _phantomManager.ActivateMobTutorial(visible, winCondition);
     }
 
     private void OnTutorialComplete()
@@ -282,7 +287,7 @@ public class TutorialManager : MonoBehaviour
         // save in playerpref
         PlayerPrefs.SetInt(PLAYERPREF_TURORIAL_KEY, 1);
         // load game scene
-        SceneManager.LoadScene(GAME_SCENE_NAME);
+        SceneManager.LoadSceneAsync(GAME_SCENE_NAME);
     }
 
     private bool CheckTutorialCompleted()

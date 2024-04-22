@@ -26,13 +26,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 131085603195575832}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8170836792747693095
 MonoBehaviour:
@@ -51,7 +51,7 @@ MonoBehaviour:
   PrefabOverrides:
   - Prefab: {fileID: 4025537716497158586, guid: 89e40236b00a9b24aaee39de0792e7d0, type: 3}
     ClassificationLabel: GLOBAL_MESH
-    _editorClassificationIndex: 17
+    _editorClassificationIndex: 16
   - Prefab: {fileID: 102490448831091297, guid: 0de274262b0a3c6488d258ef88689c7b, type: 3}
     ClassificationLabel: WALL_ART
     _editorClassificationIndex: 14

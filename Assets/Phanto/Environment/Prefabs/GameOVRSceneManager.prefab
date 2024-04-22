@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8170836792747693095}
   - component: {fileID: 7484258607795472606}
   - component: {fileID: -8769646834274527859}
+  - component: {fileID: 4413541731645775079}
   m_Layer: 0
   m_Name: GameOVRSceneManager
   m_TagString: Untagged
@@ -26,13 +27,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 131085603195575832}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8170836792747693095
 MonoBehaviour:
@@ -67,6 +68,12 @@ MonoBehaviour:
   - Prefab: {fileID: 5334103944971317628, guid: 8255cf97f2b51fa419eb8ddaa21bf955, type: 3}
     ClassificationLabel: PLANT
     _editorClassificationIndex: 12
+  - Prefab: {fileID: 102490448831091297, guid: ffbdcbdd60bc71a41a12db95420a1fe2, type: 3}
+    ClassificationLabel: DOOR_FRAME
+    _editorClassificationIndex: 5
+  - Prefab: {fileID: 102490448831091297, guid: 9eeca646c8a45c84c96408b8eaca20c9, type: 3}
+    ClassificationLabel: WINDOW_FRAME
+    _editorClassificationIndex: 6
   ActiveRoomsOnly: 1
   VerboseLogging: 0
   MaxSceneAnchorUpdatesPerFrame: 3
@@ -98,3 +105,15 @@ MonoBehaviour:
   sceneManager: {fileID: 8170836792747693095}
   planeColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   volumeColor: {r: 0, g: 1, b: 1, a: 1}
+--- !u!114 &4413541731645775079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131085603195575832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef344c68ec169d948bd82b071d0764aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

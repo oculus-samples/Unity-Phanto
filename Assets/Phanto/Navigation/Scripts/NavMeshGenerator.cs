@@ -13,8 +13,10 @@ using static NavMeshGenerateLinks;
 /// <summary>
 ///     Handles nav mesh generation from scene data.
 /// </summary>
-public class NavMeshGenerator : SingletonMonoBehaviour<NavMeshGenerator>
+public class NavMeshGenerator : MonoBehaviour
 {
+    private static readonly Dictionary<OVRSceneRoom, NavMeshGenerator> NavMeshGenerators = new Dictionary<OVRSceneRoom, NavMeshGenerator>();
+
     private const float EdgeExpansion = NavMeshConstants.OneFoot;
 
     private static List<NavMeshTriangle> _navMeshTriangles;
@@ -31,15 +33,15 @@ public class NavMeshGenerator : SingletonMonoBehaviour<NavMeshGenerator>
 
     private readonly List<NavMeshTriangle> _validTriangles = new();
 
-    public static NavMeshSurface FloorNavMeshSurface { get; private set; }
+    private OVRSceneRoom _sceneRoom;
 
-    public static Plane CeilingPlane { get; private set; }
-    public static Plane FloorPlane { get; private set; }
+    public NavMeshSurface FloorNavMeshSurface { get; private set; }
 
-    protected override void Awake()
+    public Plane CeilingPlane { get; private set; }
+    public Plane FloorPlane { get; private set; }
+
+    private void Awake()
     {
-        base.Awake();
-
         FloorNavMeshSurface = navMeshSurface;
 
         NavMeshBookKeeper.OnValidateScene += GenerateInternalLinks;
@@ -55,9 +57,9 @@ public class NavMeshGenerator : SingletonMonoBehaviour<NavMeshGenerator>
         DebugDrawManager.DebugDrawEvent -= DebugDraw;
     }
 
-    protected override void OnDestroy()
+    private void OnDestroy()
     {
-        base.OnDestroy();
+        NavMeshGenerators.Remove(_sceneRoom);
 
         NavMeshBookKeeper.OnValidateScene -= GenerateInternalLinks;
 
@@ -70,6 +72,10 @@ public class NavMeshGenerator : SingletonMonoBehaviour<NavMeshGenerator>
 
     public void Initialize(OVRSceneRoom room, Bounds meshBounds, bool furnitureInScene)
     {
+        _sceneRoom = room;
+
+        NavMeshGenerators[room] = this;
+
         Assert.IsNotNull(room.Ceiling);
         Assert.IsNotNull(room.Floor);
 
@@ -123,16 +129,6 @@ public class NavMeshGenerator : SingletonMonoBehaviour<NavMeshGenerator>
     /// <summary>
     ///     When path to destination is incomplete add extra links to path.
     /// </summary>
-    /// <param name="from"></param>
-    /// <param name="to"></param>
-    public void CreateNavMeshLink(Vector3 from, Vector3 to, int areaId)
-    {
-        var link = Instantiate(navMeshLinkPrefab, transform);
-        link.Initialize(from, to, areaId);
-
-        _navMeshLinks.Add(link);
-    }
-
     public void CreateNavMeshLink(IReadOnlyList<Vector3> corners, int cornerCount, Vector3 destination, int areaId)
     {
         var path = new NavMeshPath();
@@ -158,6 +154,9 @@ public class NavMeshGenerator : SingletonMonoBehaviour<NavMeshGenerator>
             if (cornerCount > 1) endPoint = Vector3.Lerp(reversePath[cornerCount - 2], endPoint, 0.9f);
         }
 
+        Assert.IsTrue(endPoint.IsSafeValue());
+        Assert.IsFalse(startPoint.Approximately(endPoint));
+
         var link = Instantiate(navMeshLinkPrefab, transform);
         link.Initialize(startPoint, endPoint, areaId);
     }
@@ -178,16 +177,6 @@ public class NavMeshGenerator : SingletonMonoBehaviour<NavMeshGenerator>
     {
         ValidateTriangles();
         GenInternalLinks(_navMeshTriangles, navMeshLinkPrefab, transform);
-    }
-
-    public static bool TryGetClosestPointOnNavMesh(ref Vector3 point, int areaMask = NavMesh.AllAreas,
-        float maxDistance = 10.0f)
-    {
-        // snap point to navmesh
-        if (!NavMesh.SamplePosition(point, out var navMeshHit, maxDistance, areaMask)) return false;
-
-        point = navMeshHit.position;
-        return true;
     }
 
     private void ValidateTriangles()
@@ -267,26 +256,9 @@ public class NavMeshGenerator : SingletonMonoBehaviour<NavMeshGenerator>
         return result;
     }
 
-    public static bool TryGetClosestPoint(Vector3 position, out Vector3 point, float maxDistance)
+    public static bool TryGetNavMeshGenerator(OVRSceneRoom room, out NavMeshGenerator result)
     {
-        if (!NavMesh.SamplePosition(position, out var navMeshHit, maxDistance, NavMesh.AllAreas))
-        {
-            point = default;
-            return false;
-        }
-
-        // find which triangle the point belongs to.
-        point = navMeshHit.position;
-        return true;
-    }
-
-    public static NavMeshTriangle ClosestFloorTriangleOnCircle(Vector3 point, float radius)
-    {
-        if (NavMeshBookKeeper.TryGetClosestTriangleOnCircle(point, radius, FloorNavMeshSurface, out var result))
-            return result;
-
-        Debug.LogWarning("Finding floor navmesh triangle failed.");
-        return default;
+        return NavMeshGenerators.TryGetValue(room, out result);
     }
 
     private void DebugDraw()

@@ -15,61 +15,97 @@ namespace Phanto.Audio.Scripts
     {
         [SerializeField] private bool startMusicOnLoad;
 
-        public int numberOfGooSourcesAllowable;
-        public float updateRate = 1;
-        public bool doDebugDraw;
+        [SerializeField] private int numberOfGooSourcesAllowable;
+        [SerializeField] private float updateRate = 1;
+        [SerializeField] private bool doDebugDraw;
 
-        public bool stopMusicTest;
+        [SerializeField] private bool stopMusicTest;
 
-        public List<PhantoGoo> activeGoos = new();
+        [SerializeField] private int poolCount = 10;
+        [SerializeField] private PhantoRandomOneShotSfxBehavior gooBallShootSfxPrefab;
+        [SerializeField] private PhantoRandomOneShotSfxBehavior gooStartSfxPrefab;
+        [SerializeField] private PhantoRandomOneShotSfxBehavior gooStopSfxPrefab;
+        [SerializeField] private PhantoRandomOneShotSfxBehavior gooBallShootVoPrefab;
+        [SerializeField] private PhantoRandomOneShotSfxBehavior phantoHurtVoPrefab;
 
-        public PhantoRandomOneshotSfxBehavior[] gooBallShootSfx;
-        public PhantoRandomOneshotSfxBehavior[] gooStartSfx;
-        public PhantoRandomOneshotSfxBehavior[] gooStopSfx;
-        public PhantoRandomOneshotSfxBehavior[] gooBallShootVO;
-        public PhantoRandomOneshotSfxBehavior[] phantoHurtVO;
-        public PhantoRandomOneshotSfxBehavior phantoAppearVo;
-        public PhantoRandomOneshotSfxBehavior phantoDieVo;
-        public PhantoLoopSfxBehavior phantoMusicLoop;
+        [Space(16)]
+        [SerializeField] private PhantoRandomOneShotSfxBehavior phantoAppearVo;
+        [SerializeField] private PhantoRandomOneShotSfxBehavior phantoDieVo;
+        [SerializeField] private PhantoLoopSfxBehavior phantoTutorialMusicLoop;
+        [SerializeField] private PhantoLoopSfxBehavior phantoMusicLoop;
+        [SerializeField] private PhantoLoopSfxBehavior phantoWarningMusicLoop;
+        [SerializeField] private AnimationCurve dangerMusicVolume;
 
         [SerializeField] private SfxContainer[] sfxContainers;
 
-        private readonly Dictionary<string, (List<PhantoRandomOneshotSfxBehavior> instances, int index)> sfxDictionary =
+        [SerializeField] private SemanticSoundMapCollection semanticSoundMapCollection;
+
+
+        private readonly Dictionary<string, (List<PhantoRandomOneShotSfxBehavior> instances, int index)> _sfxDictionary =
             new();
 
-        private int gooBallVOInstanceCount;
+        private readonly List<PhantoRandomOneShotSfxBehavior> _gooBallShootSfx = new();
+        private readonly List<PhantoRandomOneShotSfxBehavior> _gooStartSfx = new();
+        private readonly List<PhantoRandomOneShotSfxBehavior> _gooStopSfx = new();
+        private readonly List<PhantoRandomOneShotSfxBehavior> _gooBallShootVo = new();
+        private readonly List<PhantoRandomOneShotSfxBehavior> _phantoHurtVo = new();
 
-        private bool hurtVoActive;
-        private bool lastStopMusicTest;
-        private int phantoHurtInstanceCount;
+        private readonly List<PhantoGoo> _activeGoos = new();
 
-        private int shootSfxInstanceCount;
-        private int startSfxInstanceCount;
-        private int stopSfxInstanceCount;
+        private readonly Dictionary<string, Queue<PhantoRandomOneShotSfxBehavior>> _semanticSfxDictionary =
+            new Dictionary<string, Queue<PhantoRandomOneShotSfxBehavior>>();
+
+        private int _gooBallVoInstanceCount;
+
+        private bool _hurtVoActive;
+        private bool _lastStopMusicTest;
+        private int _phantoHurtInstanceCount;
+
+        private int _shootSfxInstanceCount;
+        private int _startSfxInstanceCount;
+        private int _stopSfxInstanceCount;
+
+        private float _dangerLevel;
+
+        public float testlevel = 1;
 
         protected override void Awake()
         {
             base.Awake();
 
-            activeGoos.Clear();
+            _activeGoos.Clear();
 
             foreach (var container in sfxContainers)
             {
-                var instances = new List<PhantoRandomOneshotSfxBehavior>();
+                var instances = new List<PhantoRandomOneShotSfxBehavior>();
 
                 for (var i = 0; i < container.spawnCount; i++)
                 {
-                    instances.Add(Instantiate(container.sfxBehavior, transform));
+                    var instance = Instantiate(container.sfxBehavior, transform);
+                    instance.gameObject.SetSuffix($"{i:000}");
+                    instances.Add(instance);
                 }
 
-                sfxDictionary[container.name] = (instances, 0);
+                _sfxDictionary[container.name] = (instances, 0);
             }
+
+            PopulatePool(gooBallShootSfxPrefab, _gooBallShootSfx, poolCount);
+            PopulatePool(gooStartSfxPrefab, _gooStartSfx, poolCount);
+            PopulatePool(gooStopSfxPrefab, _gooStopSfx, poolCount);
+            PopulatePool(gooBallShootVoPrefab, _gooBallShootVo, poolCount);
+            PopulatePool(phantoHurtVoPrefab, _phantoHurtVo, poolCount);
+
+            PopulateSemanticSfxPool(poolCount);
         }
 
         private void Start()
         {
             StartCoroutine(GooSfxUpdateLoop());
             if (startMusicOnLoad) StartMusic();
+
+            phantoMusicLoop.loopBeginEvent.AddListener(StartWarningLoops);
+            SetDangerLevel(0);
+            phantoWarningMusicLoop.loopSrc.volume = 0;
         }
 
         private void Update()
@@ -77,114 +113,124 @@ namespace Phanto.Audio.Scripts
             if (doDebugDraw)
                 for (var i = 0; i < numberOfGooSourcesAllowable; i++)
                 {
-                    if (activeGoos.Count > i)
-                        Debug.DrawLine(activeGoos[i].transform.position, Camera.main.transform.position, Color.green);
+                    if (_activeGoos.Count > i)
+                        Debug.DrawLine(_activeGoos[i].transform.position, Camera.main.transform.position, Color.green);
                 }
 
-            if (stopMusicTest != lastStopMusicTest && stopMusicTest) StopMusic();
+            if (stopMusicTest != _lastStopMusicTest && stopMusicTest) StopMusic();
 
-            lastStopMusicTest = stopMusicTest;
+            _lastStopMusicTest = stopMusicTest;
+        }
+
+        public void RegisterGoo(PhantoGoo goo)
+        {
+            _activeGoos.Add(goo);
+        }
+
+        public void UnregisterGoo(PhantoGoo goo)
+        {
+            _activeGoos.Remove(goo);
         }
 
         public void PlayGooStartSound(Vector3 position)
         {
-            if (gooStartSfx.Length <= 0) return;
+            if (_gooStartSfx.Count <= 0) return;
 
-            if (startSfxInstanceCount >= 0 && startSfxInstanceCount < gooStartSfx.Length)
+            if (_startSfxInstanceCount >= 0 && _startSfxInstanceCount < _gooStartSfx.Count)
             {
-                if (gooStartSfx[startSfxInstanceCount] == null) return;
+                if (_gooStartSfx[_startSfxInstanceCount] == null) return;
             }
             else
             {
                 return;
             }
 
-            gooStartSfx[startSfxInstanceCount].transform.position = position;
-            gooStartSfx[startSfxInstanceCount].PlaySfx();
-            startSfxInstanceCount++;
-            startSfxInstanceCount %= gooStartSfx.Length - 1;
+            _gooStartSfx[_startSfxInstanceCount].transform.position = position;
+            _gooStartSfx[_startSfxInstanceCount].PlaySfx();
+            _startSfxInstanceCount++;
+            _startSfxInstanceCount %= _gooStartSfx.Count - 1;
         }
 
         public void PlayGooBallShootSound(Vector3 position)
         {
-            if (gooBallShootSfx.Length <= 0) return;
+            if (_gooBallShootSfx.Count <= 0) return;
 
-            if (shootSfxInstanceCount >= 0 && shootSfxInstanceCount < gooBallShootSfx.Length)
+            if (_shootSfxInstanceCount >= 0 && _shootSfxInstanceCount < _gooBallShootSfx.Count)
             {
-                if (gooBallShootSfx[shootSfxInstanceCount] == null) return;
+                if (_gooBallShootSfx[_shootSfxInstanceCount] == null) return;
             }
             else
             {
                 return;
             }
 
-            gooBallShootSfx[shootSfxInstanceCount].transform.position = position;
-            gooBallShootSfx[shootSfxInstanceCount].PlaySfx();
-            shootSfxInstanceCount++;
-            shootSfxInstanceCount %= gooBallShootSfx.Length - 1;
+            _gooBallShootSfx[_shootSfxInstanceCount].transform.position = position;
+            _gooBallShootSfx[_shootSfxInstanceCount].PlaySfx();
+            _shootSfxInstanceCount++;
+            _shootSfxInstanceCount %= _gooBallShootSfx.Count - 1;
         }
 
         public void PlayGooStopSound(Vector3 position)
         {
-            if (gooStopSfx.Length <= 0) return;
+            if (_gooStopSfx.Count <= 0) return;
 
-            if (stopSfxInstanceCount >= 0 && stopSfxInstanceCount < gooStopSfx.Length)
+            if (_stopSfxInstanceCount >= 0 && _stopSfxInstanceCount < _gooStopSfx.Count)
             {
-                if (gooStopSfx[stopSfxInstanceCount] == null) return;
+                if (_gooStopSfx[_stopSfxInstanceCount] == null) return;
             }
             else
             {
                 return;
             }
 
-            gooStopSfx[stopSfxInstanceCount].transform.position = position;
-            gooStopSfx[stopSfxInstanceCount].PlaySfx();
-            stopSfxInstanceCount++;
-            stopSfxInstanceCount %= gooStopSfx.Length - 1;
+            _gooStopSfx[_stopSfxInstanceCount].transform.position = position;
+            _gooStopSfx[_stopSfxInstanceCount].PlaySfx();
+            _stopSfxInstanceCount++;
+            _stopSfxInstanceCount %= _gooStopSfx.Count - 1;
         }
 
-        public void PlayGooBallShootVO(Vector3 position)
+        public void PlayGooBallShootVo(Vector3 position)
         {
-            if (gooBallShootVO.Length <= 0) return;
+            if (_gooBallShootVo.Count <= 0) return;
 
-            if (gooBallVOInstanceCount >= 0 && gooBallVOInstanceCount < gooBallShootVO.Length)
+            if (_gooBallVoInstanceCount >= 0 && _gooBallVoInstanceCount < _gooBallShootVo.Count)
             {
-                if (gooBallShootVO[gooBallVOInstanceCount] == null) return;
+                if (_gooBallShootVo[_gooBallVoInstanceCount] == null) return;
             }
             else
             {
                 return;
             }
 
-            gooBallShootVO[gooBallVOInstanceCount].transform.position = position;
-            gooBallShootVO[gooBallVOInstanceCount].PlaySfx();
-            gooBallVOInstanceCount++;
-            gooBallVOInstanceCount %= gooBallShootVO.Length - 1;
+            _gooBallShootVo[_gooBallVoInstanceCount].transform.position = position;
+            _gooBallShootVo[_gooBallVoInstanceCount].PlaySfx();
+            _gooBallVoInstanceCount++;
+            _gooBallVoInstanceCount %= _gooBallShootVo.Count - 1;
         }
 
         public void PlayPhantoHurtVo(Vector3 position)
         {
-            if (phantoHurtVO.Length <= 0 || hurtVoActive) return;
+            if (_phantoHurtVo.Count <= 0 || _hurtVoActive) return;
 
-            if (phantoHurtInstanceCount < 0 || phantoHurtInstanceCount >= phantoHurtVO.Length) return;
+            if (_phantoHurtInstanceCount < 0 || _phantoHurtInstanceCount >= _phantoHurtVo.Count) return;
 
-            if (phantoHurtVO[phantoHurtInstanceCount] != null)
+            if (_phantoHurtVo[_phantoHurtInstanceCount] != null)
             {
-                phantoHurtVO[phantoHurtInstanceCount].transform.position = position;
-                phantoHurtVO[phantoHurtInstanceCount].PlaySfx();
+                _phantoHurtVo[_phantoHurtInstanceCount].transform.position = position;
+                _phantoHurtVo[_phantoHurtInstanceCount].PlaySfx();
 
-                StartCoroutine(WaitForClipToEnd(phantoHurtVO[phantoHurtInstanceCount].ClipLength));
-                hurtVoActive = true;
+                StartCoroutine(WaitForClipToEnd(_phantoHurtVo[_phantoHurtInstanceCount].ClipLength));
+                _hurtVoActive = true;
             }
 
-            phantoHurtInstanceCount++;
-            phantoHurtInstanceCount %= phantoHurtVO.Length - 1;
+            _phantoHurtInstanceCount++;
+            _phantoHurtInstanceCount %= _phantoHurtVo.Count - 1;
         }
 
         private IEnumerator WaitForClipToEnd(float waitTime)
         {
             yield return new WaitForSeconds(waitTime);
-            hurtVoActive = false;
+            _hurtVoActive = false;
         }
 
         public void PlayPhantoDieVo(Vector3 position)
@@ -199,86 +245,222 @@ namespace Phanto.Audio.Scripts
             phantoAppearVo.PlaySfx();
         }
 
-        public void PlayMinionSpawnVo(Vector3 position)
+        public void PlayPhantomSpawnVo(Vector3 position)
         {
-            PlaySfxInstanceAtPosition("minion_spawn", position);
+            PlaySfxInstanceAtPosition("phantom_spawn", position);
         }
 
-        public void PlayMinionLaughVo(Vector3 position)
+        public void PlayPhantomLaughVo(Vector3 position)
         {
-            PlaySfxInstanceAtPosition("minion_laugh", position);
+            PlaySfxInstanceAtPosition("phantom_laugh", position);
         }
 
-        public void PlayMinionDieVo(Vector3 position)
+        public void PlayPhantomDieVo(Vector3 position)
         {
-            PlaySfxInstanceAtPosition("minion_die", position);
+            PlaySfxInstanceAtPosition("phantom_die", position);
         }
 
-        public void PlayMinionHurtVo(Vector3 position)
+        public void PlayPhantomHurtVo(Vector3 position)
         {
-            PlaySfxInstanceAtPosition("minion_hurt", position);
+            PlaySfxInstanceAtPosition("phantom_hurt", position);
         }
 
-        public void PlayMinionJumpVo(Vector3 position)
+        public void PlayPhantomJumpVo(Vector3 position)
         {
-            PlaySfxInstanceAtPosition("minion_jump", position);
+            PlaySfxInstanceAtPosition("phantom_jump", position);
+        }
+
+        public void PlayPhantomThoughtBubbleAppear(Vector3 position)
+        {
+            PlaySfxInstanceAtPosition("phantom_thought_appear", position);
+        }
+
+        public void PlayPhantomThoughtBubbleDisappear(Vector3 position)
+        {
+            PlaySfxInstanceAtPosition("phantom_thought_disappear", position);
         }
 
         private void PlaySfxInstanceAtPosition(string label, Vector3 position)
         {
-            if (!sfxDictionary.TryGetValue(label, out var sfxItem) ||
+            if (!_sfxDictionary.TryGetValue(label, out var sfxItem) ||
                 sfxItem.instances.Count == 0)
                 return;
 
             sfxItem.instances[sfxItem.index].PlaySfxAtPosition(position);
             sfxItem.index = (sfxItem.index + 1) % sfxItem.instances.Count;
 
-            sfxDictionary[label] = sfxItem;
+            _sfxDictionary[label] = sfxItem;
         }
 
         public void StartMusic()
         {
             phantoMusicLoop.ForceStop();
             phantoMusicLoop.StartSfx(true);
+            phantoWarningMusicLoop.ForceStop();
         }
 
         public void StopMusic(bool force = false)
         {
             if (force)
+            {
                 phantoMusicLoop.ForceStop();
+                phantoWarningMusicLoop.ForceStop();
+            }
             else
+            {
                 phantoMusicLoop.StopSfx();
+                phantoWarningMusicLoop.StopSfx();
+            }
+        }
+
+
+        public void StartTutorialMusic()
+        {
+            phantoTutorialMusicLoop.ForceStop();
+            phantoTutorialMusicLoop.StartSfx();
+        }
+
+        public void StopTutorialMusic(bool force = false)
+        {
+            if (force)
+            {
+                phantoTutorialMusicLoop.ForceStop();
+            }
+            else
+            {
+                phantoTutorialMusicLoop.StopSfx();
+            }
+        }
+
+        public void StartWarningLoops()
+        {
+            phantoWarningMusicLoop.StartSfx();
+        }
+        public void SetDangerLevel(float level)
+        {
+            _dangerLevel = Mathf.Lerp(_dangerLevel, level, Time.deltaTime*2);
+            phantoWarningMusicLoop.loopSrc.volume = dangerMusicVolume.Evaluate(_dangerLevel);
+        }
+
+
+        /// <summary>
+        /// Determine the type of the object the phantom landed on and play an associated sound.
+        /// </summary>
+        /// <param name="point"></param>
+        public void PlayPhantomHopSfx(Vector3 point)
+        {
+            // Play a sound based on what you landed on.
+            if (!SceneQuery.TryGetClosestSemanticClassification(point, Vector3.up, out var semanticClassification))
+            {
+                return;
+            }
+
+            var label = semanticClassification.Labels[0];
+
+            if (string.IsNullOrEmpty(label) || !_semanticSfxDictionary.TryGetValue(label, out var queue) )
+            {
+                return;
+            }
+
+            if (queue.TryDequeue(out var oneShot))
+            {
+                oneShot.PlaySfxAtPosition(point);
+                queue.Enqueue(oneShot);
+            }
         }
 
         private void UpdateGooSfxPositions()
         {
             // Sort by distance
             SortNearestGoos();
-            for (var i = 0; i < activeGoos.Count; i++)
+            for (var i = 0; i < _activeGoos.Count; i++)
             {
+                var currentGoo = _activeGoos[i];
+
                 if (i <= numberOfGooSourcesAllowable)
                 {
-                    if (!activeGoos[i].gooLoopSfx.isOn) activeGoos[i].gooLoopSfx.StartSfx();
+                    currentGoo.StartSfx();
                 }
                 else
                 {
-                    if (activeGoos[i].gooLoopSfx.isOn) activeGoos[i].gooLoopSfx.StopSfx();
+                    currentGoo.StopSfx();
                 }
             }
         }
 
         private void SortNearestGoos()
         {
-            activeGoos.Sort((t1, t2) => Vector3.Distance(Camera.main.transform.position, t1.transform.position)
-                .CompareTo(Vector3.Distance(Camera.main.transform.position, t2.transform.position)));
+            var cameraPosition = Camera.main.transform.position;
+
+            _activeGoos.Sort((t1, t2) =>
+                (cameraPosition - t1.Position).sqrMagnitude
+                .CompareTo((cameraPosition - t2.Position).sqrMagnitude));
         }
 
         private IEnumerator GooSfxUpdateLoop()
         {
-            while (true)
+            while (enabled)
             {
                 yield return new WaitForSeconds(updateRate);
                 UpdateGooSfxPositions();
+            }
+        }
+
+        private void PopulatePool(PhantoRandomOneShotSfxBehavior prefab, List<PhantoRandomOneShotSfxBehavior> pool, int size)
+        {
+            var parent = transform;
+
+            for (int i = 0; i < pool.Count; i++)
+            {
+                Destroy(pool[i].gameObject);
+            }
+
+            pool.Clear();
+
+            for (int i = 0; i < size; i++)
+            {
+                var instance = Instantiate(prefab, parent);
+                instance.gameObject.SetSuffix($"{i:000}");
+                pool.Add(instance);
+            }
+        }
+
+        private void PopulateSemanticSfxPool(int size)
+        {
+            foreach (var queue in _semanticSfxDictionary.Values)
+            {
+                foreach (var entry in queue)
+                {
+                    Destroy(entry.gameObject);
+                }
+                queue.Clear();
+            }
+            _semanticSfxDictionary.Clear();
+
+            var parent = transform;
+
+            var count = 0;
+
+            foreach (var soundMap in semanticSoundMapCollection.SoundMaps)
+            {
+                var label = soundMap.name;
+                var prefab = soundMap.oneShotPrefab;
+
+                if (string.IsNullOrEmpty(label) || prefab == null)
+                {
+                    continue;
+                }
+
+                var queue = new Queue<PhantoRandomOneShotSfxBehavior>();
+
+                for (int i = 0; i < size; i++)
+                {
+                    var instance = Instantiate(prefab, parent);
+                    instance.gameObject.SetSuffix($"OneShot {count++:000}");
+                    queue.Enqueue(instance);
+                }
+
+                _semanticSfxDictionary.TryAdd(label, queue);
             }
         }
 
@@ -286,7 +468,7 @@ namespace Phanto.Audio.Scripts
         public class SfxContainer
         {
             public string name;
-            public PhantoRandomOneshotSfxBehavior sfxBehavior;
+            public PhantoRandomOneShotSfxBehavior sfxBehavior;
             public int spawnCount = 8;
         }
     }

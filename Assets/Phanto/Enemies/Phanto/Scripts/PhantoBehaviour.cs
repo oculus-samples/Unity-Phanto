@@ -5,12 +5,13 @@ using System.Diagnostics;
 using Phanto;
 using Phanto.Audio.Scripts;
 using Phanto.Enemies.DebugScripts;
+using Phantom;
 using Phantom.Environment.Scripts;
 using PhantoUtils;
-using PhantoUtils.VR;
 using UnityEngine;
 using Utilities.XR;
 using Debug = UnityEngine.Debug;
+using Random = UnityEngine.Random;
 
 namespace Phanto
 {
@@ -33,6 +34,8 @@ namespace Phanto
             NumStates
         }
 
+        [SerializeField] private Phanto phanto;
+
         [SerializeField] private StateID initialState = StateID.Roam;
         private float _outOfBoundsDuration;
 
@@ -40,10 +43,10 @@ namespace Phanto
         private SphereCollider _sphereCollider;
 
         private Transform _transform;
-        private readonly Transform lookTarget = null;
+        private readonly Transform _lookTarget = null;
 
         // States
-        private readonly IEnemyState<PhantoBehaviour>[] states =
+        private readonly IEnemyState<PhantoBehaviour>[] _states =
         {
             new Nova(),
             new SpitGooBall(),
@@ -55,7 +58,7 @@ namespace Phanto
             new DemoRoam()
         };
 
-        private Vector3 targetPos;
+        private Vector3 _targetPos;
 
         protected override uint InitialState => (uint)initialState;
 
@@ -101,7 +104,7 @@ namespace Phanto
 
         public override IEnemyState<PhantoBehaviour> GetState(uint stateID)
         {
-            return states[(int)stateID];
+            return _states[(int)stateID];
         }
 
         public override void Heal(float healing, IDamageable.DamageCallback callback = null)
@@ -112,29 +115,35 @@ namespace Phanto
         /// Called when an enemy collides with another object
         /// </summary>
         public override void TakeDamage(float damage, Vector3 position, Vector3 normal,
-            IDamageable.DamageCallback callback = null)
+            GameObject damageSource = null, IDamageable.DamageCallback callback = null)
         {
             if ((e.Health <= 0) |
                 e.invulnerable)
                 return;
 
-            Phanto.Instance.SetEmissionColor(Random.Range(0.25f, 6f) * new Color(0.77f, 0.88f, 1f));
+            phanto.SetEmissionColor(Random.Range(0.25f, 6f) * new Color(0.77f, 0.88f, 1f));
 
-            if (curState.GetStateID() == (int)StateID.Roam)
+            var currentState = (StateID)curState.GetStateID();
+
+            if (currentState == StateID.DemoRoam)
             {
-                if (Pain.CausesPain(this, damage)) ((Roam)curState).FeelPain();
+                // don't branch anywhere.
             }
-            else if (curState.GetStateID() != (int)StateID.Nova &&
-                     curState.GetStateID() != (int)StateID.Pain &&
-                     curState.GetStateID() != (int)StateID.Dodge &&
+            else if (currentState == StateID.Roam)
+            {
+                if (Pain.CausesPain(this, damage)) ((Roam)curState).FeelPain(this);
+            }
+            else if (currentState != StateID.Nova &&
+                     currentState != StateID.Pain &&
+                     currentState != StateID.Dodge &&
                      Dodge.ShouldDodge())
             {
                 SwitchState(StateID.Dodge);
             }
-            else if (curState.GetStateID() != (int)StateID.Pain &&
-                     curState.GetStateID() != (int)StateID.Dodge &&
+            else if (currentState != StateID.Pain &&
+                     currentState != StateID.Dodge &&
                      Pain.CausesPain(this, damage) &&
-                     (curState.GetStateID() != (int)StateID.Nova ||
+                     (currentState != StateID.Nova ||
                       ((Nova)curState).CanInterrupt()))
             {
                 SwitchState(StateID.Pain);
@@ -158,7 +167,7 @@ namespace Phanto
 
             if (_outOfBoundsDuration > 3.0f)
             {
-                var point = NavMeshGenerator.Instance.RandomPointOnFloor(CameraRig.Instance.CenterEyeAnchor.position);
+                var point = SceneQuery.RandomPointOnFloorNearUser();
                 point.y = _sceneBounds.center.y;
                 _transform.position = point;
             }
@@ -168,14 +177,21 @@ namespace Phanto
         {
             CheckInBounds();
 
-            Phanto.Instance.SetEmissionColor(new Color(1f, 1f, 1f, 1f));
+            phanto.SetEmissionColor(new Color(1f, 1f, 1f, 1f));
 
-            if (e.Health <= 0f)
+            if (e.Health <= 0f && GameplaySettingsManager.Instance.gameplaySettings.CurrentWave.winCondition ==
+                GameplaySettings.WinCondition.DefeatPhanto)
             {
-                Phanto.Instance.AdvanceWave();
-                if (Phanto.Instance.Wave < Phanto.MAX_WAVES)
+                if (phanto.Wave < GameplaySettingsManager.Instance.gameplaySettings.MaxWaves - 1)
+                {
                     SwitchState(StateID.GoEthereal);
-                else if (curState.GetStateID() != (int)StateID.Die) SwitchState(StateID.Die);
+                    phanto.AdvanceWave();
+                }
+                else if (curState.GetStateID() != (int)StateID.Die)
+                {
+                    SwitchState(StateID.Die);
+                    phanto.AdvanceWave();
+                }
             }
 
             base.UpdateBehaviour();
@@ -192,15 +208,22 @@ namespace Phanto
         /// <summary>
         /// The "Nova" state is a simple "spitfire".
         /// </summary>
-        private class Nova : BasePhantoState
+        public class Nova : BasePhantoState
         {
             public const float MIN_SQR_GOO_DIST = 0.04f;
 
-            private static readonly float[] preCastTimePerWave = { 2f, 1f, 0.5f };
-            private static readonly float[] castTimePerWave = { 5f, 3f, 2f };
-            private static readonly float[] postCastTimePerWave = { 0.3f, 0.25f, 0.05f };
+            [System.Serializable]
+            public class NovaSettings
+            {
+                public float preCastTimePerWave;
+                public float castTimePerWave;
+                public float postCastTimePerWave;
+                public int numTrailsPerWave;
+            }
 
-            private static readonly int[] numTrailsPerWave = { 3, 4, 6 };
+            private NovaSettings _novaSettings => GameplaySettingsManager.Instance.gameplaySettings.CurrentPhantoSetting
+                .novaSettings;
+
 
             private Coroutine novaCoroutine;
             private bool recovering;
@@ -214,18 +237,19 @@ namespace Phanto
 
             public bool CanInterrupt()
             {
-                return !recovering | (timer <= postCastTimePerWave[Phanto.Instance.Wave]);
+                return !recovering | (timer <= _novaSettings.postCastTimePerWave);
             }
 
             public override void EnterState(PhantoBehaviour b, IEnemyState<PhantoBehaviour> lastState)
             {
-                timer = preCastTimePerWave[Phanto.Instance.Wave];
+                timer = _novaSettings.preCastTimePerWave;
                 recovering = false;
 
-                b.targetPos = b.e.rigidbody.position;
+                b._targetPos = b.e.rigidbody.position;
 
                 if (b.e.invulnerable)
-                    b.e.StartCoroutine(Phanto.Instance.ToggleEthereal(preCastTimePerWave[Phanto.Instance.Wave]));
+                    b.e.StartCoroutine(b.phanto.ToggleEthereal(GameplaySettingsManager.Instance.gameplaySettings
+                        .CurrentPhantoSetting.novaSettings.postCastTimePerWave));
             }
 
             public override void OnCollisionStay(PhantoBehaviour b, Collision c)
@@ -238,8 +262,8 @@ namespace Phanto
 
             public override void UpdateState(PhantoBehaviour b)
             {
-                b.e.HoverAround(b.targetPos);
-                b.e.AimTowards(b.lookTarget != null ? b.lookTarget.position : Vector3.zero);
+                b.e.HoverAround(b._targetPos);
+                b.e.AimTowards(b._lookTarget != null ? b._lookTarget.position : Vector3.zero);
                 b.e.KeepUpright(Vector3.up);
 
                 if (timer <= 0f)
@@ -250,17 +274,17 @@ namespace Phanto
                         return;
                     }
 
-                    Phanto.Instance.animator.SetTrigger(Phanto.spitParamId);
-                    Phanto.Instance.animator.speed = Phanto.Instance.animator.GetCurrentAnimatorStateInfo(0).length /
-                                                     castTimePerWave[Phanto.Instance.Wave];
+                    b.phanto.animator.SetTrigger(Phanto.spitParamId);
+                    b.phanto.animator.speed = b.phanto.animator.GetCurrentAnimatorStateInfo(0).length /
+                                              _novaSettings.castTimePerWave;
 
-                    novaCoroutine = b.e.StartCoroutine(Phanto.Instance.CastGooNova(
-                        numTrailsPerWave[Phanto.Instance.Wave],
+                    novaCoroutine = b.e.StartCoroutine(b.phanto.CastGooNova(
+                        _novaSettings.numTrailsPerWave,
                         MIN_SQR_GOO_DIST,
-                        castTimePerWave[Phanto.Instance.Wave],
-                        LayerMask.GetMask("GlobalMesh")));
+                        _novaSettings.castTimePerWave,
+                        NavMeshConstants.SceneMeshLayerMask));
                     recovering = true;
-                    timer = castTimePerWave[Phanto.Instance.Wave] + postCastTimePerWave[Phanto.Instance.Wave];
+                    timer = _novaSettings.castTimePerWave + _novaSettings.postCastTimePerWave;
                 }
                 else
                 {
@@ -272,7 +296,7 @@ namespace Phanto
             {
                 if (novaCoroutine != null) b.e.StopCoroutine(novaCoroutine);
 
-                Phanto.Instance.animator.speed = 1f;
+                b.phanto.animator.speed = 1f;
                 b.e.ResetMovementSettings();
             }
 
@@ -285,20 +309,23 @@ namespace Phanto
         /// <summary>
         /// The "Spit Goo Ball" state.
         /// </summary>
-        private class SpitGooBall : BasePhantoState
+        public class SpitGooBall : BasePhantoState
         {
-            private static readonly Vector2[] weaponSpreadPerWave =
+            [System.Serializable]
+            public class SpitGooBallSettings
             {
-                new(0.01f, 0.05f),
-                new(0.02f, 0.06f),
-                new(0.035f, 0.07f)
-            };
+                public Vector2 weaponSpreadPerWave;
+                public uint weaponNumProjPerWave;
+                public float preAttackTimePerWave;
+                public float refireTimePerWave;
+                public float postAttackTimePerWave;
+                public int numVolleysPerWave;
+            }
 
-            private static readonly uint[] weaponNumProjPerWave = { 2u, 3u, 1u };
-            private static readonly float[] preAttackTimePerWave = { 0.16f, 0.08f, 0.04f };
-            private static readonly float[] refireTimePerWave = { 0.5f, 0.2f, 0.1f };
-            private static readonly float[] postAttackTimePerWave = { 0.3f, 0.25f, 0.05f };
-            private static readonly int[] numVolleysPerWave = { 1, 2, 3 };
+            private SpitGooBallSettings _spitGooBallSettings =>
+                GameplaySettingsManager.Instance.gameplaySettings.CurrentPhantoSetting.spitGooBallSettings;
+
+
             private float timer;
 
             private int volley;
@@ -311,8 +338,8 @@ namespace Phanto
             public override void EnterState(PhantoBehaviour b, IEnemyState<PhantoBehaviour> lastState)
             {
                 volley = 0;
-                timer = preAttackTimePerWave[Phanto.Instance.Wave];
-                b.targetPos = b.e.rigidbody.position;
+                timer = _spitGooBallSettings.preAttackTimePerWave;
+                b._targetPos = b.e.rigidbody.position;
                 b.e.maxAngularVelocity = 0.3f * b.e.maxAngularVelocity;
                 b.e.maxAngularAcceleration = 0.2f * b.e.maxAngularAcceleration;
             }
@@ -327,31 +354,33 @@ namespace Phanto
 
             public override void UpdateState(PhantoBehaviour b)
             {
-                b.e.HoverAround(b.targetPos);
-                b.e.AimTowards(b.lookTarget != null ? b.lookTarget.position : Vector3.zero);
+                b.e.HoverAround(b._targetPos);
+                b.e.AimTowards(b._lookTarget != null ? b._lookTarget.position : Vector3.zero);
                 b.e.KeepUpright(Vector3.up);
 
                 if (timer <= 0f)
                 {
-                    if (volley >= numVolleysPerWave[Phanto.Instance.Wave])
+                    if (volley >= _spitGooBallSettings.numVolleysPerWave)
                     {
                         b.SwitchState(StateID.Roam);
                         return;
                     }
 
-                    if (Phanto.Instance.Wave >= 0 && Phanto.Instance.Wave <= weaponNumProjPerWave.Length)
-                        if (Phanto.Instance.Wave >= 0 && Phanto.Instance.Wave <= weaponSpreadPerWave.Length)
-                            Phanto.Instance.ShootGooball(weaponNumProjPerWave[Phanto.Instance.Wave],
-                                weaponSpreadPerWave[Phanto.Instance.Wave]);
+                    if (b.phanto.Wave >= 0 &&
+                        b.phanto.Wave <= GameplaySettingsManager.Instance.gameplaySettings.MaxWaves)
+                        if (b.phanto.Wave >= 0 &&
+                            b.phanto.Wave <= GameplaySettingsManager.Instance.gameplaySettings.MaxWaves)
+                            b.phanto.ShootGooball(_spitGooBallSettings.weaponNumProjPerWave,
+                                _spitGooBallSettings.weaponSpreadPerWave);
 
-                    if (volley < numVolleysPerWave[Phanto.Instance.Wave])
+                    if (volley < _spitGooBallSettings.numVolleysPerWave)
                     {
                         ++volley;
-                        timer = refireTimePerWave[Phanto.Instance.Wave];
+                        timer = _spitGooBallSettings.refireTimePerWave;
                     }
                     else
                     {
-                        timer = postAttackTimePerWave[Phanto.Instance.Wave];
+                        timer = _spitGooBallSettings.postAttackTimePerWave;
                     }
                 }
                 else
@@ -374,16 +403,24 @@ namespace Phanto
         /// <summary>
         /// The "Pain" state.
         /// </summary>
-        private class Pain : BasePhantoState
+        public class Pain : BasePhantoState
         {
-            private static readonly float[] painChancePerWave = { 0.1f, 0.07f, 0.04f };
-            private static readonly float[] painTimePerWave = { 0.11f, 0.08f, 0.0666667f };
+            [System.Serializable]
+            public class PainSettings
+            {
+                public float painChancePerWave;
+                public float painTimePerWave;
+            }
+
+            private static PainSettings _painSettings =>
+                GameplaySettingsManager.Instance.gameplaySettings.CurrentPhantoSetting.painSettings;
+
             private float timeLeft;
 
             public static bool CausesPain(PhantoBehaviour b, float damage)
             {
                 return damage >= b.e.painThreshold &&
-                       Random.value <= painChancePerWave[Phanto.Instance.Wave];
+                       Random.value <= _painSettings.painChancePerWave;
             }
 
             public override uint GetStateID()
@@ -393,8 +430,8 @@ namespace Phanto
 
             public override void EnterState(PhantoBehaviour b, IEnemyState<PhantoBehaviour> lastState)
             {
-                timeLeft = painTimePerWave[Phanto.Instance.Wave];
-                Phanto.Instance.animator.SetTrigger(Phanto.hitParamId);
+                timeLeft = _painSettings.painTimePerWave;
+                b.phanto.animator.SetTrigger(Phanto.hitParamId);
             }
 
             public override void OnCollisionStay(PhantoBehaviour b, Collision c)
@@ -407,8 +444,8 @@ namespace Phanto
 
             public override void UpdateState(PhantoBehaviour b)
             {
-                b.e.HoverAround(b.targetPos);
-                b.e.AimTowards(b.lookTarget != null ? b.lookTarget.position : Vector3.zero);
+                b.e.HoverAround(b._targetPos);
+                b.e.AimTowards(b._lookTarget != null ? b._lookTarget.position : Vector3.zero);
                 b.e.KeepUpright(Vector3.up);
 
                 timeLeft -= Time.fixedDeltaTime;
@@ -428,9 +465,17 @@ namespace Phanto
         /// <summary>
         /// The "Go Ethereal" state.
         /// </summary>
-        private class GoEthereal : BasePhantoState
+        public class GoEthereal : BasePhantoState
         {
-            private static readonly float[] castTimePerWave = { 3f, 2f, 1f };
+            [System.Serializable]
+            public class GoEtherealSettings
+            {
+                public float castTimePerWave;
+            }
+
+            private GoEtherealSettings _goEtherealSettings =>
+                GameplaySettingsManager.Instance.gameplaySettings.CurrentPhantoSetting.goEtherealSettings;
+
             private bool spinCW;
 
             private float timeLeft;
@@ -443,13 +488,13 @@ namespace Phanto
             public override void EnterState(PhantoBehaviour b, IEnemyState<PhantoBehaviour> lastState)
             {
                 PhantoGooSfxManager.Instance.PlayPhantoDieVo(b.transform.position);
-                timeLeft = castTimePerWave[Phanto.Instance.Wave];
+                timeLeft = _goEtherealSettings.castTimePerWave;
                 spinCW = Random.value < 0.5f;
-                b.targetPos = b.e.rigidbody.position;
+                b._targetPos = b.e.rigidbody.position;
                 b.e.ResetHealth();
                 if (b.e.isActiveAndEnabled)
                 {
-                    b.e.StartCoroutine(Phanto.Instance.ToggleEthereal(castTimePerWave[Phanto.Instance.Wave]));
+                    b.e.StartCoroutine(b.phanto.ToggleEthereal(_goEtherealSettings.castTimePerWave));
                 }
             }
 
@@ -463,7 +508,7 @@ namespace Phanto
 
             public override void UpdateState(PhantoBehaviour b)
             {
-                b.e.HoverAround(b.targetPos);
+                b.e.HoverAround(b._targetPos);
                 b.e.Spin(spinCW);
                 b.e.KeepUpright(Vector3.up);
 
@@ -484,15 +529,24 @@ namespace Phanto
         /// <summary>
         /// The "Dodge" state.
         /// </summary>
-        private class Dodge : BasePhantoState
+        public class Dodge : BasePhantoState
         {
             public const float X_DIST = 0.3f;
-            private static readonly float[] dodgeChancePerWave = { 0.3f, 0.6f, 0.9f };
+
+            [System.Serializable]
+            public class DodgeSettings
+            {
+                public float dodgeChancePerWave;
+            }
+
+            private static DodgeSettings _dodgeSettings =>
+                GameplaySettingsManager.Instance.gameplaySettings.CurrentPhantoSetting.dodgeSettings;
+
             private bool left;
 
             public static bool ShouldDodge()
             {
-                return Random.value <= dodgeChancePerWave[Phanto.Instance.Wave];
+                return Random.value <= _dodgeSettings.dodgeChancePerWave;
             }
 
             public override uint GetStateID()
@@ -503,18 +557,18 @@ namespace Phanto
             public override void EnterState(PhantoBehaviour b, IEnemyState<PhantoBehaviour> lastState)
             {
                 left = Random.value < 0.5f;
-                b.targetPos = b.e.rigidbody.position;
+                b._targetPos = b.e.rigidbody.position;
                 var rot = Quaternion.AngleAxis(b.e.rigidbody.rotation.eulerAngles.y, Vector3.up);
-                if (b.targetPos.y >= 0.75f &&
+                if (b._targetPos.y >= 0.75f &&
                     Random.value <= 0.5f)
                 {
-                    b.targetPos.y = Random.Range(0.45f, Mathf.Max(0.45f, 0.9f * b.targetPos.y - 0.46f));
-                    b.targetPos += rot * (X_DIST * (left ? Vector3.left : Vector3.right));
+                    b._targetPos.y = Random.Range(0.45f, Mathf.Max(0.45f, 0.9f * b._targetPos.y - 0.46f));
+                    b._targetPos += rot * (X_DIST * (left ? Vector3.left : Vector3.right));
                 }
                 else
                 {
-                    b.targetPos += X_DIST * (left ? Vector3.up : Vector3.down);
-                    b.targetPos += rot * (Random.Range(2f * X_DIST, 3.75f * X_DIST) *
+                    b._targetPos += X_DIST * (left ? Vector3.up : Vector3.down);
+                    b._targetPos += rot * (Random.Range(2f * X_DIST, 3.75f * X_DIST) *
                                           (left ? Vector3.left : Vector3.right));
                 }
             }
@@ -526,11 +580,11 @@ namespace Phanto
                 var cDir = cLocal.normalized;
                 b.e.MoveAlong(-cDir);
 
-                var tLocal = b.targetPos - b.e.rigidbody.position;
+                var tLocal = b._targetPos - b.e.rigidbody.position;
                 if (Vector3.Dot(tLocal, cDir) >= cLocal.magnitude - b.e.proxSensor.Radius)
                 {
-                    cLocal = contact - b.targetPos;
-                    b.targetPos += 1.3f * cLocal + b.e.proxSensor.Radius * cLocal.normalized;
+                    cLocal = contact - b._targetPos;
+                    b._targetPos += 1.3f * cLocal + b.e.proxSensor.Radius * cLocal.normalized;
                 }
             }
 
@@ -541,12 +595,12 @@ namespace Phanto
             public override void UpdateState(PhantoBehaviour b)
             {
                 b.e.BarrelRoll(left);
-                b.e.AimTowards(b.targetPos);
-                b.e.FlyTo(b.targetPos);
+                b.e.AimTowards(b._targetPos);
+                b.e.FlyTo(b._targetPos);
 
-                if (b.e.rigidbody.position.y - b.targetPos.y <= 0.05f)
+                if (b.e.rigidbody.position.y - b._targetPos.y <= 0.05f)
                 {
-                    b.targetPos = b.e.rigidbody.position;
+                    b._targetPos = b.e.rigidbody.position;
                     b.SwitchState(StateID.Roam);
                 }
             }
@@ -564,11 +618,20 @@ namespace Phanto
         /// <summary>
         /// The "Roam" state.
         /// </summary>
-        private class Roam : BasePhantoState
+        public class Roam : BasePhantoState
         {
-            private static readonly float[] thinkTimePerWave = { 0.6f, 0.2f, 0.083f };
-            private static readonly float[] speedScalePerWave = { 0.3f, 0.5f, 0.7f };
-            private static readonly float[] painTimePerWave = { 1.5f, 2f, 2.5f };
+            [System.Serializable]
+            public class RoamSettings
+            {
+                public float thinkTimePerWave;
+                public float speedScalePerWave;
+                public float painTimePerWave;
+            }
+
+            private RoamSettings _roamSettings =>
+                GameplaySettingsManager.Instance.gameplaySettings.CurrentPhantoSetting.roamSettings;
+
+
             private Vector3 dir;
             private float dirTimer;
             private float painTimer;
@@ -579,26 +642,26 @@ namespace Phanto
                 return (uint)StateID.Roam;
             }
 
-            public void FeelPain()
+            public void FeelPain(PhantoBehaviour b)
             {
-                painTimer = painTimePerWave[Phanto.Instance.Wave];
-                Phanto.Instance.animator.SetTrigger(Phanto.hitParamId);
-                Phanto.Instance.animator.speed = Phanto.Instance.animator.GetCurrentAnimatorStateInfo(0).length /
-                                                 painTimePerWave[Phanto.Instance.Wave];
-                PhantoGooSfxManager.Instance.PlayPhantoHurtVo(Phanto.Instance.transform.position);
+                painTimer = _roamSettings.painTimePerWave;
+                b.phanto.animator.SetTrigger(Phanto.hitParamId);
+                b.phanto.animator.speed = b.phanto.animator.GetCurrentAnimatorStateInfo(0).length /
+                                          _roamSettings.painTimePerWave;
+                PhantoGooSfxManager.Instance.PlayPhantoHurtVo(b.phanto.transform.position);
             }
 
             private void UpdateMoveSpeed(PhantoBehaviour b)
             {
                 b.e.ResetMovementSettings();
                 var t = Mathf.Min(1f,
-                    b.e.Health / 100f + (1f - painTimer / painTimePerWave[Phanto.Instance.Wave]));
+                    b.e.Health / 100f + (1f - painTimer / _roamSettings.painTimePerWave));
                 b.e.maxVelocity *= Mathf.Lerp(1f,
-                    speedScalePerWave[Phanto.Instance.Wave],
+                    _roamSettings.speedScalePerWave,
                     t);
-                if (Phanto.Instance.animator.GetCurrentAnimatorClipInfo(0).Length > 0)
-                    if (!Phanto.Instance.animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.Equals(Phanto.HIT))
-                        Phanto.Instance.animator.speed = Mathf.Min(1f / t, 4f);
+                if (b.phanto.animator.GetCurrentAnimatorClipInfo(0).Length > 0)
+                    if (!b.phanto.animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.Equals(Phanto.HIT))
+                        b.phanto.animator.speed = Mathf.Min(1f / t, 4f);
             }
 
             public override void EnterState(PhantoBehaviour b, IEnemyState<PhantoBehaviour> lastState)
@@ -609,7 +672,7 @@ namespace Phanto
                 dir = Quaternion.AngleAxis(Random.Range(-180f, 180f) + b.e.rigidbody.rotation.eulerAngles.y,
                     Vector3.up) * Vector3.forward;
 
-                thinkTimer = b.e.invulnerable ? 6f : thinkTimePerWave[Phanto.Instance.Wave];
+                thinkTimer = b.e.invulnerable ? 6f : _roamSettings.thinkTimePerWave;
             }
 
             public override void OnCollisionStay(PhantoBehaviour b, Collision c)
@@ -670,7 +733,7 @@ namespace Phanto
                             return;
                     }
 
-                    thinkTimer = thinkTimePerWave[Phanto.Instance.Wave];
+                    thinkTimer = _roamSettings.thinkTimePerWave;
                 }
                 else
                 {
@@ -717,9 +780,6 @@ namespace Phanto
 
             public override void EnterState(PhantoBehaviour b, IEnemyState<PhantoBehaviour> lastState)
             {
-                b.e.DropSmallItems();
-                b.e.DropLargeItem();
-
                 PhantoGooSfxManager.Instance.StopMusic(true);
 
                 initialScale = b.e.transform.localScale;
@@ -727,14 +787,14 @@ namespace Phanto
                 time = 0f;
                 if (b.e.isActiveAndEnabled)
                 {
-                    b.e.StartCoroutine(Phanto.Instance.ToggleEthereal(DEATH_TIME));
+                    b.e.StartCoroutine(b.phanto.ToggleEthereal(DEATH_TIME));
                 }
 
                 b.e.rigidbody.detectCollisions = false;
 
                 b.e.maxAngularVelocity = 0.5f * b.e.maxAngularVelocity;
 
-                b.targetPos = b.e.transform.position;
+                b._targetPos = b.e.transform.position;
             }
 
             public override void OnCollisionStay(PhantoBehaviour b, Collision c)
@@ -752,7 +812,7 @@ namespace Phanto
 
             public override void UpdateState(PhantoBehaviour b)
             {
-                b.e.HoverAround(b.targetPos);
+                b.e.HoverAround(b._targetPos);
                 b.e.Spin(false);
                 b.e.BarrelRoll(true);
 
@@ -795,9 +855,9 @@ namespace Phanto
         /// </summary>
         private class DemoRoam : BasePhantoState
         {
-            private static readonly float[] thinkTimePerWave = { 0.6f, 0.2f, 0.083f };
-            private static readonly float[] speedScalePerWave = { 0.3f, 0.5f, 0.7f };
-            private static readonly float[] painTimePerWave = { 1.5f, 2f, 2.5f };
+            private const float thinkTimePerWave = 0.6f;
+            private const float speedScalePerWave = 0.3f;
+            private const float painTimePerWave = 1.5f;
 
             private readonly Queue<(Vector3 cp, Vector3 dir, long ms)> contactPoints = new();
             private readonly Stopwatch contactStopwatch = Stopwatch.StartNew();
@@ -815,13 +875,13 @@ namespace Phanto
             {
                 b.e.ResetMovementSettings();
                 var t = Mathf.Min(1f,
-                    b.e.Health / 100f + (1f - painTimer / painTimePerWave[Phanto.Instance.Wave]));
+                    b.e.Health / 100f + (1f - painTimer / painTimePerWave));
                 b.e.maxVelocity *= Mathf.Lerp(1f,
-                    speedScalePerWave[Phanto.Instance.Wave],
+                    speedScalePerWave,
                     t);
-                if (Phanto.Instance.animator.GetCurrentAnimatorClipInfo(0).Length > 0)
-                    if (!Phanto.Instance.animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.Equals(Phanto.HIT))
-                        Phanto.Instance.animator.speed = Mathf.Min(1f / t, 4f);
+                if (b.phanto.animator.GetCurrentAnimatorClipInfo(0).Length > 0)
+                    if (!b.phanto.animator.GetCurrentAnimatorClipInfo(0)[0].clip.name.Equals(Phanto.HIT))
+                        b.phanto.animator.speed = Mathf.Min(1f / t, 4f);
             }
 
             public override void EnterState(PhantoBehaviour b, IEnemyState<PhantoBehaviour> lastState)
@@ -832,7 +892,7 @@ namespace Phanto
                 dir = Quaternion.AngleAxis(Random.Range(-180f, 180f) + b.e.rigidbody.rotation.eulerAngles.y,
                     Vector3.up) * Vector3.forward;
 
-                thinkTimer = b.e.invulnerable ? 6f : thinkTimePerWave[Phanto.Instance.Wave];
+                thinkTimer = b.e.invulnerable ? 6f : thinkTimePerWave;
             }
 
             public override void OnCollisionStay(PhantoBehaviour b, Collision c)
@@ -882,7 +942,7 @@ namespace Phanto
                 }
 
                 if (thinkTimer <= 0f)
-                    thinkTimer = thinkTimePerWave[Phanto.Instance.Wave];
+                    thinkTimer = thinkTimePerWave;
                 else
                     thinkTimer -= Time.fixedDeltaTime;
             }
@@ -922,6 +982,21 @@ namespace Phanto
         }
 
         #endregion
+
+#if UNITY_EDITOR
+        private void Reset()
+        {
+            OnValidate();
+        }
+
+        private void OnValidate()
+        {
+            if (phanto == null)
+            {
+                phanto = GetComponent<Phanto>();
+            }
+        }
+#endif
     }
 }
 

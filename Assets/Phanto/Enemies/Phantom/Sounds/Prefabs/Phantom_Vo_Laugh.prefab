@@ -26,13 +26,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3038659263528606234}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1095485058511399778
 MonoBehaviour:
@@ -48,12 +48,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playOnAwake: 0
   clips:
-  - {fileID: 8300000, guid: 90dc95d5de6c79b49a71fef73dbe1e9f, type: 3}
-  - {fileID: 8300000, guid: 48d1c2e36ced973459b908673da1aa56, type: 3}
-  - {fileID: 8300000, guid: 2223563fe861ed042bbe24b8b5e6dde9, type: 3}
-  - {fileID: 8300000, guid: d83ab55bebbe8664ba30b9205fd62dbe, type: 3}
-  - {fileID: 8300000, guid: cacb7a11644fd674aae098985fbbcf28, type: 3}
-  - {fileID: 8300000, guid: 77af0b0f44f77334bbb4204ee71b9694, type: 3}
+  - {fileID: 8300000, guid: 6078cfdcf7fd3564eb760a6113fa18ff, type: 3}
+  - {fileID: 8300000, guid: 07e9e48878c800544ae52cc0e2a4f38b, type: 3}
+  - {fileID: 8300000, guid: b184509c68d02e347b2f22ca48496c34, type: 3}
+  - {fileID: 8300000, guid: 047f19daba506ff4e91fd8669ae0f4e9, type: 3}
+  - {fileID: 8300000, guid: 44ac552ae2b02114a92e8718d565acf3, type: 3}
+  - {fileID: 8300000, guid: 507cdcf798f090a4786490525c1c43d3, type: 3}
+  - {fileID: 8300000, guid: 0d86d530feed25d47b6279e236e4f6eb, type: 3}
+  - {fileID: 8300000, guid: 10c21c8c9a1e14b4b986933a4a4481b5, type: 3}
+  - {fileID: 8300000, guid: e44ef2fcda29c5e49b06aa0df4ea3081, type: 3}
+  - {fileID: 8300000, guid: e6f960962d1635041b1d30868b2a68ba, type: 3}
+  - {fileID: 8300000, guid: f19abb252e4e82d449ecdfaa235fb0fd, type: 3}
   pitchMin: 1.2
   pitchMax: 1.3
   chanceToPlay: 100
@@ -69,11 +74,11 @@ AudioSource:
   m_GameObject: {fileID: 3038659263528606234}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: -5918671688248155985, guid: 1dd706bb85d8aef4e83a6229dbd62c36, type: 2}
+  OutputAudioMixerGroup: {fileID: -6049054017482126911, guid: 1dd706bb85d8aef4e83a6229dbd62c36, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
-  m_Pitch: 1
+  m_Pitch: 1.26
   Loop: 0
   Mute: 0
   Spatialize: 1

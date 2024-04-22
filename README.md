@@ -22,9 +22,9 @@ following our
 
 ## Requirements
 
-- Recommended Unity version: 2022.3.4f1
+- Recommended Unity version: 2022.3.20f1
 - Mac or Windows
-- Unity OVR Integration package v60 (included in the project)
+- Unity OVR Integration package v64 (included in the project)
 
 <br><br>
 
@@ -133,6 +133,9 @@ permissions.
 The following diagram shows the high-level states for the player after they have
 fulfilled the requirements above. When launching the game for the first time,
 the player will go through a tutorial. Afterward, the tutorial can be skipped.
+During gameplay, the player will go through several waves, which can be either:
+1. Phanto Wave - requires the player to spray Phanto using the Polterblast 3000 while keeping goo levels low.
+2. Phantom Wave - requires the player to protect the green crystal by placing the EctoBlaster in strategic locations using both controllers.
 
 ```mermaid
 graph TD;
@@ -140,10 +143,13 @@ graph TD;
     Lobby-->Tutorial;
     Lobby-->Game;
     Tutorial-->Game;
-    Game-->Win;
-    Game-->Lose;
+    Game-->Phanto/PhantomWave;
+    Phanto/PhantomWave-->Phanto/PhantomWave
+    Phanto/PhantomWave-->Win;
     Win-->Game;
+    Phanto/PhantomWave-->Lose;
     Lose-->Game;
+
 ```
 
 <br><br>
@@ -161,6 +167,7 @@ graph TD;
     AirNavigation;
     MeshNavigation;
     SceneVisualization;
+    SemanticSceneQuery;
     DebugDrawingScene;
     UserInBounds;
     DepthOcclusion;
@@ -272,7 +279,7 @@ mixed reality that responds to the scene.
 
 1. Clone the project using:
    `git clone https://github.com/oculus-samples/Unity-Phanto`
-2. Recommended Unity version - 2022.3.4f1.
+2. Recommended Unity version - 2022.3.20f1.
 
 ## Using the project's scenes
 
@@ -310,14 +317,16 @@ scenes:
 5. [SceneVisualization](Assets/Phanto/Scenes/Features/SceneVisualization.unity):
    a debug scene that presents the mesh and the furniture bounding box, if
    available.
-6. [DebugDrawingScene](Assets/Phanto/Scenes/Features/DebugDrawingScene.unity): a
+6. [SemanticSceneQuery](Assets/Phanto/Scenes/Features/SemanticSceneQuery.unity): showcases phantom wave logic, allowing phantoms to navigate to furniture and attack crysals.
+7. [DebugDrawingScene](Assets/Phanto/Scenes/Features/DebugDrawingScene.unity): a
    debug scene that showcases some of the developer debug tools.
-7. [UserInBounds](Assets/Phanto/Scenes/Features/UserInBounds.unity): shows the
-   recommended handling of notifying the user when leaving the scene bounds.
-8. [DepthOcclusion](Assets/Phanto/Scenes/Features/DepthOcclusion.unity): demonstrates the use of soft and hard dynamic occlusions implemented using the [Depth API](https://developer.oculus.com/experimental/scene-depth-unity/)
-9. [HapticsDemo](Assets/Phanto/Scenes/Features/HapticsDemo.unity): showcases the
+8. [UserInBounds](Assets/Phanto/Scenes/Features/UserInBounds.unity): shows the
+recommended way of handling player notifications when they are leaving the scene bounds.
+9. [DepthOcclusion](Assets/Phanto/Scenes/Features/DepthOcclusion.unity): demonstrates the use of soft and hard dynamic occlusions implemented using the [Depth API](https://developer.oculus.com/experimental/scene-depth-unity/)
+10. [HapticsDemo](Assets/Phanto/Scenes/Features/HapticsDemo.unity): showcases the
    integration of haptics with dynamic modulation tied to controller
    interactions and virtual objects.
+
 
 <br><br>
 
@@ -395,6 +404,7 @@ The tutorial scene introduces the player to game mechanics. In this scene, the
 player will learn how to:
 
 - Use the Polterblast 3000.
+- Fight Phanto
 - Place the Ecto Blaster.
 - Shoot and interact with Phantoms.
 
@@ -407,9 +417,9 @@ Phanto) are used in the game. In addition, a set of controller-locked UI screens
 can be found here. As with other scenes, the tutorial scene also uses the scene
 mesh and scene elements, managed by the **SceneDataLoader** component.
 
-|                     Welcome                     |                   Polterblast                   |                  Ecto Blaster                   |                    Phantoms                     |                   Start Game                    |
-| :---------------------------------------------: | :---------------------------------------------: | :---------------------------------------------: | :---------------------------------------------: | :---------------------------------------------: |
-| ![Tutorial1](./Media/Tutorial1.PNG 'Tutorial1') | ![Tutorial2](./Media/Tutorial2.PNG 'Tutorial2') | ![Tutorial3](./Media/Tutorial3.PNG 'Tutorial3') | ![Tutorial4](./Media/Tutorial4.PNG 'Tutorial4') | ![Tutorial5](./Media/Tutorial5.PNG 'Tutorial5') |
+|                     Welcome                     |                     Polterblast                     |                   Goo                   |                  Ecto Blaster                   |                    Phantoms                     |                   Start Game                    |
+| :---------------------------------------------: | :---------------------------------------------: | :---------------------------------------------: | :---------------------------------------------: | :---------------------------------------------: | :---------------------------------------------: |
+| ![Tutorial0](./Media/Tutorial1.PNG 'Tutorial0')| ![Tutorial1](./Media/Tutorial1.PNG 'Tutorial1') | ![Tutorial2](./Media/Tutorial2.PNG 'Tutorial2') | ![Tutorial3](./Media/Tutorial3.PNG 'Tutorial3') | ![Tutorial4](./Media/Tutorial4.PNG 'Tutorial4') | ![Tutorial5](./Media/Tutorial5.PNG 'Tutorial5') |
 
 <br><br>
 
@@ -494,6 +504,14 @@ available.
 
 <br><br>
 
+## Semantic Scene Query
+
+![Semantic Scene Query](./Media/SemanticSceneQuery.gif 'Semantic Scene Query')
+
+[SemanticSceneQuery.unity](Assets/Phanto/Scenes/Features/SemanticSceneQuery.unity)
+Demonstrates how to properly use the furniture that can be automatically discovered in the scene. The phantoms are using the Scene Mesh by spawning, targeting, navigating, and attacking crystals. In addition, the phantoms' thought bubble makes the game more immersive and compelling, allowing advanced path planning based on the automatically detected furniture.
+<br><br>
+
 ## Debug Drawing Scene
 
 ![Debug Scene](./Media/DebugDrawScene.gif 'Debug Scene')
@@ -526,6 +544,8 @@ hands is inside/outside the bounds, using
 demonstrates best practices for dynamic occlusion using the [Depth API](https://developer.oculus.com/experimental/scene-depth-unity/) which uses real-time depth estimation for occlusions. To mitigate performance impact, a mixture of soft and hard occlusions were selected for each element in the game. Visit the [Depth API open-source repository](https://github.com/oculus-samples/Unity-DepthAPI) to learn more and try the new SDK.
 
 <br><br>
+
+
 
 
 ## Haptics Demo

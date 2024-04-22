@@ -19,7 +19,7 @@ public class DebugSceneEntities : MonoBehaviour
     private readonly List<OVRSceneVolume> _sceneVolumes = new List<OVRSceneVolume>();
 
     private bool _visible = false;
-    private readonly Vector3[] _linePoints = new Vector3[4];
+    private readonly Vector3[] _linePoints = new Vector3[256];
 
     private void Awake()
     {
@@ -61,6 +61,11 @@ public class DebugSceneEntities : MonoBehaviour
 
     private void DebugDraw(OVRSceneVolume sceneVolume)
     {
+        if (!sceneVolume.gameObject.activeInHierarchy)
+        {
+            return;
+        }
+
         var volumeTransform = sceneVolume.transform;
         var dimensions = sceneVolume.Dimensions;
         var pos = volumeTransform.position;
@@ -80,15 +85,21 @@ public class DebugSceneEntities : MonoBehaviour
 
     private void DebugDraw(OVRScenePlane scenePlane)
     {
+        if (!scenePlane.gameObject.activeInHierarchy)
+        {
+            return;
+        }
+
         var planeTransform = scenePlane.transform;
-        var halfDim = scenePlane.Dimensions * 0.5f;
 
-        _linePoints[0] = planeTransform.TransformPoint(new Vector2(halfDim.x, halfDim.y));
-        _linePoints[1] = planeTransform.TransformPoint(new Vector2(halfDim.x, -halfDim.y));
-        _linePoints[2] = planeTransform.TransformPoint(new Vector2(-halfDim.x, -halfDim.y));
-        _linePoints[3] = planeTransform.TransformPoint(new Vector2(-halfDim.x, halfDim.y));
+        var pointCount = Mathf.Min(scenePlane.Boundary.Count, _linePoints.Length);
 
-        XRGizmos.DrawLineList(_linePoints, planeColor, true);
+        for (int i = 0; i < pointCount; i++)
+        {
+            _linePoints[i] = planeTransform.TransformPoint(scenePlane.Boundary[i]);
+        }
+
+        XRGizmos.DrawLineList(_linePoints, planeColor, true, pointCount);
     }
 
     private void DebugMenuToggle(bool visible)
@@ -120,13 +131,6 @@ public class DebugSceneEntities : MonoBehaviour
 
         foreach (var child in children)
         {
-            var classification = child.Labels[0];
-            if (classification == OVRSceneManager.Classification.Floor ||
-                classification == OVRSceneManager.Classification.Ceiling)
-            {
-                continue;
-            }
-
             if (child.TryGetComponent<OVRSceneVolume>(out var volume))
             {
                 _sceneVolumes.Add(volume);

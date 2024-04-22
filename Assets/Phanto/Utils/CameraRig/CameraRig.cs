@@ -10,12 +10,16 @@ namespace PhantoUtils.VR
     {
         [SerializeField] private OVRCameraRig cameraRig;
 
+        [SerializeField] private InteractionRig interactionRig;
+
         public OVRCameraRig OVRCameraRig => cameraRig;
         public Transform CenterEyeAnchor => cameraRig.centerEyeAnchor;
         public Transform LeftHandAnchor => cameraRig.leftHandAnchor;
         public Transform RightHandAnchor => cameraRig.rightHandAnchor;
         public Transform LeftControllerAnchor => cameraRig.leftControllerAnchor;
         public Transform RightControllerAnchor => cameraRig.rightControllerAnchor;
+
+        public InteractionRig InteractionRig => interactionRig;
 
         protected override void Awake()
         {
@@ -38,7 +42,15 @@ namespace PhantoUtils.VR
 
         private void FindDependencies()
         {
-            if (cameraRig == null) cameraRig = GetComponentInChildren<OVRCameraRig>();
+            if (cameraRig == null)
+            {
+                cameraRig = GetComponentInChildren<OVRCameraRig>();
+            }
+
+            if (interactionRig == null)
+            {
+                interactionRig = GetComponent<InteractionRig>();
+            }
         }
     }
 }

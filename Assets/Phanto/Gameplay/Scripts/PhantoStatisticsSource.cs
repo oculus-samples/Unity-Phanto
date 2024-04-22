@@ -13,6 +13,8 @@ using UnityEngine.Events;
 /// </summary>
 public class PhantoStatisticsSource : StatisticsSource
 {
+    [SerializeField] private GameplaySettingsManager settingsManager;
+
     public UnityEvent<Statistics> OnPhantomsAlert;
     public UnityEvent<Statistics> OnGoosAlert;
     public UnityEvent<Statistics> OnPhantoAlert;
@@ -30,6 +32,7 @@ public class PhantoStatisticsSource : StatisticsSource
         _gameplayManager = GetComponent<GameplayManager>();
 
         Assert.IsNotNull(_gameplayManager);
+        Assert.IsNotNull(settingsManager);
     }
 
     private IEnumerator Start()
@@ -47,11 +50,11 @@ public class PhantoStatisticsSource : StatisticsSource
         _activeGoosStats.OnValueChanged += OnActiveGoosAlert;
         _statistics.Add(_activeGoosStats);
 
-        _activePhantoStats = new Statistics("ACTIVE_PHANTO", Phanto.Phanto.MAX_WAVES, Phanto.Phanto.MAX_WAVES - 1);
+        _activePhantoStats = new Statistics("ACTIVE_PHANTO", GameplaySettingsManager.Instance.gameplaySettings.MaxWaves - 1, GameplaySettingsManager.Instance.gameplaySettings.MaxWaves - 1);
         _activePhantoStats.OnThresholdMetAlert += OnActivePhantoAlert;
         _activePhantoStats.OnValueChanged += OnActivePhantoAlert;
-        _activePhantoStats.CurrentValue = Phanto.Phanto.Instance.Wave;
-        Phanto.Phanto.Instance.OnWaveAdvance += () => _activePhantoStats.CurrentValue = Phanto.Phanto.Instance.Wave;
+        _activePhantoStats.CurrentValue = settingsManager.Wave;
+        settingsManager.OnWaveAdvance += () => _activePhantoStats.CurrentValue += 1;
         _statistics.Add(_activePhantoStats);
 
         _isReady = true;

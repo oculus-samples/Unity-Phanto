@@ -15,7 +15,7 @@ public class UIGameOverManager : MonoBehaviour
     [SerializeField] private GameObject losePopup;
     [SerializeField] private PhantoGooSfxManager soundManager;
     [SerializeField] private AudioSource winSound;
-    [SerializeField] private AudioSource loseSound;
+    [SerializeField] private PhantoRandomOneShotSfxBehavior loseSound;
     private UIGameplayTimeManager uIGameplayTimeManager;
 
     private UIWaveChangeManager uiWaveManager;
@@ -52,8 +52,8 @@ public class UIGameOverManager : MonoBehaviour
     {
         if (CheckSoundManager())
         {
-            soundManager.StopMusic(true);
-            loseSound.Play();
+            soundManager.StopMusic();
+            loseSound.PlaySfx();
         }
 
         winPopup.SetActive(false);

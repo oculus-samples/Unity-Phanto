@@ -13,6 +13,7 @@ namespace Phantom
     public abstract class PhantomTarget : MonoBehaviour
     {
         private static readonly Dictionary<Collider, PhantomTarget> TargetCollection = new();
+        public static IReadOnlyCollection<PhantomTarget> AvailableTargets => TargetCollection.Values;
 
         public abstract Vector3 Position { get; set; }
         public abstract bool Valid { get; }
@@ -20,7 +21,14 @@ namespace Phantom
 
         public abstract void TakeDamage(float f);
 
-        public abstract Vector3 GetDestination(Vector3 point);
+        /// <summary>
+        /// Returns a world space position the agent should path to in order to reach or flee a target.
+        /// </summary>
+        /// <param name="point">point is where the agent is moving from</param>
+        /// <param name="min">closest agent wants to get</param>
+        /// <param name="max">furthest agent wants to get</param>
+        /// <returns></returns>
+        public abstract Vector3 GetDestination(Vector3 point, float min, float max);
 
         public abstract void Show(bool visible = true);
 
@@ -30,6 +38,10 @@ namespace Phantom
         ///     When this target is returned to the pool anyone that had it as a current target should forget it.
         /// </summary>
         public event Action<PhantomTarget> Forget;
+
+        protected virtual void OnEnable()
+        {
+        }
 
         protected virtual void OnDisable()
         {
@@ -53,6 +65,8 @@ namespace Phantom
         {
             Destroy(gameObject);
         }
+
+        public abstract void Initialize(OVRSemanticClassification classification, OVRSceneRoom room);
 
         public static bool TryGetTarget(Collider collider, out PhantomTarget target)
         {

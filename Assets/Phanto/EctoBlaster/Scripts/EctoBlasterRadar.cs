@@ -13,7 +13,13 @@ namespace Phantom.EctoBlaster.Scripts
     public class EctoBlasterRadar : MonoBehaviour
     {
         [Tooltip("The blaster transform")] [SerializeField]
-        private Transform blasterBaseTransform;
+        private Transform baseTransform;
+
+        [SerializeField]
+        private Transform pitchTransform;
+
+        [SerializeField]
+        private Transform yawTransform;
 
         [Tooltip("The rotation speed to rotate to the desired target")] [SerializeField]
         private float rotationSpeed = 0.5f;
@@ -21,17 +27,49 @@ namespace Phantom.EctoBlaster.Scripts
         [Tooltip("Time to perform scan loop for targets")] [SerializeField]
         private float scanTime = 1.0f;
 
+        [SerializeField] private PhantomFleeTarget _fleeTarget;
+
+        private float destroyTime = 8f;
+
         private PolterblastTrigger _blasterTrigger;
 
         private IReadOnlyCollection<PhantomController> _targets;
 
+        private Transform _transform;
+
         public float BlastRadius { get; set; } = 0.5f;
+
+        public float DestroyTime
+        {
+            get => destroyTime;
+            set => destroyTime = value;
+        }
+
+        private void Awake()
+        {
+            _transform = transform;
+
+            Assert.IsNotNull(_fleeTarget);
+        }
+
+        private void OnEnable()
+        {
+            _fleeTarget.SetPositionAndDirection(_transform.position, Vector3.zero);
+            _fleeTarget.Show();
+        }
+
+        private void OnDisable()
+        {
+            _fleeTarget.Hide();
+        }
 
         private IEnumerator Start()
         {
+            Destroy(gameObject, destroyTime);
+
             _blasterTrigger = GetComponentInChildren<PolterblastTrigger>(true);
             Assert.IsNotNull(_blasterTrigger);
-            Assert.IsNotNull(blasterBaseTransform);
+            Assert.IsNotNull(baseTransform);
 
             yield return null;
 
@@ -44,12 +82,12 @@ namespace Phantom.EctoBlaster.Scripts
                 //Find best target and check range
                 var target = FindTarget(_targets);
                 var targetFound = target != null &&
-                                  Vector3.Distance(blasterBaseTransform.position, target.HeadPosition) < BlastRadius;
+                                  Vector3.Distance(baseTransform.position, target.HeadPosition) < BlastRadius;
 
                 //Ecto blaster if a target was found and start rotation
                 _blasterTrigger.AutomaticEnabled = targetFound;
                 if (targetFound)
-                    yield return StartCoroutine(RotateToDirection(blasterBaseTransform, target.HeadPosition,
+                    yield return StartCoroutine(RotateToDirection(target.HeadPosition,
                         rotationSpeed));
 
                 yield return new WaitForSeconds(scanTime);
@@ -63,31 +101,43 @@ namespace Phantom.EctoBlaster.Scripts
         /// <returns></returns>
         private T FindTarget<T>(IEnumerable<T> targets) where T : MonoBehaviour
         {
-            return FindClosestObject(targets, blasterBaseTransform.position);
+            return FindClosestObject(targets, baseTransform.position);
         }
 
         /// <summary>
-        ///     Rotates the transform to the desired target
+        ///     Rotates the turret to the desired target
         /// </summary>
-        /// <param name="transformToRotate">The transform to change</param>
-        /// <param name="positionToLook">Target position to look at</param>
+        /// <param name="worldLookPosition">Target position to look at</param>
         /// <param name="timeToRotate">Desired movement time</param>
         /// <returns></returns>
-        private static IEnumerator RotateToDirection(Transform transformToRotate, Vector3 positionToLook,
+        private IEnumerator RotateToDirection(Vector3 worldLookPosition,
             float timeToRotate)
         {
-            var startRotation = transformToRotate.rotation;
-            var direction = positionToLook - transformToRotate.position;
-            var finalRotation = Quaternion.LookRotation(direction);
+            var baseUp = _transform.up;
+            var direction = worldLookPosition - pitchTransform.position;
+
+            var yawRotation = yawTransform.rotation;
+            var yawDirection = Vector3.ProjectOnPlane(direction, baseUp).normalized;
+            var finalYawRotation = Quaternion.LookRotation(yawDirection, baseUp);
+
+            var startRotation = pitchTransform.localRotation;
+            // where will the barrel be pointing after the turret has rotated
+            var pitchDirection = Quaternion.Inverse(finalYawRotation) * direction;
+            var finalRotation = Quaternion.LookRotation(pitchDirection, Vector3.up);
+
             var time = 0f;
             while (time <= 1f)
             {
                 time += Time.deltaTime / timeToRotate;
-                transformToRotate.rotation = Quaternion.Lerp(startRotation, finalRotation, time);
+
+                yawTransform.rotation = Quaternion.Lerp(yawRotation, finalYawRotation, time);
+                pitchTransform.localRotation = Quaternion.Lerp(startRotation, finalRotation, time);
+
                 yield return null;
             }
 
-            transformToRotate.rotation = finalRotation;
+            pitchTransform.localRotation = finalRotation;
+            yawTransform.rotation = finalYawRotation;
         }
 
         /// <summary>

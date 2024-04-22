@@ -3,11 +3,13 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
+using Phanto.Audio.Scripts;
 using Phanto.Enemies.DebugScripts;
 using PhantoUtils;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Assertions;
 using Utilities.XR;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
@@ -17,6 +19,7 @@ namespace Phantom
     /// <summary>
     ///     Monitors the navigation state of a phantom.
     /// </summary>
+    [SelectionBase]
     public class PhantomController : MonoBehaviour
     {
         private const string WalkSpeedParam = "WalkSpeed";
@@ -25,30 +28,41 @@ namespace Phantom
         private const string OnGroundParam = "OnGround";
 
         private static readonly int WalkSpeedId = Animator.StringToHash(WalkSpeedParam);
-        private static readonly int JumpParamId = Animator.StringToHash(JumpParam);
+        private static readonly int JumpId = Animator.StringToHash(JumpParam);
         private static readonly int AttackId = Animator.StringToHash(AttackParam);
         private static readonly int OnGroundId = Animator.StringToHash(OnGroundParam);
+
+        // Emotes
+        private const string AlertParam = "Alert";
+        private const string AngryParam = "Angry";
+        private const string ExclamationParam = "Exclamation";
+        private const string GhostlyParam = "Ghostly";
+        private const string SurpriseParam = "Surprise";
+
+        private static readonly int AlertId = Animator.StringToHash(AlertParam);
+        private static readonly int AngryId = Animator.StringToHash(AngryParam);
+        private static readonly int ExclamationId = Animator.StringToHash(ExclamationParam);
+        private static readonly int GhostlyId = Animator.StringToHash(GhostlyParam);
+        private static readonly int SurpriseId = Animator.StringToHash(SurpriseParam);
 
         private static Vector3 _gravity;
 
         [SerializeField] private NavMeshAgent navMeshAgent;
         [SerializeField] private Animator animator;
-        [SerializeField] private new Rigidbody rigidbody;
 
         [SerializeField] private float turnDegreesPerSecond = 540.0f;
 
         [SerializeField] private Transform head;
 
-        [SerializeField] private float fleeMultiplier = 3.0f;
-
         [SerializeField] [Tooltip("The jump will be this high above the highest link point")]
         private float peakHeight = 0.3f;
+
+        [SerializeField] private float animationMultiplier = 1.0f;
 
         private readonly Vector3[] _pathCorners = new Vector3[256];
 
         private readonly Stopwatch _stopwatch = new();
         private float _currentSpeed;
-
         private float _currentTurnDPS;
         private Vector3? _debugDestination;
         private Vector3 _debugEnd;
@@ -65,11 +79,22 @@ namespace Phantom
 
         private IPhantomManager _phantomManager;
         private Transform _transform;
+        private OriginCrystal _originCrystal;
+
+        private GameplaySettingsManager _gameplaySettingsManager;
+        private bool _gameplaySettingsReady;
+
+        private PhantoGooSfxManager _phantoGooSfxManager;
+        private bool _phantoGooSfxReady;
 
         public Vector3 Position => _transform.position;
         public Vector3 HeadPosition => head.position;
 
+        public GameplaySettings.WinCondition WinCondition => _phantomManager.WinCondition;
         public bool Ready { get; private set; }
+
+        public event Action<bool> DestinationReached;
+        public event Action PathingFailed;
 
         private void Awake()
         {
@@ -80,10 +105,8 @@ namespace Phantom
             _debugOrigin = _transform.position;
 
             navMeshAgent.updateRotation = false;
-            _defaultSpeed = navMeshAgent.speed;
 
             _currentTurnDPS = turnDegreesPerSecond;
-            _currentSpeed = _defaultSpeed;
 
             navMeshAgent.autoTraverseOffMeshLink = false;
 
@@ -97,7 +120,22 @@ namespace Phantom
 
         private void OnEnable()
         {
+            StartCoroutine(ApplySettings());
             DebugDrawManager.DebugDrawEvent += OnDebugDraw;
+        }
+
+        private IEnumerator ApplySettings()
+        {
+            if (_phantomManager is TutorialPhantomManager)
+            {
+                yield break;
+            }
+
+            yield return new WaitUntil(()=>_gameplaySettingsReady);
+            // Set phantom speed depending on settings
+            _defaultSpeed = _gameplaySettingsManager.gameplaySettings.CurrentPhantomSetting.Speed;
+            _currentSpeed = _defaultSpeed;
+            navMeshAgent.speed = _currentSpeed;
         }
 
         private void OnDisable()
@@ -105,17 +143,26 @@ namespace Phantom
             DebugDrawManager.DebugDrawEvent -= OnDebugDraw;
         }
 
-        public event Action DestinationReached;
-        public event Action PathingFailed;
-
         public void Initialize(IPhantomManager manager, bool tutorial = false)
         {
             if (_phantomManager != null)
             {
+                Debug.LogWarning($"{name} got Initialized twice.", this);
                 return;
             }
 
             _phantomManager = manager;
+
+            _gameplaySettingsManager = GameplaySettingsManager.Instance;
+            _gameplaySettingsReady = _gameplaySettingsManager != null;
+
+            _phantoGooSfxManager = PhantoGooSfxManager.Instance;
+            _phantoGooSfxReady = _phantoGooSfxManager != null;
+
+            if (!_gameplaySettingsReady || !_phantoGooSfxReady)
+            {
+                Debug.LogWarning($"Managers available: GameplaySettingsManager: {_gameplaySettingsReady} SfxManager: {_phantoGooSfxReady}", this);
+            }
 
             gameObject.SetSuffix($"{(ushort)GetInstanceID():X4}");
 
@@ -126,20 +173,33 @@ namespace Phantom
             }
         }
 
-        public void SetDestination(Vector3 destination)
+        public void SetDestination(PhantomTarget target, Vector3 destination)
         {
-            if (_pathMonitorCoroutine != null)
-            {
-                StopCoroutine(_pathMonitorCoroutine);
-                navMeshAgent.ResetPath();
-            }
+            ClearPath();
 
             _debugDestination = destination;
-            _pathMonitorCoroutine = StartCoroutine(PathMonitor(destination));
+            _pathMonitorCoroutine = StartCoroutine(PathMonitor(target, destination));
+        }
+
+        public void SetCrystalTarget(PhantomTarget target)
+        {
+            _phantomBehaviour.SetCrystalTarget(target);
         }
 
         public void Fleeing(bool fleeing)
         {
+            float fleeMultiplier;
+
+            if (_phantomManager is TutorialPhantomManager)
+            {
+                fleeMultiplier = 1.5f;
+            }
+            else
+            {
+                fleeMultiplier = _gameplaySettingsManager.gameplaySettings.CurrentPhantomSetting
+                    .FleeSpeedMultiplier;
+            }
+
             _currentSpeed = fleeing ? _defaultSpeed * fleeMultiplier : _defaultSpeed;
             _currentTurnDPS = fleeing ? turnDegreesPerSecond * fleeMultiplier : turnDegreesPerSecond;
         }
@@ -160,9 +220,9 @@ namespace Phantom
             Vector3 point;
 
             if (Random.value > 0.5f)
-                point = _phantomManager.RandomPointOnFloor(_transform.position, 1.0f);
+                point = SceneQuery.RandomPointOnFloor(_transform.position, 1.0f);
             else
-                point = _phantomManager.RandomPointOnFurniture(_transform.position, 1.0f);
+                point = SceneQuery.RandomPointOnFurniture(_transform.position, 1.0f);
 
             navMeshAgent.ResetPath();
             navMeshAgent.Warp(point);
@@ -172,15 +232,6 @@ namespace Phantom
 
         internal void SetRandomDestination()
         {
-            if (_pathMonitorCoroutine != null)
-            {
-                StopCoroutine(_pathMonitorCoroutine);
-                if (navMeshAgent.isOnNavMesh)
-                {
-                    navMeshAgent.ResetPath();
-                }
-            }
-
             if (_phantomManager == null || _transform == null)
             {
                 Debug.LogWarning("Phantom is cleaning up or isn't fully initialized yet.");
@@ -190,20 +241,21 @@ namespace Phantom
             Vector3 destination;
 
             if (Random.value > 0.5f)
-                destination = _phantomManager.RandomPointOnFloor(_transform.position, 1.0f);
+                destination = SceneQuery.RandomPointOnFloor(_transform.position, 1.0f);
             else
-                destination = _phantomManager.RandomPointOnFurniture(_transform.position, 1.0f);
-
-            _debugDestination = destination;
+                destination = SceneQuery.RandomPointOnFurniture(_transform.position, 1.0f);
 
             if (isActiveAndEnabled)
             {
-                _pathMonitorCoroutine = StartCoroutine(PathMonitor(destination));
+                SetDestination(null, destination);
             }
         }
 
-        private IEnumerator PathMonitor(Vector3 destination)
+        private IEnumerator PathMonitor(PhantomTarget target, Vector3 destination)
         {
+            // Destination point is not NaN.
+            Assert.IsTrue(destination.IsSafeValue());
+
             // Unity's NavMeshAgent doesn't have any public events, and has limited public state,
             // so you have to constantly poll the state of the agent to see if anything important has changed.
             _stopwatch.Restart();
@@ -228,7 +280,9 @@ namespace Phantom
             } while (navMeshAgent.pathPending);
 
 #if DEBUG && VERBOSE_DEBUG
-            Debug.Log($"[{nameof(PhantomController)}] {nameof(PathMonitor)} Path calculation took: {_stopwatch.ElapsedMilliseconds}", this);
+            Debug.Log(
+                $"[{nameof(PhantomController)}] {nameof(PathMonitor)} Path calculation took: {_stopwatch.ElapsedMilliseconds}",
+                this);
 #endif
 
             _pathStatus = navMeshAgent.pathStatus;
@@ -240,15 +294,30 @@ namespace Phantom
             switch (_pathStatus.Value)
             {
                 case NavMeshPathStatus.PathInvalid:
+#if UNITY_EDITOR
                     Debug.LogWarning(
-                        $"[{nameof(PhantomController)}] {nameof(PathMonitor)} {NavMeshPathStatus.PathInvalid} ({name}) dest:{destination.ToString("F2")} target:{_phantomBehaviour.CurrentTarget?.name}",
+                        $"[{nameof(PhantomController)}] {nameof(PathMonitor)} {NavMeshPathStatus.PathInvalid} ({name}) dest:{destination.ToString("F2")} pos: {Position.ToString("F2")} target:{_phantomBehaviour.CurrentTarget?.name}\nagentState: {navMeshAgent.DumpState()}",
                         this);
+#else
+                    Debug.LogWarning(
+                        $"[{nameof(PhantomController)}] {nameof(PathMonitor)} {NavMeshPathStatus.PathInvalid} ({name}) dest:{destination.ToString("F2")} pos: {Position.ToString("F2")} target:{_phantomBehaviour.CurrentTarget?.name}",
+                        this);
+#endif
+
+                    // Can't currently reach the actual destination (congested?), so attempt to reach a point on the way to the destination.
+                    var newDestination = Vector3.Lerp(Position, destination, Random.Range(0.6f, 0.9f));
+                    if (NavMesh.SamplePosition(newDestination, out var hit, 10.0f, NavMesh.AllAreas))
+                    {
+                        SetDestination(target, hit.position);
+                        yield break;
+                    }
+
                     break;
                 case NavMeshPathStatus.PathPartial:
                     Debug.LogWarning(
                         $"[{nameof(PhantomController)}] {nameof(PathMonitor)} {NavMeshPathStatus.PathPartial}", this);
 
-                    NavMeshGenerator.Instance.CreateNavMeshLink(_pathCorners, _pathCornerCount, destination, 2);
+                    _phantomManager.CreateNavMeshLink(_pathCorners, _pathCornerCount, destination, NavMeshConstants.JumpArea);
 
                     break;
                 case NavMeshPathStatus.PathComplete:
@@ -256,22 +325,71 @@ namespace Phantom
             }
 
 #if DEBUG && VERBOSE_DEBUG
-            Debug.Log($"[{nameof(PhantomController)}] {nameof(PathMonitor)} Path corner count: {_pathCornerCount}", this);
+            Debug.Log($"[{nameof(PhantomController)}] {nameof(PathMonitor)} Path corner count: {_pathCornerCount}",
+                this);
 
-            // Validate that last corner in path is approximately destination (destination is reachable)
-            if (Vector3.Distance(_pathCorners[_pathCornerCount - 1], destination) > TennisBall)
+            if (_pathCornerCount > 0)
             {
-                Debug.LogWarning($"[{nameof(PhantomController)}] {nameof(PathMonitor)} End of path and destination don't match. {navMeshAgent.pathStatus}", this);
+                var debugDistance2d =
+ Vector3.ProjectOnPlane(_pathCorners[_pathCornerCount - 1] - destination, Vector3.up)
+                    .magnitude;
+
+                // Validate that last corner in path is approximately destination (destination is reachable)
+                if (debugDistance2d > NavMeshConstants.OneFoot)
+                {
+                    Debug.LogWarning(
+                        $"[{nameof(PhantomController)}] {nameof(PathMonitor)} End of path and destination don't match. status: {navMeshAgent.pathStatus} hasPath: {navMeshAgent.hasPath} corners: {_pathCornerCount}",
+                        this);
+                }
             }
 #endif
 
             _stopwatch.Restart();
-            while (navMeshAgent.remainingDistance > _phantomBehaviour.MeleeRange && navMeshAgent.hasPath)
+            var repathCheck = 0.0f;
+
+            while (navMeshAgent.remainingDistance > navMeshAgent.stoppingDistance)
             {
+                if (!navMeshAgent.hasPath)
+                {
+                    break;
+                }
+
+                repathCheck += Time.deltaTime;
+
+                if (repathCheck > 0.5f)
+                {
+                    repathCheck = 0.0f;
+                    if (navMeshAgent.isPathStale)
+                    {
+#if DEBUG && VERBOSE_DEBUG
+#if UNITY_EDITOR
+                        Debug.Log(
+                            $"[{nameof(PhantomController)}] {nameof(PathMonitor)} path is stale, recalculating: {navMeshAgent.DumpState()}",
+                            this);
+#else
+                        Debug.Log(
+                            $"[{nameof(PhantomController)}] {nameof(PathMonitor)} path is stale, recalculating",
+                            this);
+#endif
+#endif
+                        // The navmesh has changed (links added, hole poked), so recalculate your path to destination.
+                        SetDestination(target, destination);
+                        yield break;
+                    }
+                }
+
 #if DEBUG && VERBOSE_DEBUG
                 if (_stopwatch.ElapsedMilliseconds > 2000)
                 {
-                    Debug.Log($"[{nameof(PhantomController)}] {nameof(PathMonitor)} walking: {navMeshAgent.DumpState()}", this);
+#if UNITY_EDITOR
+                    Debug.Log(
+                        $"[{nameof(PhantomController)}] {nameof(PathMonitor)} walking: {navMeshAgent.DumpState()}",
+                        this);
+#else
+                    Debug.Log(
+                        $"[{nameof(PhantomController)}] {nameof(PathMonitor)} walking {Position.ToString("F2")}",
+                        this);
+#endif
                     _stopwatch.Restart();
                 }
 #endif
@@ -297,7 +415,21 @@ namespace Phantom
             // Stop movement & transition to idle animation.
             Move(Vector3.zero);
 
-            var flatDistance = Vector3.ProjectOnPlane(destination - _transform.position, Vector3.up).magnitude;
+            Vector3 actionPoint = destination;
+            if (target != null)
+            {
+                switch (target)
+                {
+                    case PhantomChaseTarget _:
+                    case RangedFurnitureTarget _:
+                        actionPoint = target.GetAttackPoint();
+                        break;
+                    case PhantomFleeTarget _:
+                        break;
+                }
+            }
+
+            var flatDistance = Vector3.ProjectOnPlane(actionPoint - Position, Vector3.up).magnitude;
 
             if (flatDistance <= _phantomBehaviour.SpitRange)
             {
@@ -309,15 +441,20 @@ namespace Phantom
 
                 _pathCornerCount = 0;
 
-                DestinationReached?.Invoke();
+                DestinationReached?.Invoke(true);
             }
             else
             {
-                DestinationReached?.Invoke();
+                // path finding completed or failed, but agent not within attack range.
+                DestinationReached?.Invoke(false);
             }
 
 #if DEBUG && VERBOSE_DEBUG
+#if UNITY_EDITOR
             Debug.Log($"[{nameof(PhantomController)}] {nameof(PathMonitor)} done: {navMeshAgent.DumpState()}", this);
+#else
+            Debug.Log($"[{nameof(PhantomController)}] {nameof(PathMonitor)} done: {Position.ToString("F2")}", this);
+#endif
 #endif
             _pathMonitorCoroutine = null;
         }
@@ -327,8 +464,40 @@ namespace Phantom
             animator.SetTrigger(AttackId);
         }
 
+        public void PlayEmote(Thought thought)
+        {
+            int animId;
+
+            switch (thought)
+            {
+                case Thought.Surprise: // Enters flee state.
+                    animId = SurpriseId;
+                    break;
+                case Thought.Angry: // Enter attack state.
+                    animId = AngryId;
+                    break;
+                case Thought.Exclamation: // Enter chase state.
+                    animId = ExclamationId;
+                    break;
+                case Thought.Alert: // Enter roam state
+                    animId = AlertId;
+                    break;
+                case Thought.Ghost: // TODO: Victory state.
+                    animId = GhostlyId;
+                    break;
+                default:
+                    return;
+            }
+
+            animator.SetTrigger(animId);
+        }
+
         public void ClearPath()
         {
+#if DEBUG && VERBOSE_DEBUG
+            Debug.Log("stopping previous pathing...", this);
+#endif
+
             if (_pathMonitorCoroutine != null)
             {
                 StopCoroutine(_pathMonitorCoroutine);
@@ -353,8 +522,11 @@ namespace Phantom
             var deltaTime = Time.deltaTime;
 
             var magnitude = desiredVelocity.magnitude;
+            var walkSpeed = magnitude * _currentSpeed * animationMultiplier;
 
-            animator.SetFloat(WalkSpeedId, magnitude * _currentSpeed);
+            // Set the leg's layer weight based on if we are animating legs or not.
+            animator.SetLayerWeight(1, walkSpeed > 0.05f ? 0.5f : 0.0f);
+            animator.SetFloat(WalkSpeedId, walkSpeed);
 
             if (magnitude == 0) return;
 
@@ -375,7 +547,7 @@ namespace Phantom
             // can't die while mid hop.
             _phantomBehaviour.SetOnGround(false);
 
-            animator.SetTrigger(JumpParamId);
+            animator.SetTrigger(JumpId);
             animator.SetBool(OnGroundId, false);
 
             var (velocity, duration) = CalculateHopVelocity(start, end, peakHeight, _gravity.y);
@@ -404,21 +576,65 @@ namespace Phantom
 
             animator.SetBool(OnGroundId, true);
             _phantomBehaviour.SetOnGround(true);
+            if (_phantoGooSfxReady)
+            {
+                _phantoGooSfxManager.PlayPhantomHopSfx(end);
+            }
+
             yield return null;
         }
 
         public void ReturnToPool()
         {
+            if (_originCrystal != null)
+            {
+                _originCrystal.UnregisterPhantom(this);
+            }
+
             gameObject.SetActive(false);
-            PhantomManager.Instance.ReturnToPool(this);
+            _phantomManager.ReturnToPool(this);
         }
 
         public void Respawn(Vector3 position)
         {
+            // snap position to NavMesh.
+            if (NavMesh.SamplePosition(position, out var navMeshHit, NavMeshConstants.OneFoot, NavMesh.AllAreas))
+            {
+                position = navMeshHit.position;
+            }
+
             // move to position.
             _transform.SetPositionAndRotation(position, Quaternion.AngleAxis(Random.Range(0.0f, 360.0f), Vector3.up));
             // re-enable gameObject
             Show();
+        }
+
+        public void SetOriginCrystal(OriginCrystal crystal)
+        {
+            _originCrystal = crystal;
+            _originCrystal.RegisterPhantom(this);
+        }
+
+        public void RequestCrystalTarget()
+        {
+            if (_originCrystal == null)
+            {
+                _originCrystal = OriginCrystal.GetClosestOrigin(Position);
+                Assert.IsNotNull(_originCrystal);
+                _originCrystal.RegisterPhantom(this);
+            }
+
+            _originCrystal.SelectSquadTarget();
+        }
+
+        public void SpawnOuch(Vector3 position, Vector3 normal)
+        {
+            _phantomManager.SpawnOuch(position, normal);
+        }
+
+        public void DecrementPhantom()
+        {
+            _phantomManager.DecrementPhantom();
         }
 
         public void Show(bool visible = true)
@@ -429,6 +645,17 @@ namespace Phantom
         public void Hide()
         {
             Show(false);
+        }
+
+        public void ResetState()
+        {
+            if (_originCrystal != null)
+            {
+                _originCrystal.UnregisterPhantom(this);
+            }
+
+            _originCrystal = null;
+            _phantomBehaviour.ResetState();
         }
 
         internal static (Vector3, float) CalculateHopVelocity(Vector3 start, Vector3 end, float peakHeight,
@@ -518,8 +745,6 @@ namespace Phantom
             if (navMeshAgent == null) navMeshAgent = GetComponent<NavMeshAgent>();
 
             if (animator == null) animator = GetComponentInChildren<Animator>();
-
-            if (rigidbody == null) rigidbody = GetComponent<Rigidbody>();
         }
 #endif
     }

@@ -26,13 +26,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1446629524767130749}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8391248027329607058
 MonoBehaviour:
@@ -48,12 +48,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playOnAwake: 0
   clips:
-  - {fileID: 8300000, guid: c1d0383fc86d31340b0f5db341c7432f, type: 3}
-  - {fileID: 8300000, guid: b77c09b770743bf4da4160be181f60a4, type: 3}
-  - {fileID: 8300000, guid: 76b3c7500d316c84197ea2990bff66d9, type: 3}
-  - {fileID: 8300000, guid: 9272e4caeacc41046b95f5663b1c6bd5, type: 3}
-  - {fileID: 8300000, guid: c8afac358dbd53f49b93571c40b38a2f, type: 3}
-  - {fileID: 8300000, guid: 197c8a68ad3ec5f48a86b331cb92bdd5, type: 3}
+  - {fileID: 8300000, guid: 671ae5bc99b228b4b8096d800b3c7dad, type: 3}
+  - {fileID: 8300000, guid: a4057f69c9d2c604c9cfcb12d55adfff, type: 3}
+  - {fileID: 8300000, guid: 427aa9e175e7b3f4d822f911edf06383, type: 3}
+  - {fileID: 8300000, guid: a17c335555dde0e41b98841d5a6292e3, type: 3}
+  - {fileID: 8300000, guid: e76698b709033ce499aab933066dc538, type: 3}
+  - {fileID: 8300000, guid: 73c522a23f3adf84296a431361c8aa3b, type: 3}
+  - {fileID: 8300000, guid: f5c619f3052dce545ada2fcc47710185, type: 3}
+  - {fileID: 8300000, guid: ce102fc9dab5ff847bb43e008f6d0e3e, type: 3}
   pitchMin: 1.2
   pitchMax: 1.3
   chanceToPlay: 100
@@ -69,11 +71,11 @@ AudioSource:
   m_GameObject: {fileID: 1446629524767130749}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: -5918671688248155985, guid: 1dd706bb85d8aef4e83a6229dbd62c36, type: 2}
+  OutputAudioMixerGroup: {fileID: -6049054017482126911, guid: 1dd706bb85d8aef4e83a6229dbd62c36, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
-  m_Pitch: 1
+  m_Pitch: 1.26
   Loop: 0
   Mute: 0
   Spatialize: 1

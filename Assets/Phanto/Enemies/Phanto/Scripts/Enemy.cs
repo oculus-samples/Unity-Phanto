@@ -18,25 +18,11 @@ namespace Phanto
 
         [SerializeField] private MovementSettings defaultMovementSettings = MovementSettings.DEFAULTS;
 
-        [SerializeField] public Vector2 distributionSpread = new(0.85f, 0.55f);
-
-        [SerializeField] public Vector3 distributionOffset = new(0f, 0.1f, 0f);
-
-        [SerializeField] public float weaponAimRange = 0.2f;
-
         [SerializeField] private float dropYVel = 3f;
-
-        [SerializeField] private Vector2 dropSpread = new(1f, 1f);
-
-        [SerializeField] private Drop[] smallDrops;
-
-        [SerializeField] private Drop[] largeDrops;
 
         [SerializeField] public EnemyProximitySensor proxSensor;
 
         [HideInInspector] public new Rigidbody rigidbody;
-
-        [HideInInspector] public Weapon[] weapons;
 
         [SerializeField] private float initialHealth = 100f;
 
@@ -105,7 +91,6 @@ namespace Phanto
         private void Awake()
         {
             rigidbody = GetComponent<Rigidbody>();
-            weapons = GetComponents<Weapon>();
         }
 
         private void OnEnable()
@@ -113,24 +98,12 @@ namespace Phanto
             Init();
         }
 
-        protected void OnCollisionStay(Collision c)
-        {
-            var speed = c.relativeVelocity.magnitude;
-            if (speed >= 2.5f &&
-                c.gameObject != null &&
-                c.gameObject.layer == LayerMask.NameToLayer("OVRScene"))
-            {
-                var cp = c.GetContact(0);
-                TakeDamage(0.08f * speed * speed, cp.point, cp.normal, lastDamageCallback);
-            }
-        }
-
         public void Heal(float healing, IDamageable.DamageCallback callback = null)
         {
             Health += healing;
         }
 
-        public void TakeDamage(float damage, Vector3 position, Vector3 normal,
+        public void TakeDamage(float damage, Vector3 position, Vector3 normal, GameObject damageSource = null,
             IDamageable.DamageCallback callback = null)
         {
             if (invulnerable) return;
@@ -158,13 +131,6 @@ namespace Phanto
                 return false;
 
             return true;
-        }
-
-        public bool CanSee(Player targetPlayer)
-        {
-            if (!InView(transform, targetPlayer.transform)) return false;
-
-            return targetPlayer.IsDetectable(transform);
         }
 
         public void ResetMovementSettings()
@@ -341,73 +307,6 @@ namespace Phanto
             rot /= Time.fixedDeltaTime;
 
             rigidbody.AddTorque(rot, ForceMode.Acceleration);
-        }
-
-        public void AimWeaponsAt(Vector3 target)
-        {
-            foreach (var w in weapons)
-            {
-                target = w.MuzzleTransform.InverseTransformPoint(target);
-                target.y = 0f;
-                target = target.normalized;
-                target.z = Mathf.Abs(target.z);
-                target.x = Mathf.Clamp(target.x, -weaponAimRange, weaponAimRange);
-                target = target.normalized;
-                target = w.MuzzleTransform.TransformDirection(target);
-
-                var rot = Quaternion.LookRotation(target, Vector3.up);
-                w.MuzzleTransform.rotation = rot;
-            }
-        }
-
-        public void DropSmallItems()
-        {
-            if (Player.gameOver) return;
-
-            foreach (var d in smallDrops)
-                for (var roll = 0; roll < d.numRolls; ++roll)
-                {
-                    if (Random.value > d.chance) continue;
-
-                    for (var i = 0; i < d.numToDrop; ++i)
-                    {
-                        var drop = PoolManagerSingleton.Instance.Create(d.dropPrefab,
-                            rigidbody.position,
-                            Quaternion.identity);
-                        if (drop.TryGetComponent(out Rigidbody dropBody))
-                        {
-                            var vel = WeaponUtils.RandomSpread(dropSpread);
-                            vel.z = vel.y;
-                            vel.y = 0.75f * dropYVel;
-                            dropBody.AddForce(vel, ForceMode.VelocityChange);
-                        }
-                    }
-                }
-        }
-
-        public void DropLargeItem()
-        {
-            if (Player.gameOver) return;
-
-            foreach (var d in largeDrops)
-            {
-                if (Random.value > d.chance) continue;
-
-                var drop = PoolManagerSingleton.Instance.Create(d.dropPrefab,
-                    rigidbody.position,
-                    Quaternion.identity);
-                if (drop.TryGetComponent(out Rigidbody dropBody))
-                {
-                    var vel = Player.GetClosestLivePlayer(rigidbody.position).transform.position - rigidbody.position;
-                    var dist = vel.magnitude;
-                    vel.y = 0f;
-                    vel = Mathf.Min(0.8f * dist, Mathf.Max(dropSpread.x, dropSpread.y)) * vel.normalized;
-                    vel.y = dropYVel;
-                    dropBody.AddForce(vel, ForceMode.VelocityChange);
-                }
-
-                return;
-            }
         }
 
         public void DestroySelf()

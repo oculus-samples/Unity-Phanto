@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9f00a5f0c4a9ae46aa65eb3d7d9cac7, type: 3}
+  m_Name: DemoSemanticSoundMap
+  m_EditorClassIdentifier: Assembly-CSharp:com.xpd.sceneviz.samples:PhysicsSoundMapCollection
+  soundMaps:
+  - name: FLOOR
+    oneShotPrefab: {fileID: 4526382015355322387, guid: bbcf673b1c3436549b3a81bad6d5bec5, type: 3}
+  - name: CEILING
+    oneShotPrefab: {fileID: 2333864235266192009, guid: c9d7d41709fa90149808be59f0156a77, type: 3}
+  - name: WALL_FACE
+    oneShotPrefab: {fileID: 2333864235266192009, guid: bb11e14fa2431474d9438b816386ef33, type: 3}
+  - name: COUCH
+    oneShotPrefab: {fileID: 2333864235266192009, guid: 3dffe4ceb7ced694c824d93d9616f2e5, type: 3}
+  - name: DOOR_FRAME
+    oneShotPrefab: {fileID: 2333864235266192009, guid: 730314a2991fcc14187b86f86bd56a7c, type: 3}
+  - name: WINDOW_FRAME
+    oneShotPrefab: {fileID: 2333864235266192009, guid: ac04c26ae5a489b43ad49d7e430bed97, type: 3}
+  - name: OTHER
+    oneShotPrefab: {fileID: 2333864235266192009, guid: f4ad609a6d8fceb4f94832fafc0e1734, type: 3}
+  - name: STORAGE
+    oneShotPrefab: {fileID: 2333864235266192009, guid: 1c74a95015a4dbd4e8d31607875ece5c, type: 3}
+  - name: BED
+    oneShotPrefab: {fileID: 2333864235266192009, guid: 805057092884dfe41b5bea47e6d5f9dc, type: 3}
+  - name: SCREEN
+    oneShotPrefab: {fileID: 2333864235266192009, guid: 70ae57547e1465c49bdce30124dc654f, type: 3}
+  - name: LAMP
+    oneShotPrefab: {fileID: 2333864235266192009, guid: 24c4ee5a7fdd6f74395c4dc744809213, type: 3}
+  - name: PLANT
+    oneShotPrefab: {fileID: 2333864235266192009, guid: f367788204ecbd343b31be67351b85dd, type: 3}
+  - name: TABLE
+    oneShotPrefab: {fileID: 2333864235266192009, guid: f662a6d36cc267c4ea1ee2460276e5a3, type: 3}
+  - name: WALL_ART
+    oneShotPrefab: {fileID: 2333864235266192009, guid: b0b2d1fcd392a8341bbce5d101c426b5, type: 3}
+  - name: INVISIBLE_WALL_FACE
+    oneShotPrefab: {fileID: 2333864235266192009, guid: f00ea98795f763a4f972caa84c189307, type: 3}

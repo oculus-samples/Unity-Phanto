@@ -18,6 +18,9 @@ namespace PhantoUtils.VR
 
         [SerializeField] private ScrollRect scrollRect;
         [SerializeField] private TextMeshProUGUI logLinePrefab;
+
+        [SerializeField] private OVRInput.Controller scrollInputSource = OVRInput.Controller.None;
+
         private bool _logTextDirty;
 
         private StringBuilder _messageBuffer;
@@ -25,6 +28,8 @@ namespace PhantoUtils.VR
 
         private readonly LinkedList<TextMeshProUGUI> _textBatches = new();
         private int _updateTickDelay;
+
+        private ScrollviewControls _scrollviewControls;
 
         private void Awake()
         {
@@ -35,6 +40,9 @@ namespace PhantoUtils.VR
             _messageBuffer = new StringBuilder(batchCharacterSize * 4);
 
             Application.logMessageReceived += Log;
+
+            _scrollviewControls = GetComponentInChildren<ScrollviewControls>();
+            Assert.IsNotNull(_scrollviewControls);
         }
 
         private void Update()
@@ -45,7 +53,22 @@ namespace PhantoUtils.VR
                 _logTextDirty = false;
             }
 
-            if (_scrollToLatestLine) scrollRect.verticalNormalizedPosition = 0.0f;
+            var scrollToLatest = _scrollToLatestLine;
+
+            if (scrollInputSource != OVRInput.Controller.None)
+            {
+                var thumbstickTouch = OVRInput.Get(OVRInput.Touch.PrimaryThumbstick, scrollInputSource);
+
+                // If the thumb stick is being touched stop scrolling to the most recent line.
+                scrollToLatest = scrollToLatest && !thumbstickTouch;
+
+                if (thumbstickTouch)
+                {
+                    _scrollviewControls.SetScroll(OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, scrollInputSource));
+                }
+            }
+
+            if (scrollToLatest) scrollRect.verticalNormalizedPosition = 0.0f;
         }
 
         private void OnEnable()
@@ -112,6 +135,22 @@ namespace PhantoUtils.VR
         private static string GetTime()
         {
             return DateTime.Now.ToString("HH:mm:ss.fff");
+        }
+
+        private void OnValidate()
+        {
+            switch (scrollInputSource)
+            {
+                // only allow this field to have the following values:
+                case OVRInput.Controller.LTouch:
+                case OVRInput.Controller.RTouch:
+                case OVRInput.Controller.Touch:
+                case OVRInput.Controller.None:
+                    break;
+                default:
+                    scrollInputSource = OVRInput.Controller.None;
+                    break;
+            }
         }
     }
 }

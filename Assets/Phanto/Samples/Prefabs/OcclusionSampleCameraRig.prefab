@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 74614887539166312, guid: 98c79d9a1553b471791e1e2e2e42b7a7, type: 3}
       propertyPath: m_Name
-      value: GameCameraRig
+      value: OcclusionSampleCameraRig
       objectReference: {fileID: 0}
     - target: {fileID: 74614887539396680, guid: 98c79d9a1553b471791e1e2e2e42b7a7, type: 3}
       propertyPath: m_RootOrder

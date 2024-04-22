@@ -193,6 +193,36 @@ public static class NavMeshBookKeeper
         return result;
     }
 
+    public static List<NavMeshTriangle> GetTrianglesWithId(int areaId, bool isOpen = true)
+    {
+        var result = new List<NavMeshTriangle>();
+        var openCount = 0;
+
+        foreach (var triangle in _triangles)
+        {
+            if (triangle.areaId == areaId)
+            {
+                result.Add(triangle);
+                // we don't have a guarantee that any triangles will be open.
+                if (triangle.IsOpen)
+                {
+                    openCount++;
+                }
+            }
+        }
+
+        // open triangles means they have obstructed view of the ceiling.
+        // they should be preferred for most kinds of spawning.
+        if (openCount > 0 && isOpen)
+        {
+            result.RemoveAll((x) => !x.IsOpen);
+        }
+
+        Assert.IsTrue(result.Count != 0);
+
+        return result;
+    }
+
     public static bool TryGetClosestTriangleOnCircle(Vector3 point, float radius, NavMeshSurface owner,
         out NavMeshTriangle triangle)
     {
@@ -252,6 +282,7 @@ public static class NavMeshBookKeeper
 
         if (isOpen)
         {
+            // find the first open triangle
             for (var i = 0; i < _triangles.Count; i++)
             {
                 if (_triangles[i].IsOpen)
@@ -300,5 +331,107 @@ public static class NavMeshBookKeeper
         }
 
         return result;
+    }
+
+    public static int TrianglesInRadius(Vector3 point, float radius, bool isOpen, List<NavMeshTriangle> results)
+    {
+        results.Clear();
+
+        var plane = new Plane(Vector3.up, point);
+        var sqrRadius = radius * radius;
+
+        foreach (var ownedTriangles in _meshOwners.Values)
+        {
+            foreach (var tri in ownedTriangles)
+            {
+                if (isOpen && !tri.IsOpen)
+                {
+                    continue;
+                }
+
+                // does the triangle straddle the circle?
+                var count = 0;
+                count += InsideRadius(tri.v1, point, sqrRadius, ref plane) ? -1 : 1;
+                count += InsideRadius(tri.v2, point, sqrRadius, ref plane) ? -1 : 1;
+                count += InsideRadius(tri.v3, point, sqrRadius, ref plane) ? -1 : 1;
+
+                // if count is 3 the triangle is fully outside the circle.
+                if (count < 3)
+                {
+                    results.Add(tri);
+                }
+            }
+        }
+
+        return results.Count;
+
+    }
+
+    public static int TrianglesOnCircle(Vector3 point, float radius, bool isOpen, List<NavMeshTriangle> results)
+    {
+        results.Clear();
+
+        var plane = new Plane(Vector3.up, point);
+        var sqrRadius = radius * radius;
+
+        foreach (var ownedTriangles in _meshOwners.Values)
+        {
+            foreach (var tri in ownedTriangles)
+            {
+                if (isOpen && !tri.IsOpen)
+                {
+                    continue;
+                }
+
+                // does the triangle straddle the circle?
+                var count = 0;
+                count += InsideRadius(tri.v1, point, sqrRadius, ref plane) ? -1 : 1;
+                count += InsideRadius(tri.v2, point, sqrRadius, ref plane) ? -1 : 1;
+                count += InsideRadius(tri.v3, point, sqrRadius, ref plane) ? -1 : 1;
+
+                // if count is -3 the triangle is fully inside the circle.
+                // if count is 3 the triangle is fully outside the circle.
+                if (count < 3 && count > -3)
+                {
+                    results.Add(tri);
+                }
+            }
+        }
+
+        return results.Count;
+    }
+
+    public static bool FindMatchingPoint(List<NavMeshTriangle> triangles, out Vector3 result, Func<Vector3, NavMeshTriangle, bool> matchCondition)
+    {
+        // Make multiple attempts to find a location that's "padding" centimeters away from an edge.
+        result = default;
+
+        for (int i = 0; i < 100; i++)
+        {
+            for (var j = 0; j < triangles.Count; j++)
+            {
+                var tri = triangles[j];
+                result = tri.GetRandomPoint();
+
+                if (matchCondition(result, tri))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+    private static bool InsideRadius(Vector3 point, Vector3 circleCenter, float circleSqrRadius, ref Plane circlePlane)
+    {
+        // we don't want vertical distance in this calculation
+        // project the point onto the circle's plane.
+        var projectedPoint = circlePlane.ClosestPointOnPlane(point);
+
+        var sqrMag = (circleCenter - projectedPoint).sqrMagnitude;
+
+        return sqrMag <= circleSqrRadius;
     }
 }

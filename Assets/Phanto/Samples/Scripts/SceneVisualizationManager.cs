@@ -31,7 +31,6 @@ namespace Phantom
         private int _layerMask;
         private bool _meshVisible = true;
 
-
         protected void Awake()
         {
             _layerMask = DefaultLayerMask | SceneMeshLayerMask;

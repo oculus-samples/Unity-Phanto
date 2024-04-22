@@ -8,6 +8,7 @@ using Phantom;
 using PhantoUtils.VR;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 /// <summary>
@@ -21,27 +22,23 @@ public class UIWaveChangeManager : MonoBehaviour
     [Tooltip("Wave popup text")]
     [SerializeField] private TextMeshProUGUI wavePanelText;
 
-    [Tooltip("Wave max counter")]
-    [SerializeField] private int _waveMaxCounter = 3;
-
-    [Tooltip("Wave popup delay time")]
-    [SerializeField] private float[] popupDelayShowTime;
+    [Tooltip("Wave popup description")]
+    [SerializeField] private TextMeshProUGUI wavePanelDescription;
 
     [Tooltip("Wave popup show time")]
     [SerializeField] private float popupShowTime = 5.0f;
 
-    [Tooltip("Phanto wave time")]
-    [SerializeField] private float[] showBackPhantoWaveTime;
-
     [SerializeField] private GameObject phantoPooFx;
     [SerializeField] private PhantoGooSfxManager soundManager;
-    [SerializeField] private AudioSource wavePopupSound;
+    [SerializeField] private PhantoRandomOneShotSfxBehavior wavePopupSound;
 
     [SerializeField] private HapticClip wavePopupHaptic;
 
     [SerializeField] private Controller hapticController = Controller.Both;
 
     [SerializeField] private HapticCollection phantoDefeatCollection;
+
+    public UnityEvent onNewWave;
 
     private GameObject _phanto;
     private bool _started;
@@ -84,6 +81,7 @@ public class UIWaveChangeManager : MonoBehaviour
         if (!_startMusic)
             if (CheckSoundManager())
             {
+                soundManager.StopTutorialMusic();
                 soundManager.StartMusic();
                 _startMusic = true;
             }
@@ -91,9 +89,10 @@ public class UIWaveChangeManager : MonoBehaviour
         this._phanto = _phanto;
         this._started = _started;
 
+
         _waveStart = false;
         _waveCounter++;
-        if (_waveCounter <= _waveMaxCounter)
+        if (_waveCounter <= GameplaySettingsManager.Instance.gameplaySettings.MaxWaves)
         {
             // hide Phanto if the gameplay has been started
             if (_phanto != null && _started) ShowPhanto(false);
@@ -115,10 +114,10 @@ public class UIWaveChangeManager : MonoBehaviour
     private IEnumerator ShowAgainPhanto(int waveNum)
     {
         // wait until show popup
-        var showWavePopup = popupDelayShowTime[waveNum - 1];
+        var showWavePopup = GameplaySettingsManager.Instance.gameplaySettings.GuiSettingsList[waveNum - 1].popupDelayShowTime;
         yield return new WaitForSeconds(showWavePopup);
         // time params
-        var showBackPhanto = showBackPhantoWaveTime[waveNum - 1];
+        var showBackPhanto =  GameplaySettingsManager.Instance.gameplaySettings.GuiSettingsList[waveNum - 1].showBackPhantoWaveTime;
         // show wave popup
         _showUIWave = waveNum;
         yield return new WaitForSeconds(popupShowTime);
@@ -128,13 +127,12 @@ public class UIWaveChangeManager : MonoBehaviour
         // show Phanto if the gameplay has been started
         if (_phanto != null && _started)
         {
-            var _phantomManager = FindAnyObjectByType<PhantomManager>();
-            var nPos = _phantomManager.RandomPointOnFloor(_phanto.transform.position, 2.0f);
+            var nPos = SceneQuery.RandomPointOnFloor(_phanto.transform.position, 2.0f);
             nPos.y = CameraRig.Instance.CenterEyeAnchor.position.y;
             _phanto.transform.position = nPos;
             ShowPhanto(true);
         }
-
+        onNewWave?.Invoke();
         _waveStart = true;
     }
 
@@ -146,9 +144,10 @@ public class UIWaveChangeManager : MonoBehaviour
         }
         else
         {
-            wavePanelText.text = $"WAVE {waveNum}";
+            wavePanelText.text = GameplaySettingsManager.Instance.gameplaySettings.GuiSettingsList[waveNum-1].WaveTitle;
+            wavePanelDescription.text = GameplaySettingsManager.Instance.gameplaySettings.GuiSettingsList[waveNum-1].WaveObjective;
             wavePopup.SetActive(true);
-            wavePopupSound.Play();
+            wavePopupSound.PlaySfx();
             _hapticPlayer?.Play(hapticController);
         }
     }
@@ -157,15 +156,27 @@ public class UIWaveChangeManager : MonoBehaviour
     {
         if (_phanto != null)
         {
-            _phanto.SetActive(visible);
-            if (phantoPooFx)
+            if (GameplaySettingsManager.Instance.gameplaySettings.CurrentPhantoSetting.isEnabled)
             {
-                phantoPooFx.transform.position = _phanto.transform.position;
-                phantoPooFx.GetComponent<ParticleSystem>().Play();
-            }
+                _phanto.SetActive(visible);
+                if (visible)
+                {
+                    if (phantoPooFx)
+                    {
+                        phantoPooFx.transform.position = _phanto.transform.position;
+                        phantoPooFx.GetComponent<ParticleSystem>().Play();
+                    }
 
-            if (CheckSoundManager()) soundManager.PlayPhantoAppearVo(_phanto.transform.position);
+                    if (CheckSoundManager()) soundManager.PlayPhantoAppearVo(_phanto.transform.position);
+                }
+            }
+            else
+            {
+                // Disable Phanto when it's not enabled int the wave
+                _phanto.SetActive(false);
+            }
         }
+
     }
 
     private bool CheckSoundManager()

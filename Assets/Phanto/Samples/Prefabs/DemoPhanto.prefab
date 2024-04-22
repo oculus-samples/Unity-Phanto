@@ -24,13 +24,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2931203844038548905}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5568079344002223571}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!135 &5567698333002635209
 SphereCollider:
@@ -85,7 +85,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5568079344002223571}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -261,13 +260,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6464132959207246082}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.008044305, y: 0.12881058, z: 1.0199997}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5568079344002223571}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8014676877870659034
 GameObject:
@@ -298,6 +297,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8014676877870659034}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.2, z: 0}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
@@ -309,7 +309,6 @@ Transform:
   - {fileID: 3587783143050592000}
   - {fileID: 6806966540586707620}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &4546267211500122704
 Rigidbody:
@@ -350,17 +349,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c73196506c4da6848958d554b4040064, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splashDamage: 0.0052
-  splash: 0.4
-  splashDamageScale: 15
   gooBallPrefab: {fileID: 5304509512996567830, guid: 05f8800570cd09c4c919400f02fb02e5, type: 3}
   mouth: {fileID: 1127149831522875772}
-  gooBallSpeed: {x: 2, y: 5}
   animator: {fileID: 213035561139945046}
-  gooPrefabs:
-  - {fileID: 7428593279976243333, guid: 88c6afcf663a6ef429f827b21ce29616, type: 3}
-  - {fileID: 6526438457458768122, guid: f2c6ce228d3a6ce41bb48cacbf2822e5, type: 3}
-  - {fileID: 4078627530729038020, guid: 56cb8567d23b65949a37950567bf06ed, type: 3}
+  ectoBlasterLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  settingsManager: {fileID: 0}
 --- !u!114 &1386166659076062422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -393,16 +388,9 @@ MonoBehaviour:
     hoverRadius: 0.8
     hoverNoiseOffset: 0
     hoverNoiseFrequency: {x: 0, y: 1, z: 0}
-  distributionSpread: {x: 0.85, y: 0.55}
-  distributionOffset: {x: 0, y: 0.1, z: 0}
-  weaponAimRange: 0.2
   dropYVel: 3
-  dropSpread: {x: 1, y: 1}
-  smallDrops: []
-  largeDrops: []
   proxSensor: {fileID: 8499749417154182279}
   rigidbody: {fileID: 0}
-  weapons: []
   initialHealth: 100
   invulnerable: 0
   painThreshold: 0.15
@@ -418,6 +406,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7aa01d1171fa06845be7f4e32067c9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  phanto: {fileID: 7238118986958415383}
   initialState: 7
 --- !u!135 &9138164207407465226
 SphereCollider:
@@ -476,13 +465,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9190193384722381384}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.08, z: 1.14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5568079344002223571}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &9109673013399515239
 PrefabInstance:

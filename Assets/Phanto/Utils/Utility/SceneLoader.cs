@@ -19,6 +19,13 @@ namespace PhantoUtils
 
         [SerializeField] private bool loadOnStart = true;
 
+        [RuntimeInitializeOnLoadMethod]
+        private static void Initialize()
+        {
+            // This should reduce frame drops during scene loads.
+            Application.backgroundLoadingPriority = ThreadPriority.Low;
+        }
+
         private void Start()
         {
             if (loadOnStart) LoadScene();

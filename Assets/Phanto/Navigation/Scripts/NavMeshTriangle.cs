@@ -25,6 +25,8 @@ public class NavMeshTriangle : IEquatable<NavMeshTriangle>
     public readonly Vector3 v2;
     public readonly Vector3 v3;
 
+    public int AreaMask => 1 << areaId;
+
     private float _area;
 
     public NavMeshTriangle(Vector3 va, Vector3 vb, Vector3 vc, int id)
@@ -131,7 +133,7 @@ public class NavMeshTriangle : IEquatable<NavMeshTriangle>
                 QueryTriggerInteraction.Ignore))
         {
 #if VERBOSE_DEBUG
-            Debug.Log($"point: {point} raycast: {raycastHit.point.ToString("F2")} dist: {raycastHit.distance}");
+            Debug.Log($"point: {ceiling} raycast: {raycastHit.point.ToString("F2")} dist: {raycastHit.distance}");
 #endif
 
             IsOpen = false;
@@ -174,6 +176,16 @@ public class NavMeshTriangle : IEquatable<NavMeshTriangle>
             }
     }
 
+    public void DebugDraw(Color color)
+    {
+        for (var i = 0; i < 3; i++)
+        {
+            var edge = _edges[i];
+
+            XRGizmos.DrawLine(edge.a, edge.b, color, 0.006f);
+        }
+    }
+
     public void DebugDraw(Color borderColor, Color notOpen)
     {
         if (!IsOpen)
@@ -195,6 +207,56 @@ public class NavMeshTriangle : IEquatable<NavMeshTriangle>
 
                 if (borderEdge) XRGizmos.DrawLine(edge.a, edge.b, borderColor, 0.006f);
             }
+    }
+
+    /// <summary>
+    /// Returns the vertex of the triangle furthest from the provided point
+    /// Used to try and find the longest path from A to B.
+    /// </summary>
+    /// <param name="point"></param>
+    /// <param name="tri"></param>
+    /// <param name="awayFromEdge">Shift the point 5 cm away from the triangle's corner</param>
+    /// <returns></returns>
+    public Vector3 FurthestVert(Vector3 point)
+    {
+        var result = v1;
+        var maxDistance = (point - v1).sqrMagnitude;
+
+        var distance = (point - v2).sqrMagnitude;
+        if (distance > maxDistance)
+        {
+            result = v2;
+            maxDistance = distance;
+        }
+
+        distance = (point - v3).sqrMagnitude;
+        if (distance > maxDistance)
+        {
+            result = v3;
+        }
+
+        return result;
+    }
+
+    public Vector3 ClosestVert(Vector3 point)
+    {
+        var result = v1;
+        var minDistance = (point - v1).sqrMagnitude;
+
+        var distance = (point - v2).sqrMagnitude;
+        if (distance < minDistance)
+        {
+            result = v2;
+            minDistance = distance;
+        }
+
+        distance = (point - v3).sqrMagnitude;
+        if (distance < minDistance)
+        {
+            result = v3;
+        }
+
+        return result;
     }
 
     public readonly struct Edge : IEquatable<Edge>

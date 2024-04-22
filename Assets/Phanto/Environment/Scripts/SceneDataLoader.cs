@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using OVRSimpleJSON;
-using PhantoUtils.VR;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -23,11 +22,12 @@ namespace Phantom.Environment.Scripts
         }
 
         private static readonly string GuidEmpty = Guid.Empty.ToString();
+
         // Scene API data
         private static readonly string[] MeshClassifications =
             { "GlobalMesh", OVRSceneManager.Classification.GlobalMesh };
 
-        public static SceneDataLoader Instance;
+        private static readonly Dictionary<OVRSpace, int> SpaceDictionary = new Dictionary<OVRSpace, int>();
 
         // A reference to the OVRSceneManager prefab.
         [SerializeField] private OVRSceneManager ovrSceneManagerPrefab;
@@ -51,7 +51,6 @@ namespace Phantom.Environment.Scripts
 
         private void Awake()
         {
-            Instance = this;
             Assert.IsNotNull(ovrSceneManagerPrefab, $"{nameof(ovrSceneManagerPrefab)} cannot be null.");
             Assert.IsNotNull(sceneRoot, $"{nameof(sceneRoot)} cannot be null.");
         }
@@ -190,12 +189,51 @@ namespace Phantom.Environment.Scripts
         /// </summary>
         private Transform SpawnSceneRoom(JSONNode json, Transform root)
         {
-            var roomNode = json["room"];
+            SpaceDictionary.Clear();
 
-            Assert.IsNotNull(roomNode);
+            var roomNode = json.GetValueOrDefault("room", null);
+            if (roomNode != null)
+            {
+                GenerateRoom(root, roomNode);
+                return root;
+            }
 
+            var rooms = json.GetValueOrDefault("rooms", null);
+            if (rooms != null)
+            {
+                for (int i = 0; i < rooms.Count; i++)
+                {
+                    GenerateRoom(root, rooms[i]);
+                }
+
+                return root;
+            }
+
+            // JSON format that can be used with Meta XR Simulator scene recorder
+            // https://developer.oculus.com/documentation/unity/xrsim-scene-recorder/
+            // NOTE: This format doesn't contain scene mesh data.
+            var components = json.GetValueOrDefault("components", null) as JSONObject;
+            if (components != null)
+            {
+                rooms = XRSimConverter.Convert(components);
+
+                for (int i = 0; i < rooms.Count; i++)
+                {
+                    GenerateRoom(root, rooms[i]);
+                }
+
+                return root;
+            }
+
+            throw new ArgumentException("Unknown json format");
+        }
+
+        private void GenerateRoom(Transform root, JSONNode roomNode)
+        {
             var pose = ToPose(roomNode["pose"]);
-            var roomGo = new GameObject("SceneRoom");
+            var uuid = roomNode["uuid"].Value.Substring(0, 6);
+
+            var roomGo = new GameObject($"JsonRoom_{uuid}");
             var roomTransform = roomGo.transform;
             roomTransform.SetPositionAndRotation(pose.position, pose.rotation);
             roomTransform.SetParent(root);
@@ -205,7 +243,6 @@ namespace Phantom.Environment.Scripts
 
             var sceneChildren = (JSONArray)roomNode["children"];
 
-            var spaceDictionary = new Dictionary<OVRSpace, int>();
             var planeList = new List<OVRScenePlane>();
 
             // Add each child node to the room.
@@ -219,7 +256,7 @@ namespace Phantom.Environment.Scripts
 
                 var space = SpawnSceneChild((JSONObject)child, room, roomTransform, planeList);
 
-                spaceDictionary[space] = 1;
+                SpaceDictionary[space] = 1;
             }
 
             AddPlanesToRoom(room, planeList);
@@ -227,9 +264,7 @@ namespace Phantom.Environment.Scripts
             var anchorReferenceCountDictionary = typeof(OVRSceneAnchor).GetField("AnchorReferenceCountDictionary",
                 BindingFlags.NonPublic | BindingFlags.Static);
 
-            anchorReferenceCountDictionary?.SetValue(null, spaceDictionary);
-
-            return roomTransform;
+            anchorReferenceCountDictionary?.SetValue(null, SpaceDictionary);
         }
 
 
@@ -490,8 +525,8 @@ namespace Phantom.Environment.Scripts
                 BindingFlags.Public | BindingFlags.Instance);
             offsetProp?.SetValue(volume, offset);
 
-            volume.ScaleChildren = volumeNode["scaleChildren"];
-            volume.OffsetChildren = volumeNode["offsetChildren"];
+            volume.ScaleChildren = volumeNode.GetValueOrDefault("scaleChildren", volume.ScaleChildren);
+            volume.OffsetChildren = volumeNode.GetValueOrDefault("offsetChildren", volume.OffsetChildren);
 
             return volume;
         }
