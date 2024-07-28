@@ -24,26 +24,33 @@ public class TutorialManager : MonoBehaviour
     private const string PLAYERPREF_TURORIAL_KEY = "Tutorial";
     private const string GAME_SCENE_NAME = "GameScene";
 
-    [Header("Global configuration")] [SerializeField]
+    [Header("Global configuration")]
+    [SerializeField]
     private float startDelayTime = 1.5f;
 
     [SerializeField] private float changeDelayTime = 1.0f;
     [SerializeField] private TutorialPageData[] tutorialPages;
 
-    [Space(10)] [Header("Page configuration")] [SerializeField]
+    [Space(10)]
+    [Header("Page configuration")]
+    [SerializeField]
     private float overrideEnableAnimTime = 0.15f;
 
     [SerializeField] private float overrideEnableAnimScale = 0.5f;
     [SerializeField] private float overrideButtonBlinkTime = 0.2f;
 
-    [Space(10)] [Header("Audio configuration")] [SerializeField]
+    [Space(10)]
+    [Header("Audio configuration")]
+    [SerializeField]
     private PhantoGooSfxManager soundManager;
 
     [SerializeField] private AudioSource showPageSound;
     [SerializeField] private AudioSource hidePageSound;
     [SerializeField] private AudioSource tutorialCompletedSound;
 
-    [Space(10)] [Header("Debug configuration")] [SerializeField]
+    [Space(10)]
+    [Header("Debug configuration")]
+    [SerializeField]
     private bool showDebug;
 
     [SerializeField] private GameObject modalDebug;

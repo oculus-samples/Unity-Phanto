@@ -54,7 +54,8 @@ namespace Phantom
 
         [SerializeField] private Transform head;
 
-        [SerializeField] [Tooltip("The jump will be this high above the highest link point")]
+        [SerializeField]
+        [Tooltip("The jump will be this high above the highest link point")]
         private float peakHeight = 0.3f;
 
         [SerializeField] private float animationMultiplier = 1.0f;
@@ -131,7 +132,7 @@ namespace Phantom
                 yield break;
             }
 
-            yield return new WaitUntil(()=>_gameplaySettingsReady);
+            yield return new WaitUntil(() => _gameplaySettingsReady);
             // Set phantom speed depending on settings
             _defaultSpeed = _gameplaySettingsManager.gameplaySettings.CurrentPhantomSetting.Speed;
             _currentSpeed = _defaultSpeed;

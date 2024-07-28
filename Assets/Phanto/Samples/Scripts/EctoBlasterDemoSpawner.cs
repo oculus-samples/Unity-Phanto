@@ -17,7 +17,8 @@ namespace Phantom.EctoBlaster.Scripts
         [SerializeField] private Transform leftHand;
         [SerializeField] private Transform rightHand;
 
-        [Tooltip("The radius to start tracking the target")] [SerializeField]
+        [Tooltip("The radius to start tracking the target")]
+        [SerializeField]
         private float trackingRadius = 1.0f;
 
         [SerializeField] private PhantoRandomOneShotSfxBehavior placeDownSFX;

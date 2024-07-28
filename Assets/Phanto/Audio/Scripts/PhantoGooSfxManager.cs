@@ -338,7 +338,7 @@ namespace Phanto.Audio.Scripts
         }
         public void SetDangerLevel(float level)
         {
-            _dangerLevel = Mathf.Lerp(_dangerLevel, level, Time.deltaTime*2);
+            _dangerLevel = Mathf.Lerp(_dangerLevel, level, Time.deltaTime * 2);
             phantoWarningMusicLoop.loopSrc.volume = dangerMusicVolume.Evaluate(_dangerLevel);
         }
 
@@ -357,7 +357,7 @@ namespace Phanto.Audio.Scripts
 
             var label = semanticClassification.Labels[0];
 
-            if (string.IsNullOrEmpty(label) || !_semanticSfxDictionary.TryGetValue(label, out var queue) )
+            if (string.IsNullOrEmpty(label) || !_semanticSfxDictionary.TryGetValue(label, out var queue))
             {
                 return;
             }

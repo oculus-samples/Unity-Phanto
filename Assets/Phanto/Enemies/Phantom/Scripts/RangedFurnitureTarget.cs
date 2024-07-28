@@ -110,7 +110,7 @@ namespace Phantom
 
                 _triangles.RemoveAll((tri) =>
                 {
-                    var vector = Vector3.ProjectOnPlane(  position - tri.center, Vector3.up).normalized;
+                    var vector = Vector3.ProjectOnPlane(position - tri.center, Vector3.up).normalized;
 
                     var dot = Vector3.Dot(forwardNormal, vector);
 
@@ -132,7 +132,7 @@ namespace Phantom
                     var plane = new Plane(Vector3.up, randomPoint);
                     targetPoint = plane.ClosestPointOnPlane(targetPoint);
 
-                    var ray = new Ray(targetPoint,  randomPoint - targetPoint);
+                    var ray = new Ray(targetPoint, randomPoint - targetPoint);
                     launchPoint = ray.GetPoint(distance);
                 }
                 else
@@ -142,7 +142,8 @@ namespace Phantom
                     launchPoint = triangle.GetRandomPoint();
                 }
 
-                if (NavMesh.SamplePosition(launchPoint, out var navMeshHit, NavMeshConstants.OneFoot, NavMesh.AllAreas)) {
+                if (NavMesh.SamplePosition(launchPoint, out var navMeshHit, NavMeshConstants.OneFoot, NavMesh.AllAreas))
+                {
                     launchPoint = navMeshHit.position;
                     break;
                 }

@@ -14,40 +14,52 @@ namespace Phantom.EctoBlaster.Scripts
     /// </summary>
     public class EctoBlasterSpawner : MonoBehaviour
     {
-        [Tooltip("A reference to the blaster prefab")] [SerializeField]
+        [Tooltip("A reference to the blaster prefab")]
+        [SerializeField]
         private GameObject blasterPrefab;
 
-        [Tooltip("A reference to the blaster preview prefab")] [SerializeField]
+        [Tooltip("A reference to the blaster preview prefab")]
+        [SerializeField]
         private GameObject blasterPreviewPrefab;
 
-        [Tooltip("A reference to the blaster range indicator prefab")] [SerializeField]
+        [Tooltip("A reference to the blaster range indicator prefab")]
+        [SerializeField]
         private GameObject blasterRangeIndicatorPrefab;
 
-        [Tooltip("The layer mask used to detect which objects can the blaster be spawned on")] [SerializeField]
+        [Tooltip("The layer mask used to detect which objects can the blaster be spawned on")]
+        [SerializeField]
         private LayerMask meshLayerMask;
 
-        [Tooltip("The layer mask used to detect which objects will be targeted by the blaster")] [SerializeField]
+        [Tooltip("The layer mask used to detect which objects will be targeted by the blaster")]
+        [SerializeField]
         private LayerMask blasterLayerMask;
 
-        [Tooltip("The button used to spawn the blaster")] [SerializeField]
+        [Tooltip("The button used to spawn the blaster")]
+        [SerializeField]
         private OVRInput.RawButton spawnButton;
 
-        [Tooltip("The radius to start blasting the target")] [SerializeField]
+        [Tooltip("The radius to start blasting the target")]
+        [SerializeField]
         private float blastRadius = 0.5f;
 
-        [Tooltip("The effective size of the blaster radius")] [SerializeField]
+        [Tooltip("The effective size of the blaster radius")]
+        [SerializeField]
         private float visualBlastRadius = 2.0f;
 
-        [Tooltip("The sound effects played when the blaster is spawned")] [SerializeField]
+        [Tooltip("The sound effects played when the blaster is spawned")]
+        [SerializeField]
         private PhantoRandomOneShotSfxBehavior placeDownSFX;
 
-        [Tooltip("The sound effects played when the blaster is picked up")] [SerializeField]
+        [Tooltip("The sound effects played when the blaster is picked up")]
+        [SerializeField]
         private PhantoRandomOneShotSfxBehavior pickUpSFX;
 
-        [Tooltip("Blaster Respawn Time")] [SerializeField]
+        [Tooltip("Blaster Respawn Time")]
+        [SerializeField]
         private float respawnTime = 5f;
 
-        [Tooltip("Blaster destroy Time")] [SerializeField]
+        [Tooltip("Blaster destroy Time")]
+        [SerializeField]
         private float blasterDestroyTime = 8f;
 
 

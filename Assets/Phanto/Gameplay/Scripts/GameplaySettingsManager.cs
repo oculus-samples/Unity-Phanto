@@ -16,7 +16,7 @@ public class GameplaySettingsManager : SingletonMonoBehaviour<GameplaySettingsMa
 
     public event Action OnWaveAdvance;
 
-    public int Wave { get; private set;}
+    public int Wave { get; private set; }
 
     protected override void Awake()
     {

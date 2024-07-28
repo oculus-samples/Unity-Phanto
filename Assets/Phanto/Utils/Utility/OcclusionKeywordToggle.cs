@@ -99,7 +99,7 @@ namespace PhantoUtils
                 switch (OVRPlugin.GetSystemHeadsetType())
                 {
                     case OVRPlugin.SystemHeadset.Meta_Quest_3:
-                    // case OVRPlugin.SystemHeadset.Meta_Link_Quest_3: // TODO: Coming soon.
+                        // case OVRPlugin.SystemHeadset.Meta_Link_Quest_3: // TODO: Coming soon.
                         return true;
                 }
 

@@ -10,20 +10,25 @@ using Phanto.Audio.Scripts;
 /// </summary>
 public class UIStatisticsManager : MonoBehaviour
 {
-    [Header("UI Elements 2D")] [SerializeField]
+    [Header("UI Elements 2D")]
+    [SerializeField]
     private GameObject mainPanel;
 
     [SerializeField] private TextMeshProUGUI gooCounterText;
     [SerializeField] private Image gooIcon;
 
-    [Space(10)] [Header("UI Elements Hand")] [SerializeField]
+    [Space(10)]
+    [Header("UI Elements Hand")]
+    [SerializeField]
     private GameObject mainPanelHand;
 
     [SerializeField] private TextMeshProUGUI gooCounterTextHand;
     [SerializeField] private Image gooIconHand;
     [SerializeField] private bool useHand = true;
 
-    [Space(10)] [Header("Alert Levels configuration")] [SerializeField]
+    [Space(10)]
+    [Header("Alert Levels configuration")]
+    [SerializeField]
     private float gooAlertStart = 0.2f;
 
     [SerializeField] private float gooAlertLow = 0.3f;
@@ -31,7 +36,9 @@ public class UIStatisticsManager : MonoBehaviour
     [SerializeField] private float gooAlertMax = 0.7f;
     [SerializeField] private float gooAlertEnd = 0.8f;
 
-    [Space(10)] [Header("Blink Anim configuration")] [SerializeField]
+    [Space(10)]
+    [Header("Blink Anim configuration")]
+    [SerializeField]
     private float gooAlertBlinkLevel = 2f;
 
     [SerializeField] private float gooAlertBlinkTime = 0.15f;
@@ -40,7 +47,9 @@ public class UIStatisticsManager : MonoBehaviour
     [Header("Warning sfx")]
     [SerializeField] private PhantoRandomOneShotSfxBehavior alertSfx;
 
-    [Space(10)] [Header("Debug configuration")] [SerializeField]
+    [Space(10)]
+    [Header("Debug configuration")]
+    [SerializeField]
     private bool debugInfo;
 
     private int _alertLevel = -1;
@@ -68,20 +77,22 @@ public class UIStatisticsManager : MonoBehaviour
                 _blinkCurrentTime = 0;
                 _blinkCurrentStatus = !_blinkCurrentStatus;
 
-                if (_alertLevel == 2) {
+                if (_alertLevel == 2)
+                {
                     alertSfx.pitchMin = 1.5f;
                     alertSfx.pitchMax = 1.5f;
-                } else if (_alertLevel == 3)
+                }
+                else if (_alertLevel == 3)
                 {
                     alertSfx.pitchMin = 1.7f;
                     alertSfx.pitchMax = 1.7f;
-                } 
+                }
                 {
                     alertSfx.pitchMin = 1f;
                     alertSfx.pitchMax = 1f;
                 }
 
-                if (_blinkCurrentStatus) 
+                if (_blinkCurrentStatus)
                     alertSfx.PlaySfx();
             }
         }

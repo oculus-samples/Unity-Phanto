@@ -163,7 +163,7 @@ namespace Phantom
 
             var offset = Vector3.zero;
 
-            for (var i=0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 // spawn and position corner crystals.
                 // use boundary to spawn crystals.

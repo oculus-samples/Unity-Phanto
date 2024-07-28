@@ -399,7 +399,7 @@ namespace Phantom
             PhantomTarget closest = null;
             foreach (var target in _targetsInRange)
             {
-                if (target==null || !target.Valid) continue;
+                if (target == null || !target.Valid) continue;
 
                 var distance = Vector3.Distance(target.Position, position);
                 if (distance < minDistance)

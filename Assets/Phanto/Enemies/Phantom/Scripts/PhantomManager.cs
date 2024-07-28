@@ -27,28 +27,37 @@ namespace Phantom
         public static readonly string[] CrystalSurfaces = new[]
             { Classification.Table, Classification.Couch, Classification.Bed, Classification.Storage, Classification.Other };
 
-        [Tooltip("The prefab to spawn.")] [SerializeField]
+        [Tooltip("The prefab to spawn.")]
+        [SerializeField]
         private PhantomController phantomPrefab;
 
-        [Tooltip("The PhantomFleeTarget prefab to spawn.")] [SerializeField]
+        [Tooltip("The PhantomFleeTarget prefab to spawn.")]
+        [SerializeField]
         protected PhantomFleeTarget fleaTargetPrefab;
 
-        [Tooltip("The PhantomChaseTarget prefab to spawn.")] [SerializeField]
+        [Tooltip("The PhantomChaseTarget prefab to spawn.")]
+        [SerializeField]
         private PhantomChaseTarget chaseTargetPrefabPrefab;
 
-        [Tooltip("The number of PhantomChaseTarget to spawn.")] [SerializeField]
+        [Tooltip("The number of PhantomChaseTarget to spawn.")]
+        [SerializeField]
         private int chaseInstances = 3;
 
-        [Tooltip("The PhantomFleeTarget prefab to spawn.")] [SerializeField]
+        [Tooltip("The PhantomFleeTarget prefab to spawn.")]
+        [SerializeField]
         protected int fleeInstances = 8;
 
-        [Tooltip("The maximum distance a phantom can move from the floor.")] [SerializeField] [Range(0.01f, 10.0f)]
+        [Tooltip("The maximum distance a phantom can move from the floor.")]
+        [SerializeField]
+        [Range(0.01f, 10.0f)]
         private float targetRefreshRate = 2.0f;
 
-        [Tooltip("Reference to Phanto")] [SerializeField]
+        [Tooltip("Reference to Phanto")]
+        [SerializeField]
         protected Phanto.Phanto phanto;
 
-        [Tooltip("The UIWaveChangeManager to handle pahntoms in waves.")] [SerializeField]
+        [Tooltip("The UIWaveChangeManager to handle pahntoms in waves.")]
+        [SerializeField]
         private UIWaveChangeManager _waveChangeManager;
 
         [SerializeField] private TableCrystal tableCrystalPrefab;

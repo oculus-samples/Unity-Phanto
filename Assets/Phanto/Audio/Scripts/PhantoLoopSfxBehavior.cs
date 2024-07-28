@@ -21,11 +21,11 @@ namespace Phanto.Audio.Scripts
         [SerializeField] internal AudioSource loopSrc;
         [SerializeField] internal AudioSource stopSrc;
 
-        [Range(0, 1)] [SerializeField] protected float loopVolume = 1;
-        [Range(0, 5)] [SerializeField] protected float loopFadeInTime = 1;
-        [Range(0, 5)] [SerializeField] protected float loopFadeOutTime = 0.1f;
-        [Range(0, 1)] [SerializeField] protected float startVolume = 1;
-        [Range(0, 1)] [SerializeField] protected float stopVolume = 1;
+        [Range(0, 1)][SerializeField] protected float loopVolume = 1;
+        [Range(0, 5)][SerializeField] protected float loopFadeInTime = 1;
+        [Range(0, 5)][SerializeField] protected float loopFadeOutTime = 0.1f;
+        [Range(0, 1)][SerializeField] protected float startVolume = 1;
+        [Range(0, 1)][SerializeField] protected float stopVolume = 1;
         [SerializeField] protected bool randomStartPosition = true;
 
         [SerializeField] protected float bufferStartTime;
@@ -60,7 +60,7 @@ namespace Phanto.Audio.Scripts
                 if (bufferStartTime != 0)
                 {
                     loopSrc.PlayScheduled(startBuffer + waitTime);
-                    StartCoroutine(WaitAndFireEvent(bufferStartTime+waitTime));
+                    StartCoroutine(WaitAndFireEvent(bufferStartTime + waitTime));
                 }
                 else
                 {
@@ -97,7 +97,7 @@ namespace Phanto.Audio.Scripts
             StopAllCoroutines();
             if (starts.Length > 0 && startSrc != null)
                 if (startSrc.isPlaying) StartCoroutine(Fade(startSrc.volume, 0, loopFadeOutTime, startSrc));
-            if (loops.Length > 0 &&  loopSrc != null)
+            if (loops.Length > 0 && loopSrc != null)
                 if (loopSrc.isPlaying) StartCoroutine(Fade(loopSrc.volume, 0, loopFadeOutTime, loopSrc));
             if (stops.Length > 0 && stopSrc != null)
             {
@@ -112,7 +112,7 @@ namespace Phanto.Audio.Scripts
 
         public void ForceStop()
         {
-            if(startSrc != null)
+            if (startSrc != null)
                 startSrc.Stop();
             if (loopSrc != null)
                 loopSrc?.Stop();

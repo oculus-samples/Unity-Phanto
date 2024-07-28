@@ -12,7 +12,8 @@ namespace Phantom.EctoBlaster.Scripts
     /// </summary>
     public class EctoBlasterRadar : MonoBehaviour
     {
-        [Tooltip("The blaster transform")] [SerializeField]
+        [Tooltip("The blaster transform")]
+        [SerializeField]
         private Transform baseTransform;
 
         [SerializeField]
@@ -21,10 +22,12 @@ namespace Phantom.EctoBlaster.Scripts
         [SerializeField]
         private Transform yawTransform;
 
-        [Tooltip("The rotation speed to rotate to the desired target")] [SerializeField]
+        [Tooltip("The rotation speed to rotate to the desired target")]
+        [SerializeField]
         private float rotationSpeed = 0.5f;
 
-        [Tooltip("Time to perform scan loop for targets")] [SerializeField]
+        [Tooltip("Time to perform scan loop for targets")]
+        [SerializeField]
         private float scanTime = 1.0f;
 
         [SerializeField] private PhantomFleeTarget _fleeTarget;

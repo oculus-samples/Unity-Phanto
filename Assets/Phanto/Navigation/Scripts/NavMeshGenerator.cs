@@ -21,7 +21,8 @@ public class NavMeshGenerator : MonoBehaviour
 
     private static List<NavMeshTriangle> _navMeshTriangles;
 
-    [SerializeField] [Range(0.001f, 10.0f)]
+    [SerializeField]
+    [Range(0.001f, 10.0f)]
     private float volumeHeight = 0.03f;
 
     // Careful, InteractionSDK has a NavMeshSurface type too!

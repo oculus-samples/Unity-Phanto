@@ -47,7 +47,7 @@ public class UIWaveChangeManager : MonoBehaviour
 
     private bool _waveStart;
 
-    private int  _showUIWave = 0;
+    private int _showUIWave = 0;
     private int _showUIWaveMem = -1;
 
     private HapticClipPlayer _hapticPlayer;
@@ -117,7 +117,7 @@ public class UIWaveChangeManager : MonoBehaviour
         var showWavePopup = GameplaySettingsManager.Instance.gameplaySettings.GuiSettingsList[waveNum - 1].popupDelayShowTime;
         yield return new WaitForSeconds(showWavePopup);
         // time params
-        var showBackPhanto =  GameplaySettingsManager.Instance.gameplaySettings.GuiSettingsList[waveNum - 1].showBackPhantoWaveTime;
+        var showBackPhanto = GameplaySettingsManager.Instance.gameplaySettings.GuiSettingsList[waveNum - 1].showBackPhantoWaveTime;
         // show wave popup
         _showUIWave = waveNum;
         yield return new WaitForSeconds(popupShowTime);
@@ -144,8 +144,8 @@ public class UIWaveChangeManager : MonoBehaviour
         }
         else
         {
-            wavePanelText.text = GameplaySettingsManager.Instance.gameplaySettings.GuiSettingsList[waveNum-1].WaveTitle;
-            wavePanelDescription.text = GameplaySettingsManager.Instance.gameplaySettings.GuiSettingsList[waveNum-1].WaveObjective;
+            wavePanelText.text = GameplaySettingsManager.Instance.gameplaySettings.GuiSettingsList[waveNum - 1].WaveTitle;
+            wavePanelDescription.text = GameplaySettingsManager.Instance.gameplaySettings.GuiSettingsList[waveNum - 1].WaveObjective;
             wavePopup.SetActive(true);
             wavePopupSound.PlaySfx();
             _hapticPlayer?.Play(hapticController);

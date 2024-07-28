@@ -16,12 +16,12 @@ public class GameplaySettings : ScriptableObject
     private GameplaySettingsManager _manager;
 
     // Individual settings list
-    public PhantoSetting[] PhantoSettingsList =>  waveSettings.Select((setting) => setting.phantoSetting).ToArray();
-    public PhantomSetting[] PhantomSettingsList =>  waveSettings.Select((setting) => setting.phantomSetting).ToArray();
-    public GuiSettings[] GuiSettingsList =>  waveSettings.Select((setting) => setting.guiSettings).ToArray();
+    public PhantoSetting[] PhantoSettingsList => waveSettings.Select((setting) => setting.phantoSetting).ToArray();
+    public PhantomSetting[] PhantomSettingsList => waveSettings.Select((setting) => setting.phantomSetting).ToArray();
+    public GuiSettings[] GuiSettingsList => waveSettings.Select((setting) => setting.guiSettings).ToArray();
 
     // Current settings accessor
-    public WaveSettings CurrentWaveSettings =>  waveSettings[_manager.Wave];
+    public WaveSettings CurrentWaveSettings => waveSettings[_manager.Wave];
     public PhantoSetting CurrentPhantoSetting => PhantoSettingsList[_manager.Wave];
     public PhantomSetting CurrentPhantomSetting => PhantomSettingsList[_manager.Wave];
     public GuiSettings CurrentGuiSetting => GuiSettingsList[_manager.Wave];
@@ -55,7 +55,7 @@ public class GameplaySettings : ScriptableObject
     }
 
     [System.Serializable]
-    public class PhantoSetting:GameSetting
+    public class PhantoSetting : GameSetting
     {
         [Header("Phanto General settings")]
         [Tooltip("The amount of damage to apply to the enemy.")]
@@ -65,7 +65,7 @@ public class GameplaySettings : ScriptableObject
         public float splashAmount = 0.4f;
 
         [Tooltip("Sets the speed of the projectile.")]
-        public Vector2 gooBallSpeed = new Vector2(2,5);
+        public Vector2 gooBallSpeed = new Vector2(2, 5);
 
         [Header("Phanto Behaviour settings")]
         public PhantoBehaviour.Nova.NovaSettings novaSettings;
@@ -77,7 +77,7 @@ public class GameplaySettings : ScriptableObject
     }
 
     [System.Serializable]
-    public class PhantomSetting:GameSetting
+    public class PhantomSetting : GameSetting
     {
         [Tooltip("Phantom movement speed")]
         public float Speed = 1;
@@ -121,7 +121,7 @@ public class GameplaySettings : ScriptableObject
     }
 
     [System.Serializable]
-    public class GuiSettings:GameSetting
+    public class GuiSettings : GameSetting
     {
         [Tooltip("The wave title")]
         public string WaveTitle = "Wave X";

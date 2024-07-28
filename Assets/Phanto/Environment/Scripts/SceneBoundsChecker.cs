@@ -18,13 +18,16 @@ namespace Phantom.Environment.Scripts
         private static Bounds? _bounds;
         [SerializeField] private OVRCameraRig cameraRig;
 
-        [SerializeField] [Tooltip("Amount the floor must shift to trigger realignment.")]
+        [SerializeField]
+        [Tooltip("Amount the floor must shift to trigger realignment.")]
         private float maxShift = 0.05f;
 
-        [SerializeField] [Tooltip("Amount the floor must rotate to trigger realignment.")]
+        [SerializeField]
+        [Tooltip("Amount the floor must rotate to trigger realignment.")]
         private float maxRotation = 5f;
 
-        [SerializeField] [Tooltip("Rotate the tracking space to make sure the room's floor is 0,0,0 and axis aligned.")]
+        [SerializeField]
+        [Tooltip("Rotate the tracking space to make sure the room's floor is 0,0,0 and axis aligned.")]
         private bool axisAlignFloor = true;
 
         private bool _boundsDirty;

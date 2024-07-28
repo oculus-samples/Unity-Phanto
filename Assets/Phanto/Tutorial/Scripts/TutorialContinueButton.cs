@@ -11,17 +11,21 @@ public class TutorialContinueButton : MonoBehaviour
 {
     private const string RESTART_SCENE = "TutorialScene";
 
-    [Header("Page configuration")] [SerializeField]
+    [Header("Page configuration")]
+    [SerializeField]
     private float animationTime = 1.0f;
 
-    [Space(10)] [Header("Button configuration")] [SerializeField]
+    [Space(10)]
+    [Header("Button configuration")]
+    [SerializeField]
     private float showButtonTime = 5.0f;
 
     [SerializeField] private float blinkButtonTime = 0.5f;
     [SerializeField] private float scaleButtonMultiplier = 0.5f;
     [SerializeField] private GameObject continueButton;
 
-    [Header("Button Restart Action")] [SerializeField]
+    [Header("Button Restart Action")]
+    [SerializeField]
     private bool useButtonAction;
 
     [SerializeField] private OVRInput.RawButton restartGameButton;

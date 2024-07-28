@@ -13,10 +13,12 @@ public class PhantoGoo : MonoBehaviour
     private static readonly HashSet<PhantoGoo> GooCollection = new();
     public static IReadOnlyCollection<PhantoGoo> ActiveGoos => GooCollection;
 
-    [Tooltip("The GooController this Goo belongs to.")] [SerializeField]
+    [Tooltip("The GooController this Goo belongs to.")]
+    [SerializeField]
     private GooController gooController;
 
-    [Tooltip("The collider this Goo uses to detect collisions.")] [SerializeField]
+    [Tooltip("The collider this Goo uses to detect collisions.")]
+    [SerializeField]
     private new Collider collider;
 
     [SerializeField] private LayerMask ectoBlasterLayer;

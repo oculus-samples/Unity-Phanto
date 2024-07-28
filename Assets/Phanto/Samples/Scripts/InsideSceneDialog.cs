@@ -94,7 +94,7 @@ public class InsideSceneDialog : MonoBehaviour
             _rightHandIn = InsideSceneChecker.PointInsideScene(_cameraRig.rightHandAnchor.position);
             _headIn = InsideSceneChecker.PointInsideScene(_cameraRig.centerEyeAnchor.position);
 
-            var statusText = $"Head: {(_headIn ? In : Out) }\nLeft controller: {(_leftHandIn ? In : Out)}\nRight controller: {(_rightHandIn ? In : Out)}";
+            var statusText = $"Head: {(_headIn ? In : Out)}\nLeft controller: {(_leftHandIn ? In : Out)}\nRight controller: {(_rightHandIn ? In : Out)}";
 
             infoText.text = statusText;
 

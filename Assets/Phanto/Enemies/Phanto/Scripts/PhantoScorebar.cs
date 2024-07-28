@@ -26,7 +26,7 @@ namespace Phanto
         private void Update()
         {
             // Update score
-            _textMesh.text = new string('-', Mathf.Max(0,(int)(_enemy.Health / 10)));
+            _textMesh.text = new string('-', Mathf.Max(0, (int)(_enemy.Health / 10)));
             var source = transform;
             var position = source.position;
             var dirToTarget = (_cameraTransform.position - position).normalized;

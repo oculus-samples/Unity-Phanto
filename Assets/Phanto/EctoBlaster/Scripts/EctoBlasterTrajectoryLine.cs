@@ -13,13 +13,16 @@ using UnityEngine;
 [RequireComponent(typeof(EctoBlasterSpawner))]
 public class EctoBlasterTrajectoryLine : MonoBehaviour
 {
-    [Tooltip("Number of points to represent the arc")] [SerializeField]
+    [Tooltip("Number of points to represent the arc")]
+    [SerializeField]
     private int positionCount = 10;
 
-    [Tooltip("Arc height at center")] [SerializeField]
+    [Tooltip("Arc height at center")]
+    [SerializeField]
     private float arcHeight = .2f;
 
-    [Tooltip("Animation curve to control the arc width along the line")] [SerializeField]
+    [Tooltip("Animation curve to control the arc width along the line")]
+    [SerializeField]
     private AnimationCurve arcCurve;
 
     // Private members

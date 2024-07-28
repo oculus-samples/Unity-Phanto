@@ -183,12 +183,12 @@ public static class NavMeshBookKeeper
         var result = new List<NavMeshTriangle>();
 
         foreach (var list in _meshOwners.Values)
-        foreach (var tri in list)
-        {
-            if (!tri.IsOpen) continue;
+            foreach (var tri in list)
+            {
+                if (!tri.IsOpen) continue;
 
-            result.Add(tri);
-        }
+                result.Add(tri);
+            }
 
         return result;
     }

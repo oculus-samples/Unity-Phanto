@@ -63,7 +63,7 @@ public class GooController : MonoBehaviour
         }
     }
 
-    public void SpeedUpParticles( float acceleration )
+    public void SpeedUpParticles(float acceleration)
     {
         SpeedUp(_particleSystem, acceleration);
         var particles = _particleSystem.GetComponentsInChildren<ParticleSystem>();

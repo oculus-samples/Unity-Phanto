@@ -140,7 +140,7 @@ namespace Phantom
             if (closest != null)
             {
                 var pos = closest.position;
-                var direction = Vector3.ProjectOnPlane( pos - _head.position, Vector3.up).normalized;
+                var direction = Vector3.ProjectOnPlane(pos - _head.position, Vector3.up).normalized;
 
                 XRGizmos.DrawPoint(closestPoint, Color.white, 0.05f);
                 XRGizmos.DrawAxis(closest, 0.15f, 0.006f);

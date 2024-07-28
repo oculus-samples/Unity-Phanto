@@ -70,7 +70,7 @@ public class DebugSceneEntities : MonoBehaviour
         var dimensions = sceneVolume.Dimensions;
         var pos = volumeTransform.position;
 
-        pos.y -=  dimensions.z * 0.5f;
+        pos.y -= dimensions.z * 0.5f;
 
         if (sceneVolume.OffsetChildren)
         {

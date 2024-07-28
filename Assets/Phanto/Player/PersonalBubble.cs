@@ -14,7 +14,7 @@ public class PersonalBubble : MonoBehaviour
 {
     private static readonly Dictionary<Object, PersonalBubble> PlayerBubbles = new();
 
-    [SerializeField][Range(0.25f,1.0f)] private float radius = 0.33f;
+    [SerializeField][Range(0.25f, 1.0f)] private float radius = 0.33f;
 
     [Tooltip("The camera rig to reference")]
     [SerializeField] private OVRCameraRig cameraRig;
