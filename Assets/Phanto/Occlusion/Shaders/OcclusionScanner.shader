@@ -19,7 +19,7 @@ Shader "MR/OcclusionScanner"
             #pragma multi_compile_instancing
 
             #include "UnityCG.cginc"
-            #include "Packages/com.meta.xr.depthapi/Runtime/BiRP/EnvironmentOcclusionBiRP.cginc"
+            #include "Packages/com.meta.xr.sdk.core/Shaders/EnvironmentDepth/BiRP/EnvironmentOcclusionBiRP.cginc"
 
             // DepthAPI Environment Occlusion
             #pragma multi_compile _ HARD_OCCLUSION SOFT_OCCLUSION

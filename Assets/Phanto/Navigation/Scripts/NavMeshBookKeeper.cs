@@ -105,6 +105,45 @@ public static class NavMeshBookKeeper
         return false;
     }
 
+
+    /// <summary>
+    ///     Spherecast from the ceiling down to the triangle to verify it's in an "open" area.
+    /// </summary>
+    /// <param name="rooms"></param>
+    public static IEnumerator ValidateRooms(IReadOnlyList<OVRSceneRoom> rooms)
+    {
+        var stopwatch = Stopwatch.StartNew();
+
+        foreach (var room in rooms)
+        {
+            var ceilingTransform = room.Ceiling.transform;
+            var ceilingPlane = new Plane(ceilingTransform.forward, ceilingTransform.position);
+
+            // verify each triangle is not under furniture.
+            foreach (var triangleList in _meshOwners.Values)
+            {
+                if (triangleList == null)
+                {
+                    continue;
+                }
+
+                foreach (var triangle in triangleList)
+                {
+                    triangle.VerifyOpen(ceilingPlane);
+                }
+
+                if (stopwatch.ElapsedMilliseconds > 5)
+                {
+                    Debug.Log($"validating scene: {stopwatch.Elapsed}");
+                    yield return null;
+                    stopwatch.Restart();
+                }
+            }
+        }
+
+        OnValidateScene?.Invoke();
+    }
+
     /// <summary>
     ///     Spherecast from the ceiling down to the triangle to verify it's in an "open" area.
     /// </summary>

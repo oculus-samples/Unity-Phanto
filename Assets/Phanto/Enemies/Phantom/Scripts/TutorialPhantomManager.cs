@@ -24,7 +24,7 @@ namespace Phantom
 
         protected override void OnEnable()
         {
-            SceneBoundsChecker.BoundsChanged += OnBoundsChanged;
+            SceneBoundsChecker.WorldAligned += OnWorldAligned;
             settingsManager.OnWaveAdvance += OnWaveAdvance;
         }
 

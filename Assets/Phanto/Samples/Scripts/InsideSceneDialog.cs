@@ -118,7 +118,7 @@ public class InsideSceneDialog : MonoBehaviour
         XRGizmos.DrawSphere(hand.position, 0.05f, inBounds ? Color.green : Color.red);
     }
 
-    private void OnUserInSceneChanged(Bounds bounds, bool inside)
+    private void OnUserInSceneChanged(bool inside)
     {
         if (_insideScene == inside)
         {

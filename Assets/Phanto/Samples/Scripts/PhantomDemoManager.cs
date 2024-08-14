@@ -59,7 +59,7 @@ namespace Phantom
         {
             _phantomSpawnerCoroutine = StartCoroutine(PhantomSpawner());
 
-            SceneBoundsChecker.BoundsChanged += OnBoundsChanged;
+            SceneBoundsChecker.WorldAligned += OnWorldAligned;
             DebugDrawManager.DebugDrawEvent += DebugDraw;
         }
 
@@ -77,7 +77,7 @@ namespace Phantom
                 _phantomSpawnerCoroutine = null;
             }
 
-            SceneBoundsChecker.BoundsChanged -= OnBoundsChanged;
+            SceneBoundsChecker.WorldAligned -= OnWorldAligned;
             DebugDrawManager.DebugDrawEvent -= DebugDraw;
         }
 
@@ -160,7 +160,7 @@ namespace Phantom
             }
         }
 
-        private void OnBoundsChanged(Bounds bounds)
+        private void OnWorldAligned()
         {
             _sceneReady = true;
         }

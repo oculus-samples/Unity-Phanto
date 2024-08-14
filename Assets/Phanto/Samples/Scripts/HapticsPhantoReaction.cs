@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class HapticsPhantoReaction : MonoBehaviour
 {
-    [SerializeField] private PhantoRandomOneshotHapticSfxBehavior hapticSfxBehavior;
+    [SerializeField] private PhantoRandomOneShotHapticSfxBehavior hapticSfxBehavior;
 
     private void OnTriggerEnter(Collider other)
     {

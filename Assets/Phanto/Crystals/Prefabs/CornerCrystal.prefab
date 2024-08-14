@@ -10,8 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7059786610219980774}
   - component: {fileID: 3798201604253655769}
-  - component: {fileID: 5722646844262562059}
-  - component: {fileID: 3573223145174744995}
   m_Layer: 0
   m_Name: CornerCrystal
   m_TagString: Untagged
@@ -47,33 +45,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dc64aab52182b943bf005c3f9823cad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5722646844262562059
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3915406123422914694}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 274a64d85f5fba84590d087e68040223, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  occlusionType: 1
---- !u!114 &3573223145174744995
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3915406123422914694}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f41e8388e5af4f4887bc8e3a93ca2ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <DepthBiasValue>k__BackingField: 0.07
-  DoesAffectChildren: 1
 --- !u!1 &8141747423125360831
 GameObject:
   m_ObjectHideFlags: 0

@@ -39,7 +39,7 @@ namespace Phanto
         [SerializeField] private StateID initialState = StateID.Roam;
         private float _outOfBoundsDuration;
 
-        private Bounds _sceneBounds;
+        private Bounds _worldBounds;
         private SphereCollider _sphereCollider;
 
         private Transform _transform;
@@ -74,22 +74,22 @@ namespace Phanto
 
         private void OnEnable()
         {
-            SceneBoundsChecker.BoundsChanged += OnBoundsChanged;
+            SceneBoundsChecker.WorldAligned += OnWorldAligned;
 
             DebugDrawManager.DebugDrawEvent += DebugDraw;
         }
 
         private void OnDisable()
         {
-            SceneBoundsChecker.BoundsChanged -= OnBoundsChanged;
+            SceneBoundsChecker.WorldAligned -= OnWorldAligned;
 
             DebugDrawManager.DebugDrawEvent -= DebugDraw;
         }
 
-        private void OnBoundsChanged(Bounds bounds)
+        private void OnWorldAligned()
         {
-            _sceneBounds = bounds;
-            _sceneBounds.Expand(NavMeshConstants.OneFoot);
+            _worldBounds = SceneQuery.GetWorldBounds();
+            _worldBounds.Expand(NavMeshConstants.OneFoot);
         }
 
         public override uint GetNumStates()
@@ -157,7 +157,7 @@ namespace Phanto
 
         private void CheckInBounds()
         {
-            if (_sceneBounds.Contains(_transform.position))
+            if (_worldBounds.Contains(_transform.position))
             {
                 _outOfBoundsDuration = 0.0f;
                 return;
@@ -168,7 +168,7 @@ namespace Phanto
             if (_outOfBoundsDuration > 3.0f)
             {
                 var point = SceneQuery.RandomPointOnFloorNearUser();
-                point.y = _sceneBounds.center.y;
+                point.y = _worldBounds.center.y;
                 _transform.position = point;
             }
         }

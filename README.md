@@ -24,7 +24,7 @@ following our
 
 - Recommended Unity version: 2022.3.20f1
 - Mac or Windows
-- Unity OVR Integration package v64 (included in the project)
+- Unity OVR Integration package v67 (included in the project)
 
 <br><br>
 

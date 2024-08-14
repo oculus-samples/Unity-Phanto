@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 432086293399132112}
   - component: {fileID: 645322443031245477}
   - component: {fileID: 1317991015001654344}
+  - component: {fileID: -4902692165743647047}
   m_Layer: 0
   m_Name: GameCameraRig
   m_TagString: Untagged
@@ -54,6 +55,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraRig: {fileID: 4300710967103994000}
+  interactionRig: {fileID: 7158325826579567813}
 --- !u!114 &7158325826579567813
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -119,6 +121,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   permissionGrantedEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: -4902692165743647047}
+        m_TargetAssemblyTypeName: HMDChecker, Assembly-CSharp
+        m_MethodName: ExecuteIfHMDDetected
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &-4902692165743647047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 74614887539166312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 466b462753fb2084ca26a06a77b2df81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HMDDetectedEvent:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6413364930525344417}
@@ -658,6 +687,10 @@ PrefabInstance:
       propertyPath: requestScenePermissionOnStartup
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 126d619cf4daa52469682f85c1378b4a, type: 3}
+      propertyPath: shouldBoundaryVisibilityBeSuppressed
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -1154,6 +1187,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 74614887539396680}
     m_Modifications:
+    - target: {fileID: -3339483757200392019, guid: 940ca5991157c5b418edaf5e5226df05, type: 3}
+      propertyPath: _cameraRig
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 121279618062894758, guid: 940ca5991157c5b418edaf5e5226df05, type: 3}
       propertyPath: _occlusionType
       value: 2

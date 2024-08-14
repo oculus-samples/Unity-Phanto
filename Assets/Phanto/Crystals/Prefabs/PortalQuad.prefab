@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 786111789669091246}
   - component: {fileID: 6638363175349337417}
   - component: {fileID: 2358672908966893389}
-  - component: {fileID: 2666975570607499252}
   - component: {fileID: 4408350687179275979}
   m_Layer: 0
   m_Name: Quad
@@ -85,19 +84,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &2666975570607499252
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4500012756717869510}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 274a64d85f5fba84590d087e68040223, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  occlusionType: 1
 --- !u!114 &4408350687179275979
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,18 +47,26 @@ namespace Phantom.Environment.Scripts
 
         [SerializeField] private UnityEvent<Transform> SceneDataProcessed = new();
 
+        [Tooltip("Remove scene mesh and replace with SceneMesher generated geometry.")]
+        [SerializeField]
+        private bool forceSceneMesher = false;
+
         [SerializeField] private bool hideSceneMesh;
         [SerializeField] private bool generateNavMesh = true;
-        private bool _boundsUpdated;
+
+        private readonly List<OVRSemanticClassification> _semanticClassifications =
+            new List<OVRSemanticClassification>();
+
+        private bool _sceneReady;
 
         private void OnEnable()
         {
-            SceneBoundsChecker.BoundsChanged += OnBoundsChanged;
+            SceneBoundsChecker.WorldAligned += OnWorldAligned;
         }
 
         private void OnDisable()
         {
-            SceneBoundsChecker.BoundsChanged -= OnBoundsChanged;
+            SceneBoundsChecker.WorldAligned -= OnWorldAligned;
         }
 
         public void PostProcessScene(Transform sceneRoot)
@@ -87,166 +96,172 @@ namespace Phantom.Environment.Scripts
                 return sceneMeshBounds;
             }
 
+            // Wait for world alignment to finish.
             do
             {
                 yield return null;
-            } while (!_boundsUpdated);
+            } while (!_sceneReady);
 
-            var room = FindObjectOfType<OVRSceneRoom>();
+            var rooms = GetComponentsInChildren<OVRSceneRoom>(true);
 
-            Assert.IsNotNull(room);
+            Assert.IsTrue(rooms.Length > 0);
 
-            while (room.Walls.Length == 0) yield return null;
-
-            Debug.Log("Post-processing scene.");
-            var semanticClassifications = room.GetComponentsInChildren<OVRSemanticClassification>();
-
-            // Keep track of meshes and bounding boxes separately
-            List<OVRSceneVolume> sceneBoundingBoxes = new();
-            List<OVRScenePlane> scenePlanes = new();
-
-            List<OVRSemanticClassification> sceneMeshes = new();
-            List<OVRSemanticClassification> walkableFurniture = new();
-            List<OVRSemanticClassification> targetableFurniture = new();
-
-            Bounds sceneMeshBounds = default;
-
-            if (!room.TryGetComponent<SceneQuery>(out var sceneQuery))
+            // Process each room, generate navmesh, modify scene mesh etc.
+            foreach (var room in rooms)
             {
-                sceneQuery = room.gameObject.AddComponent<SceneQuery>();
-            }
+                while (room.Walls.Length == 0) yield return null;
 
-            sceneQuery.Initialize(semanticClassifications);
+                Debug.Log($"Post-processing scene: {room.name}");
 
-            // All the scene objects we care about should have a semantic classification, regardless of type
-            foreach (var semanticObject in semanticClassifications)
-            {
-                if (semanticObject.Contains(Classification.GlobalMesh))
+                List<OVRSemanticClassification> sceneMeshes = new();
+                List<OVRSemanticClassification> walkableFurniture = new();
+                List<OVRSemanticClassification> targetableFurniture = new();
+
+                Bounds sceneMeshBounds = default;
+
+                room.GetComponentsInChildren(true, _semanticClassifications);
+
+                // All the scene objects we care about should have a semantic classification, regardless of type
+                foreach (var semanticObject in _semanticClassifications)
                 {
-                    // To support using static mesh on device.
-                    if (semanticObject.TryGetComponent<OVRSceneVolumeMeshFilter>(out var volumeMeshFilter)
-                        && volumeMeshFilter.enabled)
-                        yield return new WaitUntil(() => volumeMeshFilter.IsCompleted);
-
-                    var meshFilter = semanticObject.GetComponent<MeshFilter>();
-                    var vertices = new List<Vector3>();
-
-                    do
+                    if (semanticObject.Contains(Classification.GlobalMesh))
                     {
-                        yield return null;
-                        meshFilter.sharedMesh.GetVertices(vertices);
-                    } while (vertices.Count == 0);
+                        // To support using static mesh on device.
+                        if (semanticObject.TryGetComponent<OVRSceneVolumeMeshFilter>(out var volumeMeshFilter)
+                            && volumeMeshFilter.enabled)
+                            yield return new WaitUntil(() => volumeMeshFilter.IsCompleted);
 
-                    sceneMeshBounds = GetMeshBounds(meshFilter.transform, vertices);
-#if UNITY_EDITOR
-                    if (meshFilter == null) meshFilter = semanticObject.GetComponentInChildren<MeshFilter>();
-
-                    if (meshFilter == null)
-                        Debug.LogError("No mesh filter on object classified as SceneMesh.", semanticObject);
-
-                    if (semanticObject.TryGetComponent<MeshCollider>(out var meshCollider))
-                        while (meshCollider.sharedMesh == null)
-                        {
-                            Debug.Log("waiting for mesh collider bake!");
-                            yield return null;
-                        }
-
-                    yield return null;
-#endif
-
-                    Debug.Log($"Scene mesh found with {meshFilter.sharedMesh.triangles.Length} triangles.");
-                    sceneMeshes.Add(semanticObject);
-                    continue;
-                }
-
-                if (semanticObject.ContainsAny(WalkableFurniture))
-                {
-                    // Need to make sure floor is set up before furniture is set up.
-                    walkableFurniture.Add(semanticObject);
-                }
-                else if (semanticObject.ContainsAny(RangedTargets) || semanticObject.ContainsAny(WallMountedTargets))
-                {
-                    targetableFurniture.Add(semanticObject);
-                }
-
-                if (semanticObject.TryGetComponent<OVRSceneVolume>(out var sceneVolume))
-                    sceneBoundingBoxes.Add(sceneVolume);
-                else if (semanticObject.TryGetComponent<OVRScenePlane>(out var scenePlane)) scenePlanes.Add(scenePlane);
-            }
-
-            if (sceneMeshes.Count == 0)
-            {
-                // have to wait until the floor's boundary is loaded for meshing to work.
-                while (room.Floor.Boundary.Count == 0)
-                {
-                    yield return null;
-                }
-
-                var semanticClassification = CreateFallbackSceneMesh(room);
-                if (semanticClassification != null)
-                {
-                    sceneMeshes.Add(semanticClassification);
-
-                    if (semanticClassification.TryGetComponent<MeshFilter>(out var meshFilter))
-                    {
+                        var meshFilter = semanticObject.GetComponent<MeshFilter>();
                         var vertices = new List<Vector3>();
-                        meshFilter.sharedMesh.GetVertices(vertices);
+
+                        do
+                        {
+                            yield return null;
+                            meshFilter.sharedMesh.GetVertices(vertices);
+                        } while (vertices.Count == 0);
 
                         sceneMeshBounds = GetMeshBounds(meshFilter.transform, vertices);
+#if UNITY_EDITOR
+                        if (meshFilter == null) meshFilter = semanticObject.GetComponentInChildren<MeshFilter>();
+
+                        if (meshFilter == null)
+                            Debug.LogError("No mesh filter on object classified as SceneMesh.", semanticObject);
+
+                        if (semanticObject.TryGetComponent<MeshCollider>(out var meshCollider))
+                            while (meshCollider.sharedMesh == null)
+                            {
+                                Debug.Log("waiting for mesh collider bake!");
+                                yield return null;
+                            }
+
+                        yield return null;
+#endif
+
+                        Debug.Log($"Scene mesh found with {meshFilter.sharedMesh.triangles.Length} triangles.");
+                        sceneMeshes.Add(semanticObject);
+                        continue;
+                    }
+
+                    if (semanticObject.ContainsAny(WalkableFurniture))
+                    {
+                        // Need to make sure floor is set up before furniture is set up.
+                        walkableFurniture.Add(semanticObject);
+                    }
+                    else if (semanticObject.ContainsAny(RangedTargets) ||
+                             semanticObject.ContainsAny(WallMountedTargets))
+                    {
+                        targetableFurniture.Add(semanticObject);
                     }
                 }
 
-                // give the new mesh colliders time to bake
-                yield return new WaitForFixedUpdate();
-            }
+                if (forceSceneMesher)
+                {
+                    // Destroy the instantiated scene meshes so we can replace them with SceneMesher objects.
+                    for (var i = 0; i < sceneMeshes.Count; i++)
+                    {
+                        // FIXME: Disable instead of destroy?
+                        Destroy(sceneMeshes[i].gameObject);
+                    }
 
-            if (hideSceneMesh && sceneMeshes.Count > 0)
-            {
-                Debug.Log("Disabling scene mesh.");
-                foreach (var sceneMesh in sceneMeshes) sceneMesh.gameObject.SetActive(false);
-            }
+                    sceneMeshes.Clear();
+                }
 
-            if (generateNavMesh)
-            {
-                Transform meshTransform;
-                var furnitureInScene = false;
                 if (sceneMeshes.Count == 0)
                 {
-                    Debug.LogWarning("No scene mesh found in scene.");
-                    meshTransform = room.Floor.transform;
-                }
-                else
-                {
-                    furnitureInScene = walkableFurniture.Count > 0;
-                    meshTransform = sceneMeshes[0].transform;
-                }
-
-                PrepareNavmesh(meshTransform, room, sceneMeshBounds, furnitureInScene);
-
-                foreach (var furniture in walkableFurniture)
-                {
-                    Debug.Log($"Preparing furniture for: {string.Join(",", furniture.Labels)}");
-                    if (!PrepareFurniture(furniture))
+                    // have to wait until the floor's boundary is loaded for meshing to work.
+                    while (room.Floor.Boundary.Count == 0)
                     {
-                        // no navmesh was generated for this piece of furniture.
-                        // mark it as targetable instead of walkable.
-                        Debug.Log("Marked as targetable");
-                        targetableFurniture.Add(furniture);
+                        yield return null;
+                    }
+
+                    var semanticClassification = CreateFallbackSceneMesh(room);
+                    if (semanticClassification != null)
+                    {
+                        sceneMeshes.Add(semanticClassification);
+
+                        if (semanticClassification.TryGetComponent<MeshFilter>(out var meshFilter))
+                        {
+                            var vertices = new List<Vector3>();
+                            meshFilter.sharedMesh.GetVertices(vertices);
+
+                            sceneMeshBounds = GetMeshBounds(meshFilter.transform, vertices);
+                        }
+                    }
+
+                    // give the new mesh colliders time to bake
+                    yield return new WaitForFixedUpdate();
+                }
+
+                if (hideSceneMesh && sceneMeshes.Count > 0)
+                {
+                    Debug.Log("Disabling scene mesh.");
+                    foreach (var sceneMesh in sceneMeshes) sceneMesh.gameObject.SetActive(false);
+                }
+
+                if (generateNavMesh)
+                {
+                    Transform meshTransform;
+                    var furnitureInScene = false;
+                    if (sceneMeshes.Count == 0)
+                    {
+                        Debug.LogWarning("No scene mesh found in scene.");
+                        meshTransform = room.Floor.transform;
                     }
                     else
                     {
-                        Debug.Log("Marked as walkable");
+                        furnitureInScene = walkableFurniture.Count > 0;
+                        meshTransform = sceneMeshes[0].transform;
+                    }
+
+                    PrepareNavmesh(meshTransform, room, sceneMeshBounds, furnitureInScene);
+
+                    foreach (var furniture in walkableFurniture)
+                    {
+                        Debug.Log($"Preparing furniture for: {string.Join(",", furniture.Labels)}");
+                        if (!PrepareFurniture(furniture))
+                        {
+                            // no navmesh was generated for this piece of furniture.
+                            // mark it as targetable instead of walkable.
+                            // Debug.Log("Marked as targetable");
+                            targetableFurniture.Add(furniture);
+                        }
+                        else
+                        {
+                            // Debug.Log("Marked as walkable");
+                        }
+                    }
+
+                    foreach (var furniture in targetableFurniture)
+                    {
+                        PrepareTargetableFurniture(furniture, room);
                     }
                 }
-
-                foreach (var furniture in targetableFurniture) PrepareTargetableFurniture(furniture, room);
-
-                // At this point all furniture is set up and we can validate reachability.
-                yield return StartCoroutine(NavMeshBookKeeper.ValidateScene(room));
             }
 
+            // At this point all furniture is set up and we can validate reachability.
+            yield return StartCoroutine(NavMeshBookKeeper.ValidateRooms(rooms));
+
             SceneDataProcessed?.Invoke(sceneRoot);
-            yield return null;
         }
 
         private OVRSemanticClassification CreateFallbackSceneMesh(OVRSceneRoom ovrSceneRoom)
@@ -267,6 +282,9 @@ namespace Phantom.Environment.Scripts
 
             if (go.TryGetComponent<OVRSceneAnchor>(out var anchor))
             {
+                // set the anchor handle id.
+                JsonSceneBuilder.SetUuid(anchor, Guid.NewGuid(), JsonSceneBuilder.NextHandle);
+
                 SceneDataLoader.AddAnchorReferenceCount(anchor);
             }
 
@@ -306,9 +324,9 @@ namespace Phantom.Environment.Scripts
             navmeshGenerator.Initialize(room, meshBounds, furnitureInScene);
         }
 
-        private void OnBoundsChanged(Bounds bounds)
+        private void OnWorldAligned()
         {
-            _boundsUpdated = true;
+            _sceneReady = true;
         }
     }
 }

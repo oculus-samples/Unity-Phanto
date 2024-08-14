@@ -26,7 +26,7 @@ Shader "Phanto/CrystalPortal Occlusion"
             #pragma multi_compile _ HARD_OCCLUSION SOFT_OCCLUSION
 
             #include "UnityCG.cginc"
-            #include "Packages/com.meta.xr.depthapi/Runtime/BiRP/EnvironmentOcclusionBiRP.cginc"
+            #include "Packages/com.meta.xr.sdk.core/Shaders/EnvironmentDepth/BiRP/EnvironmentOcclusionBiRP.cginc"
 
             struct appdata
             {

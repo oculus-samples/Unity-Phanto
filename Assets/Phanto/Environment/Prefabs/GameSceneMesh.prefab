@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 1851132616428891189}
   - component: {fileID: 9202221846336061621}
   - component: {fileID: 166436650187737601}
-  - component: {fileID: 5722571708145444901}
   m_Layer: 6
   m_Name: Wireframe
   m_TagString: Untagged
@@ -112,19 +111,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 943883cf0a879e24688d43e2834d116a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5722571708145444901
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5729224963907879431}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 274a64d85f5fba84590d087e68040223, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  occlusionType: 1
 --- !u!1 &9090621435052557532
 GameObject:
   m_ObjectHideFlags: 0
@@ -142,7 +128,6 @@ GameObject:
   - component: {fileID: 9079215020832361644}
   - component: {fileID: 8379332771219338707}
   - component: {fileID: 4367846452819000184}
-  - component: {fileID: 5745488442619228048}
   m_Layer: 6
   m_Name: GameSceneMesh
   m_TagString: GlobalMesh
@@ -232,6 +217,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f7908265c95d43459d60793234f63fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _transform: {fileID: 569453917265775592}
+  _gameObject: {fileID: 9090621435052557532}
+  _sceneAnchor: {fileID: 2452186665301220092}
 --- !u!23 &9079215020832361644
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -301,16 +289,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collider: {fileID: 3212664313826324248}
---- !u!114 &5745488442619228048
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9090621435052557532}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 274a64d85f5fba84590d087e68040223, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  occlusionType: 1

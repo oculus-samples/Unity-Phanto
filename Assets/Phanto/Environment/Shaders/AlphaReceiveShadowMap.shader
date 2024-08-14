@@ -9,7 +9,7 @@ Shader "MR/AlphaReceiveShadowMap"
         _ShadowAlpha ("Shadow Alpha", float) = 0.5
         _ShadowColor ("Shadow Color", Color) = (0.5,0.5,0.5)
         _BaseColor ("Base Color", Color) = (0,0,0)
-        _DepthBias("Depth Bias", float) = 0.06
+        _EnvironmentDepthBias("Depth Bias", float) = 0.06
     }
     SubShader
     {
@@ -47,7 +47,7 @@ Shader "MR/AlphaReceiveShadowMap"
             #define SHADOWS_SCREEN
             #include "AutoLight.cginc"
             #include "UnityCG.cginc"
-            #include "Packages/com.meta.xr.depthapi/Runtime/BiRP/EnvironmentOcclusionBiRP.cginc"
+            #include "Packages/com.meta.xr.sdk.core/Shaders/EnvironmentDepth/BiRP/EnvironmentOcclusionBiRP.cginc"
 
             struct appdata
             {
@@ -61,6 +61,7 @@ Shader "MR/AlphaReceiveShadowMap"
                 float2 uv : TEXCOORD0;
                 SHADOW_COORDS(5)
                 float4 pos : SV_POSITION;
+                META_DEPTH_VERTEX_OUTPUT(3)
 
                 float4 screenPos : TEXCOORD1;
 
@@ -73,7 +74,7 @@ Shader "MR/AlphaReceiveShadowMap"
             float _ShadowAlpha;
             float4 _ShadowColor;
             float4 _BaseColor;
-            float _DepthBias;
+            float _EnvironmentDepthBias;
 
             v2f vert (appdata v)
             {
@@ -82,6 +83,7 @@ Shader "MR/AlphaReceiveShadowMap"
                 UNITY_INITIALIZE_OUTPUT(v2f, o);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
                 o.pos = UnityObjectToClipPos(v.vertex);
+                META_DEPTH_INITIALIZE_VERTEX_OUTPUT(o, v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 
                 o.screenPos = ComputeScreenPos(o.pos);
@@ -103,7 +105,7 @@ Shader "MR/AlphaReceiveShadowMap"
                 if (col.a > 0.000001)
                 {
                     float2 screenUV = i.screenPos.xy / i.screenPos.w;
-                    float occlusionValue = CalculateEnvironmentDepthOcclusionWithBias(screenUV, i.screenPos.z, _DepthBias);
+                    float occlusionValue = META_DEPTH_GET_OCCLUSION_VALUE_WORLDPOS(i.posWorld, _EnvironmentDepthBias);
                     col.a *= occlusionValue;
                 }
 

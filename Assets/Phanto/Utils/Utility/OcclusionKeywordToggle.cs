@@ -2,7 +2,7 @@
 
 using UnityEngine;
 using UnityEngine.Rendering;
-using Meta.XR.Depth;
+using Meta.XR.EnvironmentDepth;
 
 namespace PhantoUtils
 {
@@ -14,7 +14,7 @@ namespace PhantoUtils
         private static GlobalKeyword _hardOcclusionKeyword;
         private static GlobalKeyword _softOcclusionKeyword;
 
-        private OcclusionType _occlusionType = OcclusionType.NoOcclusion;
+        private OcclusionShadersMode _occlusionType = OcclusionShadersMode.None;
         private bool _released = true;
 
         [RuntimeInitializeOnLoadMethod]
@@ -28,18 +28,18 @@ namespace PhantoUtils
         {
             if (Shader.IsKeywordEnabled(_softOcclusionKeyword))
             {
-                _occlusionType = OcclusionType.SoftOcclusion;
+                _occlusionType = OcclusionShadersMode.SoftOcclusion;
             }
 
             if (Shader.IsKeywordEnabled(_hardOcclusionKeyword))
             {
-                _occlusionType = OcclusionType.HardOcclusion;
+                _occlusionType = OcclusionShadersMode.HardOcclusion;
             }
 
             // For HMDs that don't support occlusion turn off both keywords.
             if (!SupportsOcclusion)
             {
-                _occlusionType = OcclusionType.NoOcclusion;
+                _occlusionType = OcclusionShadersMode.None;
                 SetOcclusionState(_occlusionType);
             }
         }
@@ -53,12 +53,12 @@ namespace PhantoUtils
             if (startIsDown && xIsDown && yIsDown && _released)
             {
                 var increment = (int)_occlusionType;
-                if (++increment > (int)OcclusionType.SoftOcclusion)
+                if (++increment > (int)OcclusionShadersMode.SoftOcclusion)
                 {
                     increment = 0;
                 }
 
-                _occlusionType = (OcclusionType)increment;
+                _occlusionType = (OcclusionShadersMode)increment;
 
                 SetOcclusionState(_occlusionType);
 
@@ -73,15 +73,15 @@ namespace PhantoUtils
             }
         }
 
-        private static void SetOcclusionState(OcclusionType occlusionType)
+        private static void SetOcclusionState(OcclusionShadersMode occlusionType)
         {
             switch (occlusionType)
             {
-                case OcclusionType.HardOcclusion:
+                case OcclusionShadersMode.HardOcclusion:
                     Shader.SetKeyword(_hardOcclusionKeyword, true);
                     Shader.SetKeyword(_softOcclusionKeyword, false);
                     break;
-                case OcclusionType.SoftOcclusion:
+                case OcclusionShadersMode.SoftOcclusion:
                     Shader.SetKeyword(_hardOcclusionKeyword, false);
                     Shader.SetKeyword(_softOcclusionKeyword, true);
                     break;
@@ -99,7 +99,7 @@ namespace PhantoUtils
                 switch (OVRPlugin.GetSystemHeadsetType())
                 {
                     case OVRPlugin.SystemHeadset.Meta_Quest_3:
-                        // case OVRPlugin.SystemHeadset.Meta_Link_Quest_3: // TODO: Coming soon.
+                    case OVRPlugin.SystemHeadset.Meta_Link_Quest_3:
                         return true;
                 }
 

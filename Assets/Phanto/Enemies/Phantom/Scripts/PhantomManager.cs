@@ -75,13 +75,12 @@ namespace Phantom
         private readonly Queue<PhantomChaseTarget> _yumPool = new();
         protected readonly HashSet<PhantomTarget> _allPhantomTargets = new();
 
-        private Bounds? _bounds;
-
         private NavMeshGenerator _navMeshGenerator;
         protected Coroutine _phantomSpawnerCoroutine;
         protected int _spawnCount = 4;
 
         private bool _started;
+        private bool _sceneReady;
 
         private Coroutine _extinguishGooCoroutine;
         private Coroutine _targetSpawnerCoroutine;
@@ -166,7 +165,7 @@ namespace Phantom
                 ReturnToPool(phantom);
             }
 
-            while (!_bounds.HasValue || _sceneRoom == null) yield return null;
+            while (!_sceneReady || _sceneRoom == null) yield return null;
 
             _started = true;
             OnWaveAdvance();
@@ -179,7 +178,7 @@ namespace Phantom
 
             settingsManager.OnWaveAdvance += OnWaveAdvance;
 
-            SceneBoundsChecker.BoundsChanged += OnBoundsChanged;
+            SceneBoundsChecker.WorldAligned += OnWorldAligned;
         }
 
         private void OnDisable()
@@ -198,7 +197,7 @@ namespace Phantom
 
             settingsManager.OnWaveAdvance -= OnWaveAdvance;
 
-            SceneBoundsChecker.BoundsChanged -= OnBoundsChanged;
+            SceneBoundsChecker.WorldAligned -= OnWorldAligned;
         }
 
         protected override void OnDestroy()
@@ -270,9 +269,9 @@ namespace Phantom
             Assert.IsNotNull(_sceneRoom);
         }
 
-        protected void OnBoundsChanged(Bounds bounds)
+        protected void OnWorldAligned()
         {
-            _bounds = bounds;
+            _sceneReady = true;
         }
 
         /// <summary>
@@ -373,11 +372,14 @@ namespace Phantom
             Vector3 spawnPoint;
             var attempts = 0;
 
+            var room = SceneQuery.GetRoomContainingPoint(playerHeadPos);
+            Bounds roomBounds = SceneQuery.GetRoomBounds(room);
+
             while (true)
             {
                 attempts++;
 
-                var spawnBounds = _bounds.Value;
+                var spawnBounds = roomBounds;
                 // shrink the bounds by a foot to keep away from walls.
                 spawnBounds.Expand(-0.3f);
 

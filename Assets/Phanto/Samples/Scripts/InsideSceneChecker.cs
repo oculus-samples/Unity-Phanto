@@ -10,9 +10,8 @@ public class InsideSceneChecker : MonoBehaviour
 {
     private const float MaxCeilingRayLength = 100.0f;
 
-    public static event Action<Bounds, bool> UserInSceneChanged;
+    public static event Action<bool> UserInSceneChanged;
     public static bool UserInScene { get; private set; }
-    private static Bounds _bounds;
 
     [SerializeField] private SceneBoundsChecker sceneBoundsChecker;
     [SerializeField] private OVRCameraRig cameraRig;
@@ -27,20 +26,19 @@ public class InsideSceneChecker : MonoBehaviour
 
     private void OnEnable()
     {
-        SceneBoundsChecker.BoundsChanged += OnSceneBoundsChanged;
+        SceneBoundsChecker.WorldAligned += OnWorldAligned;
 
         StartCoroutine(UserBoundsTest());
     }
 
     private void OnDisable()
     {
-        SceneBoundsChecker.BoundsChanged -= OnSceneBoundsChanged;
+        SceneBoundsChecker.WorldAligned -= OnWorldAligned;
         _boundsSet = false;
     }
 
-    private void OnSceneBoundsChanged(Bounds bounds)
+    private void OnWorldAligned()
     {
-        _bounds = bounds;
         _boundsSet = true;
     }
 
@@ -63,7 +61,7 @@ public class InsideSceneChecker : MonoBehaviour
             if (UserInScene != inBounds)
             {
                 UserInScene = inBounds;
-                UserInSceneChanged?.Invoke(_bounds, inBounds);
+                UserInSceneChanged?.Invoke(inBounds);
             }
 
             yield return wait;
@@ -72,25 +70,7 @@ public class InsideSceneChecker : MonoBehaviour
 
     public static bool PointInsideScene(Vector3 position)
     {
-        var inBounds = true;
-
-        if (!_bounds.Contains(position))
-        {
-            inBounds = false;
-        }
-        else // if you are inside the axis-aligned bounding box you could still be outside the scene (e.g. L-shaped room).
-        {
-            // cast ray upwards against scene mesh.
-            // if you didn't hit anything you're outside the scene
-            // if you hit something and the normal is facing away from you, you're under the scene (basement)
-            if (!Physics.Raycast(position, Vector3.up, out var hit, MaxCeilingRayLength, NavMeshConstants.SceneMeshLayerMask)
-                || Vector3.Dot(hit.normal, position - hit.point) < 0)
-            {
-                inBounds = false;
-            }
-        }
-
-        return inBounds;
+        return SceneQuery.TryGetRoomContainingPoint(position, out _);
     }
 
 #if UNITY_EDITOR

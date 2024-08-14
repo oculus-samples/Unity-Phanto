@@ -78,15 +78,15 @@ namespace Phantom
 
         private void OnEnable()
         {
-            SceneBoundsChecker.BoundsChanged += OnBoundsChanged;
+            SceneBoundsChecker.WorldAligned += OnWorldAligned;
         }
 
         private void OnDisable()
         {
-            SceneBoundsChecker.BoundsChanged -= OnBoundsChanged;
+            SceneBoundsChecker.WorldAligned -= OnWorldAligned;
         }
 
-        private void OnBoundsChanged(Bounds bounds)
+        private void OnWorldAligned()
         {
             _sceneReady = true;
         }

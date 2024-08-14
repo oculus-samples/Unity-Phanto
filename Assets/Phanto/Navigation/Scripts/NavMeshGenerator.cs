@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using Phanto.Enemies.DebugScripts;
+using Phantom.Environment.Scripts;
 using PhantoUtils;
 using Unity.AI.Navigation;
 using UnityEditor;
@@ -9,17 +10,24 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Assertions;
 using static NavMeshGenerateLinks;
+using Classification = OVRSceneManager.Classification;
 
 /// <summary>
 ///     Handles nav mesh generation from scene data.
 /// </summary>
 public class NavMeshGenerator : MonoBehaviour
 {
-    private static readonly Dictionary<OVRSceneRoom, NavMeshGenerator> NavMeshGenerators = new Dictionary<OVRSceneRoom, NavMeshGenerator>();
-
     private const float EdgeExpansion = NavMeshConstants.OneFoot;
 
-    private static List<NavMeshTriangle> _navMeshTriangles;
+    private static readonly Dictionary<Object, NavMeshGenerator> NavMeshGenerators =
+        new Dictionary<Object, NavMeshGenerator>();
+
+    private static readonly Dictionary<PhantoAnchorInfo, PhantoAnchorInfo> LinkedOpenings =
+        new Dictionary<PhantoAnchorInfo, PhantoAnchorInfo>();
+
+    private static readonly List<NavMeshGenerator> Floors = new List<NavMeshGenerator>();
+
+    private List<NavMeshTriangle> _navMeshTriangles;
 
     [SerializeField]
     [Range(0.001f, 10.0f)]
@@ -35,6 +43,7 @@ public class NavMeshGenerator : MonoBehaviour
     private readonly List<NavMeshTriangle> _validTriangles = new();
 
     private OVRSceneRoom _sceneRoom;
+    private readonly List<PhantoAnchorInfo> _openings = new List<PhantoAnchorInfo>();
 
     public NavMeshSurface FloorNavMeshSurface { get; private set; }
 
@@ -51,17 +60,30 @@ public class NavMeshGenerator : MonoBehaviour
     private void OnEnable()
     {
         DebugDrawManager.DebugDrawEvent += DebugDraw;
+
+        _sceneRoom = GetComponentInParent<OVRSceneRoom>();
+        Assert.IsNotNull(_sceneRoom);
+
+        NavMeshGenerators.Add(_sceneRoom, this);
+        NavMeshGenerators.Add(_sceneRoom.Floor, this);
+        NavMeshGenerators.Add(transform, this);
+        NavMeshGenerators.Add(gameObject, this);
     }
 
     private void OnDisable()
     {
         DebugDrawManager.DebugDrawEvent -= DebugDraw;
+
+        Assert.IsNotNull(_sceneRoom);
+
+        NavMeshGenerators.Remove(_sceneRoom);
+        NavMeshGenerators.Remove(_sceneRoom.Floor);
+        NavMeshGenerators.Remove(transform);
+        NavMeshGenerators.Remove(gameObject);
     }
 
     private void OnDestroy()
     {
-        NavMeshGenerators.Remove(_sceneRoom);
-
         NavMeshBookKeeper.OnValidateScene -= GenerateInternalLinks;
 
         foreach (var nml in _navMeshLinks)
@@ -74,8 +96,6 @@ public class NavMeshGenerator : MonoBehaviour
     public void Initialize(OVRSceneRoom room, Bounds meshBounds, bool furnitureInScene)
     {
         _sceneRoom = room;
-
-        NavMeshGenerators[room] = this;
 
         Assert.IsNotNull(room.Ceiling);
         Assert.IsNotNull(room.Floor);
@@ -98,6 +118,12 @@ public class NavMeshGenerator : MonoBehaviour
             floorPoint.y += (room.Ceiling.transform.position.y - room.Floor.transform.position.y) * 0.5f;
 
         var navMeshVolumeBounds = new Bounds(floorPoint, Vector3.zero);
+
+        foreach (var point in room.Floor.Boundary)
+        {
+            navMeshVolumeBounds.Encapsulate(floorTransform.TransformPoint(point));
+        }
+
         navMeshVolumeBounds.Encapsulate(meshBounds.min);
         navMeshVolumeBounds.Encapsulate(new Vector3(meshBounds.max.x, meshBounds.min.y, meshBounds.max.z));
 
@@ -106,32 +132,43 @@ public class NavMeshGenerator : MonoBehaviour
 
     public Vector3 RandomPointOnFloor(Vector3 position, float minDistance = 1.0f, bool verifyOpenArea = true)
     {
-        var iterations = 0;
+        var shuffledTriangles = new List<NavMeshTriangle>(_navMeshTriangles);
 
-        NavMeshTriangle triangle;
-        Vector3 point;
-
-        do
+        // Search the room up to 10 times for a valid spawn point.
+        for (int i = 0; i < 10; i++)
         {
-            triangle = RandomFloorTriangle();
+            shuffledTriangles.Shuffle();
 
-            if (triangle == null) return default;
+            foreach (var triangle in shuffledTriangles)
+            {
+                if (triangle == null)
+                {
+                    continue;
+                }
 
-            point = triangle.GetRandomPoint();
+                var point = triangle.GetRandomPoint();
 
-            if (Vector3.Distance(position, point) > minDistance
-                && (!verifyOpenArea || triangle.IsOpen))
-                break;
-        } while (iterations++ < 10);
+                if (Vector3.Distance(position, point) > minDistance
+                    && (!verifyOpenArea || triangle.IsOpen))
+                {
+                    return point;
+                }
+            }
+        }
 
-        return point;
+        return position;
     }
 
-    /// <summary>
-    ///     When path to destination is incomplete add extra links to path.
-    /// </summary>
     public void CreateNavMeshLink(IReadOnlyList<Vector3> corners, int cornerCount, Vector3 destination, int areaId)
     {
+        var room = SceneQuery.GetRoomContainingPoint(destination);
+        if (!NavMeshGenerators.TryGetValue(room, out var floor))
+        {
+            Debug.LogError("No floor navmesh associated with room.", room);
+
+            return;
+        }
+
         var path = new NavMeshPath();
 
         var startPoint = corners[cornerCount - 1];
@@ -158,7 +195,7 @@ public class NavMeshGenerator : MonoBehaviour
         Assert.IsTrue(endPoint.IsSafeValue());
         Assert.IsFalse(startPoint.Approximately(endPoint));
 
-        var link = Instantiate(navMeshLinkPrefab, transform);
+        var link = Instantiate(floor.navMeshLinkPrefab, floor.transform);
         link.Initialize(startPoint, endPoint, areaId);
     }
 
@@ -166,7 +203,7 @@ public class NavMeshGenerator : MonoBehaviour
     {
         volumeBounds.Expand(new Vector3(EdgeExpansion, 0.002f, EdgeExpansion));
 
-        navMeshSurface.size = volumeBounds.size;
+        navMeshSurface.size = transform.InverseTransformVector(volumeBounds.size);
         navMeshSurface.center = transform.InverseTransformPoint(volumeBounds.center);
 
         _navMeshTriangles = navMeshSurface.GenerateNavMeshTriangles();
@@ -177,7 +214,58 @@ public class NavMeshGenerator : MonoBehaviour
     private void GenerateInternalLinks()
     {
         ValidateTriangles();
+
+        GenerateDoorLinks();
         GenInternalLinks(_navMeshTriangles, navMeshLinkPrefab, transform);
+    }
+
+    private void GenerateDoorLinks()
+    {
+        _openings.Clear();
+        _sceneRoom.GetComponentsInChildren(true, _openings);
+
+        _openings.RemoveAll((classification) => !classification.ContainsAny(SceneQuery.Openings));
+
+        foreach (var opening in _openings)
+        {
+            if (!opening.IsPlane || LinkedOpenings.ContainsKey(opening))
+            {
+                continue;
+            }
+
+            // find which room is on the positive side and negative side of the door
+            if (!SceneQuery.TryGetConnectingRoom(_sceneRoom, opening, out Vector3 front, out Vector3 back, out var otherRoom))
+            {
+                // opening doesn't connect to different room.
+                continue;
+            }
+
+            // if they are different rooms place a navmesh link to connect them.
+
+            // snap both points to navmesh.
+            if (!NavMesh.SamplePosition(front, out var frontHit, NavMeshConstants.OneFoot,
+                    NavMeshConstants.FloorAreaMask)
+                || !NavMesh.SamplePosition(back, out var backHit, NavMeshConstants.OneFoot,
+                    NavMeshConstants.FloorAreaMask))
+            {
+                continue;
+            }
+
+            front = frontHit.position;
+            back = backHit.position;
+
+            // If there's a matching door in the other room
+            // add it to the linked openings dictionary so we can skip it
+            // when processing the other room.
+            if (SceneQuery.TryGetLinkedOpening(opening, otherRoom, out var sibling))
+            {
+                LinkedOpenings[opening] = sibling;
+                LinkedOpenings[sibling] = opening;
+            }
+
+            var link = Instantiate(navMeshLinkPrefab, opening.transform);
+            link.Initialize(front, back);
+        }
     }
 
     private void ValidateTriangles()
@@ -195,66 +283,18 @@ public class NavMeshGenerator : MonoBehaviour
 
     public NavMeshTriangle RandomFloorTriangle()
     {
-        if (_validTriangles.Count == 0) ValidateTriangles();
+        Floors.Clear();
+        Floors.AddRange(NavMeshGenerators.Values);
 
-        Assert.IsNotNull(_navMeshTriangles, "The floor has no navmesh!");
+        var floor = Floors.RandomElement();
 
-        return _validTriangles.RandomElement();
-    }
+        Assert.IsNotNull(floor);
 
-    public NavMeshTriangle ClosestFloorTriangle(Vector3 point)
-    {
-        if (_validTriangles.Count == 0) ValidateTriangles();
+        if (floor._validTriangles.Count == 0) floor.ValidateTriangles();
 
-        var result = _validTriangles[0];
-        var plane = new Plane(Vector3.up, result.center);
+        Assert.IsNotNull(floor._navMeshTriangles, "The floor has no navmesh!");
 
-        point = plane.ClosestPointOnPlane(point);
-
-        var minDistance = float.MaxValue;
-
-        foreach (var tri in _validTriangles)
-        {
-            var distance = Vector3.Distance(tri.center, point);
-
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                result = tri;
-            }
-        }
-
-        return result;
-    }
-
-    /// <summary>
-    ///     Find triangle closest to the center of this list of navmesh triangle.
-    /// </summary>
-    /// <param name="triangles"></param>
-    /// <returns></returns>
-    public static NavMeshTriangle FindCenter(List<NavMeshTriangle> triangles)
-    {
-        var center = Vector3.zero;
-
-        foreach (var tri in triangles) center += tri.center;
-
-        center /= triangles.Count;
-
-        var result = triangles[0];
-        var minDistance = float.MaxValue;
-
-        foreach (var tri in triangles)
-        {
-            var distance = Vector3.Distance(tri.center, center);
-
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                result = tri;
-            }
-        }
-
-        return result;
+        return floor._validTriangles.RandomElement();
     }
 
     public static bool TryGetNavMeshGenerator(OVRSceneRoom room, out NavMeshGenerator result)

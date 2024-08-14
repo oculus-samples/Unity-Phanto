@@ -56,13 +56,14 @@ public class PhantomChaseTarget : PhantomTarget
     {
         var collider = GetComponentInChildren<Collider>();
         if (collider == null) return;
-        var matrix = transform.localToWorldMatrix;
+        var tf = transform;
+        var matrix = tf.localToWorldMatrix;
 
         Gizmos.matrix = matrix;
         Gizmos.color = MSPalette.Orange;
         var bounds = collider.bounds;
 
-        Gizmos.DrawWireCube(bounds.center, bounds.size);
+        Gizmos.DrawWireCube(tf.InverseTransformPoint(bounds.center), bounds.size);
     }
 #endif
 

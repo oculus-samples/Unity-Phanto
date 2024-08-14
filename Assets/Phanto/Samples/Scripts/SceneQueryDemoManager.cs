@@ -59,7 +59,6 @@ namespace Phantom
 
         private readonly SpatialHash<long> _spatialHash = new(CELL_SIZE);
         private readonly Stopwatch _spatialHashStopwatch = Stopwatch.StartNew();
-        private Bounds? _bounds;
 
         private NavMeshGenerator _navMeshGenerator;
 
@@ -85,13 +84,13 @@ namespace Phantom
 
         private void OnEnable()
         {
-            SceneBoundsChecker.BoundsChanged += OnBoundsChanged;
+            SceneBoundsChecker.WorldAligned += OnWorldAligned;
             DebugDrawManager.DebugDrawEvent += DebugDraw;
         }
 
         private void OnDisable()
         {
-            SceneBoundsChecker.BoundsChanged -= OnBoundsChanged;
+            SceneBoundsChecker.WorldAligned -= OnWorldAligned;
             DebugDrawManager.DebugDrawEvent -= DebugDraw;
         }
 
@@ -115,7 +114,7 @@ namespace Phantom
                 _bouncingPool.Enqueue(phantom);
             }
 
-            while (!_bounds.HasValue || _sceneRoom == null) yield return null;
+            while (!_sceneReady || _sceneRoom == null) yield return null;
 
             for (var i = 0; i < spawnCount; i++)
             {
@@ -503,9 +502,8 @@ namespace Phantom
             _originCrystals.Enqueue(crystal);
         }
 
-        private void OnBoundsChanged(Bounds bounds)
+        private void OnWorldAligned()
         {
-            _bounds = bounds;
             _sceneReady = true;
         }
 

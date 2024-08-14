@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using Phantom.Environment.Scripts;
 using PhantoUtils;
 using PhantoUtils.VR;
 using UnityEngine;
@@ -14,12 +15,15 @@ using static OVRSceneManager.Classification;
 public class SceneQuery : MonoBehaviour
 {
     private static readonly string[] Boundaries = new[] { WallFace, InvisibleWallFace, Floor, Ceiling };
+    public static readonly string[] Openings = new[] { DoorFrame, WindowFrame, InvisibleWallFace };
 
     private static readonly Vector3[] PathCorners = new Vector3[1024];
 
     // Scene anchors have transform.forward as their "up" direction.
     private static readonly Vector3 AnchorUp = Vector3.forward;
-    private static readonly Dictionary<OVRSceneRoom, SceneQuery> SceneQueries = new Dictionary<OVRSceneRoom, SceneQuery>();
+
+    private static readonly Dictionary<OVRSceneRoom, SceneQuery> SceneQueries =
+        new Dictionary<OVRSceneRoom, SceneQuery>();
 
     private Transform _roomTransform;
     private OVRSceneRoom _room;
@@ -32,6 +36,11 @@ public class SceneQuery : MonoBehaviour
     private readonly Dictionary<Transform, OVRScenePlane> _scenePlanes = new();
 
     private readonly Dictionary<Transform, OVRSemanticClassification> _semanticClassifications = new();
+
+    private readonly List<(Transform, OVRScenePlane, float)>
+        _candidates = new List<(Transform, OVRScenePlane, float)>();
+
+    private readonly List<PhantoAnchorInfo> _anchorInfos = new List<PhantoAnchorInfo>();
 
     private bool _ready = false;
 
@@ -60,7 +69,17 @@ public class SceneQuery : MonoBehaviour
         }
     }
 
-    public void Initialize(IReadOnlyCollection<OVRSemanticClassification> semanticClassifications)
+    public void Initialize()
+    {
+        if (_ready)
+        {
+            Debug.LogWarning($"Attempted to initialize twice: {name}", this);
+            return;
+        }
+        Initialize(GetComponentsInChildren<OVRSemanticClassification>(true));
+    }
+
+    private void Initialize(IEnumerable<OVRSemanticClassification> semanticClassifications)
     {
         TryGetComponent(out _room);
         _roomTransform = _room.transform;
@@ -69,9 +88,17 @@ public class SceneQuery : MonoBehaviour
         _sceneVolumes.Clear();
         _scenePlanes.Clear();
         _roomFurnishings.Clear();
+        _anchorInfos.Clear();
 
         foreach (var sc in semanticClassifications)
         {
+            if (!sc.TryGetComponent(out PhantoAnchorInfo anchorInfo))
+            {
+                anchorInfo = sc.gameObject.AddComponent<PhantoAnchorInfo>();
+            }
+
+            _anchorInfos.Add(anchorInfo);
+
             var tform = sc.transform;
             var boundary = sc.ContainsAny(Boundaries);
 
@@ -120,7 +147,8 @@ public class SceneQuery : MonoBehaviour
         return result != null;
     }
 
-    private (OVRSemanticClassification, float) GetClosestSemanticClassificationInternal(Vector3 worldPoint, Vector3 normal)
+    private (OVRSemanticClassification, float) GetClosestSemanticClassificationInternal(Vector3 worldPoint,
+        Vector3 normal)
     {
         float distance;
 
@@ -154,8 +182,6 @@ public class SceneQuery : MonoBehaviour
         return (null, float.MaxValue);
     }
 
-    private readonly List<(Transform, OVRScenePlane, float)> _candidates = new List<(Transform, OVRScenePlane, float)>();
-
     private (OVRSemanticClassification, float) BruteForceSearch(Vector3 worldPoint, Vector3 normal)
     {
         var minDistance = float.MaxValue;
@@ -165,6 +191,12 @@ public class SceneQuery : MonoBehaviour
         // iterate through the scene objects to find which "top" is closest to the point.
         foreach (var (tForm, sceneVolume) in _sceneVolumes)
         {
+            if (tForm == null)
+            {
+                // FIXME: Need to prune null entries.
+                continue;
+            }
+
             var objectPoint = tForm.InverseTransformPoint(worldPoint);
             var objectNormal = tForm.InverseTransformDirection(normal);
 
@@ -553,6 +585,7 @@ public class SceneQuery : MonoBehaviour
                         var worldPoint = furnitureTransform.TransformPoint(point);
                         height = Mathf.Max(height, floorPlane.GetDistanceToPoint(worldPoint));
                     }
+
                     break;
             }
 
@@ -574,5 +607,278 @@ public class SceneQuery : MonoBehaviour
         lid.distance = maxHeight;
 
         return lid;
+    }
+
+    /// <summary>
+    /// Search "other room" for an opening that is the mirror
+    /// of the source opening.
+    /// </summary>
+    /// <param name="opening"></param>
+    /// <param name="otherRoom"></param>
+    /// <param name="sibling"></param>
+    /// <returns></returns>
+    public static bool TryGetLinkedOpening(PhantoAnchorInfo sourceOpening, OVRSceneRoom otherRoom,
+        out PhantoAnchorInfo sibling)
+    {
+        if (!SceneQueries.TryGetValue(otherRoom, out var sceneQuery))
+        {
+            sibling = null;
+            return false;
+        }
+
+        var openings = new List<PhantoAnchorInfo>(sceneQuery._anchorInfos);
+        openings.RemoveAll((classification) => !classification.ContainsAny(Openings));
+
+        foreach (var opening in openings)
+        {
+            var dot = Vector3.Dot(sourceOpening.Forward, opening.Forward);
+
+            var openingPos = opening.Position;
+
+            // the two openings face away from each other
+            // a ray from opening passes through source opening
+            if (dot > -0.9f || !sourceOpening.PlaneContainsPoint(openingPos, out var distance))
+            {
+                continue;
+            }
+
+            distance = Mathf.Abs(distance);
+            var openingWidth = Mathf.Max(sourceOpening.Width, opening.Width);
+
+            // distance between openings is less than half the width.
+            // (how thick are walls?)
+            if (distance < openingWidth * 0.5f)
+            {
+                sibling = opening;
+                return true;
+            }
+        }
+
+        sibling = null;
+        return false;
+    }
+
+    /// <summary>
+    /// Returns room the contains or is closest to provided point
+    /// </summary>
+    /// <param name="point">world space point</param>
+    /// <returns></returns>
+    public static OVRSceneRoom GetRoomContainingPoint(Vector3 point)
+    {
+        var minDistance = float.MaxValue;
+        OVRSceneRoom result = null;
+
+        foreach (var room in SceneQueries.Keys)
+        {
+            var distance = DistanceFromRoom(room, point);
+
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                result = room;
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="point"></param>
+    /// <param name="result"></param>
+    /// <returns>true if this point is within a room</returns>
+    public static bool TryGetRoomContainingPoint(Vector3 point, out OVRSceneRoom result)
+    {
+        foreach (var room in SceneQueries.Keys)
+        {
+            var floorTransform = room.Floor.transform;
+            var floorPoint = Vector3.ProjectOnPlane(floorTransform.InverseTransformPoint(point), Vector3.forward);
+
+            if (PointInPolygon2D(room.Floor.Boundary, floorPoint))
+            {
+                result = room;
+                return true;
+            }
+        }
+
+        result = GetRoomContainingPoint(point);
+        return false;
+    }
+
+    /// <summary>
+    /// Determine if this opening (door, window, etc) connects
+    /// two adjacent rooms. Provides points to create a navmesh link between the rooms.
+    /// </summary>
+    /// <param name="room">room the opening belongs to</param>
+    /// <param name="opening">potential route to another room</param>
+    /// <param name="front">point on the floor in front of the opening</param>
+    /// <param name="back">point on the floor behind the opening</param>
+    /// <param name="otherRoom">room this opening connects to</param>
+    /// <returns></returns>
+    public static bool TryGetConnectingRoom(OVRSceneRoom room, PhantoAnchorInfo opening, out Vector3 front,
+        out Vector3 back,
+        out OVRSceneRoom otherRoom)
+    {
+        otherRoom = null;
+        back = default;
+        var probeLength = Mathf.Max(opening.Width * 0.5f, 0.4f);
+        var planeTransform = opening.transform;
+
+        var ray = new Ray(planeTransform.position, planeTransform.forward);
+        front = ray.GetPoint(probeLength);
+
+        // find room probeLength in front of door.
+        // var frontRoom = RoomContainingPoint(front, true);
+
+        // if either is null, return false.
+        if (!TryGetRoomContainingPoint(front, out var frontRoom))
+        {
+            return false;
+        }
+
+        if (frontRoom != room)
+        {
+            otherRoom = frontRoom;
+        }
+
+        // find room probeLength behind door.
+        back = ray.GetPoint(-probeLength);
+        // var backRoom = RoomContainingPoint(back, true);
+
+        // if they're the same room, return false.
+        if (!TryGetRoomContainingPoint(back, out var backRoom) || frontRoom == backRoom)
+        {
+            return false;
+        }
+
+        if (backRoom != room)
+        {
+            otherRoom = backRoom;
+        }
+
+        // otherwise set front and back to positions on floor for navmesh link.
+        front = frontRoom.Floor.ClosestPointOnPlane(front);
+        back = backRoom.Floor.ClosestPointOnPlane(back);
+
+        return true;
+    }
+
+    private static float DistanceFromRoom(OVRSceneRoom room, Vector3 point)
+    {
+        var roomTransform = room.transform;
+        var floorTransform = room.Floor.transform;
+
+        var localSpacePoint = roomTransform.InverseTransformPoint(point);
+
+        // local space bounding box for room.
+        var roomBounds = new Bounds(Vector3.zero, Vector3.zero);
+
+        roomBounds.Encapsulate(room.Ceiling.transform.localPosition);
+        roomBounds.Encapsulate(floorTransform.localPosition);
+
+        foreach (var wall in room.Walls)
+        {
+            roomBounds.Encapsulate(wall.transform.localPosition);
+        }
+
+        if (roomBounds.Contains(localSpacePoint))
+        {
+            var floorPoint = Vector3.ProjectOnPlane(floorTransform.InverseTransformPoint(point), Vector3.forward);
+
+            if (PointInPolygon2D(room.Floor.Boundary, floorPoint))
+            {
+                return 0;
+            }
+        }
+
+        return Mathf.Sqrt(roomBounds.SqrDistance(localSpacePoint));
+    }
+
+    /// <summary>
+    /// Determines if a point is inside of a 2d polygon.
+    /// </summary>
+    /// <param name="boundaryVertices">The vertices that make up the bounds of the polygon</param>
+    /// <param name="target">The target point to test</param>
+    /// <returns>True if the point is inside the polygon, false otherwise</returns>
+    public static bool PointInPolygon2D(IReadOnlyList<Vector2> boundaryVertices, Vector2 target)
+    {
+        var count = boundaryVertices.Count;
+
+        if (count < 3)
+            return false;
+
+        int collision = 0;
+        var x = target.x;
+        var y = target.y;
+
+        for (int i = 0; i < count; i++)
+        {
+            var x1 = boundaryVertices[i].x;
+            var y1 = boundaryVertices[i].y;
+
+            var x2 = boundaryVertices[(i + 1) % count].x;
+            var y2 = boundaryVertices[(i + 1) % count].y;
+
+            if (y < y1 != y < y2 &&
+                x < x1 + ((y - y1) / (y2 - y1)) * (x2 - x1))
+            {
+                collision += (y1 < y2) ? 1 : -1;
+            }
+        }
+
+        return collision != 0;
+    }
+
+    public static Bounds GetRoomBounds(OVRSceneRoom room)
+    {
+        var floor = room.Floor;
+        var ceiling = room.Ceiling;
+        Assert.IsNotNull(floor);
+        Assert.IsNotNull(ceiling);
+
+        var floorTransform = floor.transform;
+        var ceilingTransform = ceiling.transform;
+
+        var bounds = new Bounds(floorTransform.position, Vector3.zero);
+
+        foreach (var point in floor.Boundary)
+        {
+            bounds.Encapsulate(floorTransform.TransformPoint(point));
+        }
+
+        foreach (var point in ceiling.Boundary)
+        {
+            bounds.Encapsulate(ceilingTransform.TransformPoint(point));
+        }
+
+        return bounds;
+    }
+
+    /// <summary>
+    /// Get a bounding box that encompasses all loaded rooms.
+    /// This can be used to determine if something has escaped.
+    /// </summary>
+    /// <returns></returns>
+    public static Bounds GetWorldBounds()
+    {
+        Bounds? worldBounds = null;
+
+        foreach (var room in SceneQueries.Keys)
+        {
+            if (!worldBounds.HasValue)
+            {
+                worldBounds = GetRoomBounds(room);
+            }
+            else
+            {
+                var temp = worldBounds.Value;
+                temp.Encapsulate(GetRoomBounds(room));
+
+                worldBounds = temp;
+            }
+        }
+
+        return worldBounds.GetValueOrDefault();
     }
 }

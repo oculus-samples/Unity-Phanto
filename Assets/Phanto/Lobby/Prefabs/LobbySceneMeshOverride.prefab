@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 7912803727231614162}
   - component: {fileID: 5469748698168249699}
   - component: {fileID: 8240846031980305207}
-  - component: {fileID: 8086279307380133264}
   m_Layer: 6
   m_Name: Wireframe
   m_TagString: Untagged
@@ -116,19 +115,6 @@ MonoBehaviour:
   _baseColor: {r: 0.0709623, g: 0.30887568, b: 0.9811321, a: 0}
   _frequency: 1
   _amplitude: 0.5
---- !u!114 &8086279307380133264
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3248984871486542091}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 274a64d85f5fba84590d087e68040223, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  occlusionType: 1
 --- !u!1 &3254348751681064241
 GameObject:
   m_ObjectHideFlags: 0
@@ -275,3 +261,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f7908265c95d43459d60793234f63fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _transform: {fileID: 3142467400957245745}
+  _gameObject: {fileID: 3254348751681064241}
+  _sceneAnchor: {fileID: 4430182240210341399}

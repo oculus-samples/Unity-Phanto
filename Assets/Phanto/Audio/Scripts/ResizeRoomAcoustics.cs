@@ -46,7 +46,7 @@ namespace Phanto.Audio.Scripts
         }
 #endif
 
-        private void OnBoundsChanged(Bounds bounds)
+        private void OnBoundsChanged(OVRSceneRoom room, Bounds bounds)
         {
             _debugBounds = bounds;
             transform.position = bounds.center;

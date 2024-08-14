@@ -13,7 +13,7 @@ Shader "Unlit/WireframeShader" {
       #pragma vertex vert
       #pragma fragment frag
 
-      #include "Packages/com.meta.xr.depthapi/Runtime/BiRP/EnvironmentOcclusionBiRP.cginc"
+      #include "Packages/com.meta.xr.sdk.core/Shaders/EnvironmentDepth/BiRP/EnvironmentOcclusionBiRP.cginc"
       #pragma multi_compile _ HARD_OCCLUSION SOFT_OCCLUSION
 
       half4 _WireframeColor, _Color;

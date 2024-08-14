@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 205130437594560672}
   - component: {fileID: 6203919673633464882}
   - component: {fileID: 1278520909028670164}
-  - component: {fileID: 8292261869567200355}
   - component: {fileID: 6228475534747802106}
   m_Layer: 0
   m_Name: ScannerQuad
@@ -86,19 +85,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &8292261869567200355
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4181345791366964127}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 274a64d85f5fba84590d087e68040223, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  occlusionType: 2
 --- !u!114 &6228475534747802106
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,7 +110,6 @@ GameObject:
   - component: {fileID: 4094505107878709509}
   - component: {fileID: 2121054158453634290}
   - component: {fileID: 1646570467397877499}
-  - component: {fileID: 5997209543949998321}
   m_Layer: 0
   m_Name: UIOccluder
   m_TagString: Untagged
@@ -197,19 +182,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &5997209543949998321
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4714612644057427343}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 274a64d85f5fba84590d087e68040223, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  occlusionType: 1
 --- !u!1 &9078978499932490605
 GameObject:
   m_ObjectHideFlags: 0

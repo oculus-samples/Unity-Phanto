@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.17273416, g: 0.21582963, b: 0.29775494, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1363,19 +1363,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7732979251931869024}
   m_CullTransparentMesh: 1
---- !u!114 &5263299820550548725
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7157307361017877283}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 274a64d85f5fba84590d087e68040223, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  occlusionType: 1
 --- !u!1 &5973160773118233133
 GameObject:
   m_ObjectHideFlags: 0
@@ -1553,7 +1540,6 @@ GameObject:
   - component: {fileID: 7663944580194871444}
   - component: {fileID: 374355256974095318}
   - component: {fileID: 8862568313242340310}
-  - component: {fileID: 5263299820550548725}
   m_Layer: 0
   m_Name: UIOccluder
   m_TagString: Untagged
@@ -1812,7 +1798,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!114 &8721797231020872101
 MonoBehaviour:

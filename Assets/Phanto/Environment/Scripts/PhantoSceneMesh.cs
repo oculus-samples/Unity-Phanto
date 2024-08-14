@@ -127,12 +127,6 @@ namespace Phantom.Environment.Scripts
             // convert the point/normal into room-relative coordinates in case room moves in the future;
             var roomPoint = _roomTransform.InverseTransformPoint(avgPCIntersection);
             var roomNormal = _roomTransform.InverseTransformDirection(avgPCNormal);
-
-            // FIXME: what do we do when the player sprays a window door? Heal damage? (Makes round too easy?)
-            // CrystalTargetProbe(roomPoint, roomNormal, (crystalTarget) =>
-            // {
-            //     crystalTarget.Heal(1);
-            // });
         }
 
         /// <summary>

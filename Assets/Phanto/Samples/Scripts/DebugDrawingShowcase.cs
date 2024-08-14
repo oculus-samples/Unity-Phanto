@@ -50,13 +50,13 @@ public class DebugDrawingShowcase : MonoBehaviour
 
     private void OnEnable()
     {
-        SceneBoundsChecker.BoundsChanged += OnBoundsChanged;
+        SceneBoundsChecker.WorldAligned += OnWorldAligned;
         DebugDrawManager.DebugDrawEvent += DebugDraw;
     }
 
     private void OnDisable()
     {
-        SceneBoundsChecker.BoundsChanged -= OnBoundsChanged;
+        SceneBoundsChecker.WorldAligned -= OnWorldAligned;
         DebugDrawManager.DebugDrawEvent -= DebugDraw;
     }
 
@@ -122,7 +122,7 @@ public class DebugDrawingShowcase : MonoBehaviour
         }
     }
 
-    private void OnBoundsChanged(Bounds bounds)
+    private void OnWorldAligned()
     {
         _sceneReady = true;
     }

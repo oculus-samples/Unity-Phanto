@@ -50,17 +50,17 @@ MonoBehaviour:
     primitive: {fileID: 5304509512996567830, guid: 05f8800570cd09c4c919400f02fb02e5, type: 3}
     size: 32
     callbackProviderOverride: {fileID: 0}
-  - poolType: 1
+  - poolType: 0
     primitive: {fileID: 7428593279976243333, guid: 88c6afcf663a6ef429f827b21ce29616, type: 3}
-    size: 32
+    size: 64
     callbackProviderOverride: {fileID: 0}
-  - poolType: 1
+  - poolType: 0
     primitive: {fileID: 6526438457458768122, guid: f2c6ce228d3a6ce41bb48cacbf2822e5, type: 3}
-    size: 32
+    size: 64
     callbackProviderOverride: {fileID: 0}
-  - poolType: 1
+  - poolType: 0
     primitive: {fileID: 4078627530729038020, guid: 56cb8567d23b65949a37950567bf06ed, type: 3}
-    size: 32
+    size: 64
     callbackProviderOverride: {fileID: 0}
   verbosity: 0
 --- !u!114 &1570657426461186365

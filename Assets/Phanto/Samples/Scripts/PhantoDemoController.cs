@@ -13,23 +13,23 @@ public class PhantoDemoController : MonoBehaviour
 
     [SerializeField] private bool debugDraw = true;
 
-    private Bounds? _bounds;
+    private bool _sceneReady;
 
     private void Awake()
     {
-        SceneBoundsChecker.BoundsChanged += OnBoundsChanged;
+        SceneBoundsChecker.WorldAligned += OnBoundsChanged;
 
         DebugDrawManager.DebugDraw = debugDraw;
     }
 
     private void OnDestroy()
     {
-        SceneBoundsChecker.BoundsChanged -= OnBoundsChanged;
+        SceneBoundsChecker.WorldAligned -= OnBoundsChanged;
     }
 
-    private void OnBoundsChanged(Bounds bounds)
+    private void OnBoundsChanged()
     {
-        _bounds = bounds;
+        _sceneReady = true;
     }
 
     public void PositionAndEnablePhanto(Transform sceneRoot)
@@ -41,13 +41,13 @@ public class PhantoDemoController : MonoBehaviour
 
     private IEnumerator FindASpawnPosition()
     {
-        while (!_bounds.HasValue) yield return null;
-
-        var bounds = _bounds.Value;
-
-        bounds.Expand(-0.5f);
+        while (!_sceneReady) yield return null;
 
         var head = CameraRig.Instance.CenterEyeAnchor;
+        var room = SceneQuery.GetRoomContainingPoint(head.position);
+
+        var bounds = SceneQuery.GetRoomBounds(room);
+        bounds.Expand(-0.5f);
 
         Vector3 spawnPoint = default;
         var attempts = 0;

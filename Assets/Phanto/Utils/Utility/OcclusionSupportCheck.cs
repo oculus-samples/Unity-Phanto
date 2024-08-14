@@ -1,6 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
-using Meta.XR.Depth;
+using Meta.XR.EnvironmentDepth;
 using PhantoUtils;
 using UnityEngine;
 
@@ -8,9 +8,9 @@ public class OcclusionSupportCheck : MonoBehaviour
 {
     private void Start()
     {
-        if (!OcclusionKeywordToggle.SupportsOcclusion && TryGetComponent<EnvironmentDepthOcclusionController>(out var depthOcclusionController))
+        if (!OcclusionKeywordToggle.SupportsOcclusion && TryGetComponent<EnvironmentDepthManager>(out var depthOcclusionController))
         {
-            depthOcclusionController.EnableOcclusionType(OcclusionType.NoOcclusion);
+            depthOcclusionController.OcclusionShadersMode = OcclusionShadersMode.None;
         }
     }
 }

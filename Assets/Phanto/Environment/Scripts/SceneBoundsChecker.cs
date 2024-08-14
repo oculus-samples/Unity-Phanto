@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEditor;
 using UnityEngine;
@@ -15,7 +16,9 @@ namespace Phantom.Environment.Scripts
     /// </summary>
     public class SceneBoundsChecker : MonoBehaviour
     {
-        private static Bounds? _bounds;
+        private static Bounds? _currentBounds;
+        private static OVRSceneRoom _currentRoom;
+
         [SerializeField] private OVRCameraRig cameraRig;
 
         [SerializeField]
@@ -30,29 +33,42 @@ namespace Phantom.Environment.Scripts
         [Tooltip("Rotate the tracking space to make sure the room's floor is 0,0,0 and axis aligned.")]
         private bool axisAlignFloor = true;
 
-        private bool _boundsDirty;
-
         private Coroutine _boundsPollingCoroutine;
         private OVRScenePlane _floorPlane;
 
         private Transform _floorTransform;
-
-        private OVRSceneRoom _room;
         private Transform _trackingSpaceTransform;
+        private Transform _headTransform;
 
-        public Bounds Bounds => _bounds.GetValueOrDefault();
-
-        private static event Action<Bounds> _boundsChanged;
-
-        public static event Action<Bounds> BoundsChanged
+        private static event Action<OVRSceneRoom, Bounds> _boundsChanged;
+        /// <summary>
+        /// The user has moved from one room to another.
+        /// </summary>
+        public static event Action<OVRSceneRoom, Bounds> BoundsChanged
         {
             add
             {
-                if (_bounds.HasValue) value?.Invoke(_bounds.Value);
+                if (_currentBounds.HasValue) value?.Invoke(_currentRoom, _currentBounds.Value);
 
                 _boundsChanged += value;
             }
             remove => _boundsChanged -= value;
+        }
+
+        private static event Action _worldAligned;
+        /// <summary>
+        /// If "axis align floor" is true this will be invoked when we've moved
+        /// the user's first room to the origin.
+        /// </summary>
+        public static event Action WorldAligned
+        {
+            add
+            {
+                if (_currentBounds.HasValue) value?.Invoke();
+
+                _worldAligned += value;
+            }
+            remove => _worldAligned -= value;
         }
 
         private bool IsFloorAligned
@@ -74,6 +90,8 @@ namespace Phantom.Environment.Scripts
 
         private void Awake()
         {
+            _headTransform = cameraRig.centerEyeAnchor;
+
             SceneManager.activeSceneChanged += OnActiveSceneChanged;
         }
 
@@ -95,7 +113,7 @@ namespace Phantom.Environment.Scripts
 
         private void OnDestroy()
         {
-            _bounds = null;
+            _currentBounds = null;
             SceneManager.activeSceneChanged -= OnActiveSceneChanged;
         }
 
@@ -115,10 +133,10 @@ namespace Phantom.Environment.Scripts
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
-            if (!_bounds.HasValue) return;
+            if (!_currentBounds.HasValue) return;
 
-            var bounds = _bounds.Value;
-            Gizmos.color = _boundsDirty ? Color.red : Color.green;
+            var bounds = _currentBounds.Value;
+            Gizmos.color = Color.green;
             Gizmos.DrawWireCube(bounds.center, bounds.size);
 
             if (_trackingSpaceTransform != null)
@@ -139,94 +157,83 @@ namespace Phantom.Environment.Scripts
 
         private IEnumerator BoundsChangePolling()
         {
+            _currentRoom = null;
+            var wait = new WaitForSeconds(0.25f);
+            OVRSceneRoom room = null;
+
             // wait until room is loaded.
             do
             {
                 yield return null;
-                _room = FindObjectOfType<OVRSceneRoom>();
-            } while (_room == null);
+            } while (!SceneQuery.TryGetRoomContainingPoint(cameraRig.centerEyeAnchor.position, out room));
 
             var timeoutStopwatch = Stopwatch.StartNew();
-            while (_room.Walls.Length == 0)
+            while (room.Floor == null || room.Floor.Boundary.Count == 0 || room.Walls.Length == 0)
             {
                 if (timeoutStopwatch.ElapsedMilliseconds > 3000)
                 {
                     Debug.LogWarning("Timed out waiting for walls in scene. Walls missing?");
                     break;
                 }
-                yield return null;
-            }
 
-            var sceneAnchors = _room.GetComponentsInChildren<OVRSceneAnchor>();
-            var sceneAnchorCount = sceneAnchors.Length;
-
-            // Wait for every scene anchor's position to get updated.
-            for (var i = 0; i < sceneAnchorCount; i++)
-            {
                 yield return null;
             }
 
             _trackingSpaceTransform = cameraRig.trackingSpace;
 
             // OVRSceneRoom can get destroyed while we're waiting.
-            if (_room == null || _room.Floor == null)
+            if (room == null || room.Floor == null)
             {
                 CancelBoundsPolling();
                 StartBoundsPolling();
                 yield break;
             }
 
-            _floorPlane = _room.Floor;
+            _floorPlane = room.Floor;
             _floorTransform = _floorPlane.transform;
 
-            Bounds previousBounds = default;
+            if (!axisAlignFloor || IsFloorAligned)
+            {
+                _currentBounds = default;
+                _worldAligned?.Invoke();
+            }
+
             while (enabled)
             {
                 if (axisAlignFloor && !IsFloorAligned) AxisAlignFloor(_floorTransform, _trackingSpaceTransform);
 
-                // Wait for every scene anchor's position to get updated.
-                for (var i = 0; i < sceneAnchorCount; i++)
+                // find the room the user is currently in.
+                var headRoom = SceneQuery.GetRoomContainingPoint(_headTransform.position);
+
+                // if it is not the same as the current room
+                if (headRoom != _currentRoom)
                 {
-                    yield return null;
+                    // calculate bounds and broadcast event.
+                    _currentRoom = headRoom;
+                    _currentBounds = SceneQuery.GetRoomBounds(headRoom);
+
+                    _boundsChanged?.Invoke(_currentRoom, _currentBounds.Value);
                 }
 
-                var currentBounds = DetermineBounds(_room);
-
-                var centerDelta = Vector3.Distance(previousBounds.center, currentBounds.center);
-                var extentsDelta = Vector3.Distance(previousBounds.extents, currentBounds.extents);
-
-                if (Mathf.Max(centerDelta, extentsDelta) > maxShift)
-                {
-                    _bounds = previousBounds;
-                    previousBounds = currentBounds;
-                    _boundsDirty = true;
-                    Debug.Log($"[SceneBoundsChecker:{Time.frameCount}] Bounds dirty");
-                    continue;
-                }
-
-                if (_boundsDirty)
-                {
-                    _boundsDirty = false;
-
-                    _bounds = currentBounds;
-                    _boundsChanged?.Invoke(currentBounds);
-                    Debug.Log($"[SceneBoundsChecker:{Time.frameCount}] Bounds finished moving");
-                }
+                yield return wait;
             }
         }
 
         public void RecalculateBounds()
         {
-            var bounds = DetermineBounds(_room);
-            _boundsChanged?.Invoke(bounds);
-            _bounds = bounds;
+            // get the room the user's camera is in.
+            var room = SceneQuery.GetRoomContainingPoint(cameraRig.centerEyeAnchor.position);
+
+            var bounds = SceneQuery.GetRoomBounds(room);
+            _boundsChanged?.Invoke(room, bounds);
+            _currentBounds = bounds;
         }
 
         private void StartBoundsPolling()
         {
             if (_boundsPollingCoroutine != null) StopCoroutine(_boundsPollingCoroutine);
 
-            _boundsDirty = true;
+            _currentRoom = null;
             _boundsPollingCoroutine = StartCoroutine(BoundsChangePolling());
         }
 
@@ -239,25 +246,6 @@ namespace Phantom.Environment.Scripts
             }
         }
 
-        private static Bounds DetermineBounds(OVRSceneRoom room)
-        {
-            void EncapsulatePlane(OVRScenePlane plane, ref Bounds bounds)
-            {
-                var planeTransform = plane.transform;
-                var halfDims = (Vector3)plane.Dimensions * 0.5f;
-
-                bounds.Encapsulate(planeTransform.TransformPoint(halfDims));
-                bounds.Encapsulate(planeTransform.TransformPoint(-halfDims));
-            }
-
-            var bounds = new Bounds(room.Floor.transform.position, Vector3.zero);
-            EncapsulatePlane(room.Ceiling, ref bounds);
-
-            foreach (var wall in room.Walls) EncapsulatePlane(wall, ref bounds);
-
-            return bounds;
-        }
-
         /// <summary>
         ///     Move the tracking space so the floor is at 0,~0,0 and axis aligned.
         ///     Should result in tighter room bounds.
@@ -266,8 +254,6 @@ namespace Phantom.Environment.Scripts
         /// <param name="trackingSpace"></param>
         private static void AxisAlignFloor(Transform floorTransform, Transform trackingSpace)
         {
-            // move/rotate the floor to axis aligned 0,0,0.
-
             // floor's up axis is actually pointing Unity forward.
             var forward = Vector3.ProjectOnPlane(floorTransform.up, Vector3.up).normalized;
 
@@ -279,11 +265,13 @@ namespace Phantom.Environment.Scripts
 
             // rotate the tracking space around the origin so forward and Vector3.forward are parallel.
             trackingSpace.RotateAround(Vector3.zero, Vector3.up, angle);
+
+            _worldAligned?.Invoke();
         }
 
         public static bool PointInBounds(Vector3 point)
         {
-            return _bounds.HasValue ? _bounds.Value.Contains(point) : false;
+            return _currentBounds.HasValue ? _currentBounds.Value.Contains(point) : false;
         }
     }
 

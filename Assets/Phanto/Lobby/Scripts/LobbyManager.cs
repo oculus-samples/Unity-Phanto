@@ -35,7 +35,7 @@ public class LobbyManager : MonoBehaviour
     private SceneLoader _sceneLoader;
 
     private bool _permissionGranted = false;
-    private bool _boundsSet = false;
+    private bool _sceneReady = false;
 
     private void Awake()
     {
@@ -52,12 +52,12 @@ public class LobbyManager : MonoBehaviour
 
     private void OnEnable()
     {
-        SceneBoundsChecker.BoundsChanged += OnBoundsChanged;
+        SceneBoundsChecker.WorldAligned += OnWorldAligned;
     }
 
     private void OnDisable()
     {
-        SceneBoundsChecker.BoundsChanged -= OnBoundsChanged;
+        SceneBoundsChecker.WorldAligned -= OnWorldAligned;
     }
 
     private void OnDestroy()
@@ -174,9 +174,9 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    private void OnBoundsChanged(Bounds bounds)
+    private void OnWorldAligned()
     {
-        _boundsSet = true;
+        _sceneReady = true;
         ShowInstructions();
     }
 
@@ -194,7 +194,7 @@ public class LobbyManager : MonoBehaviour
 
     private void ShowInstructions()
     {
-        if (!_boundsSet || !_permissionGranted)
+        if (!_sceneReady || !_permissionGranted)
         {
             return;
         }

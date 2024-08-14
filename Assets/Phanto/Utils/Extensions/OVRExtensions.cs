@@ -21,7 +21,7 @@ namespace PhantoUtils
             return false;
         }
 
-        public static Vector3 ClosetPointOnPlane(this OVRScenePlane scenePlane, Vector3 point)
+        public static Vector3 ClosestPointOnPlane(this OVRScenePlane scenePlane, Vector3 point)
         {
             var planeTransform = scenePlane.transform;
             var plane = new Plane(planeTransform.forward, planeTransform.position);

@@ -2,7 +2,7 @@
 
 using System;
 using System.Collections;
-using Meta.XR.Depth;
+using Meta.XR.EnvironmentDepth;
 using PhantoUtils;
 using UnityEngine;
 
@@ -14,21 +14,14 @@ public class OcclusionDemoController : MonoBehaviour
     [SerializeField]
     private Transform trio;
 
-    private EnvironmentDepthTextureProvider _depthTextureProvider;
-    private EnvironmentDepthOcclusionController _occlusionController;
+    private EnvironmentDepthManager _environmentDepthManager;
     private bool _ready;
 
     private void Awake()
     {
-        if (!TryGetComponent(out _depthTextureProvider))
+        if (!TryGetComponent(out _environmentDepthManager))
         {
-            Debug.LogError($"Requires a {nameof(EnvironmentDepthTextureProvider)} component.");
-            return;
-        }
-
-        if (!TryGetComponent(out _occlusionController))
-        {
-            Debug.LogError($"Requires a {nameof(EnvironmentDepthOcclusionController)} component.");
+            Debug.LogError($"Requires a {nameof(EnvironmentDepthManager)} component.");
             return;
         }
     }
@@ -49,16 +42,9 @@ public class OcclusionDemoController : MonoBehaviour
 
     private void DisableOcclusion()
     {
-        // Make sure occlusion is globally disabled so it can be enabled per object.
-        _occlusionController.EnableOcclusionType(OcclusionType.NoOcclusion);
-
-        // disable the global occlusion keywords so we can have per-material control.
-        Shader.DisableKeyword(EnvironmentDepthOcclusionController.HardOcclusionKeyword);
-        Shader.DisableKeyword(EnvironmentDepthOcclusionController.SoftOcclusionKeyword);
-
         if (OcclusionKeywordToggle.SupportsOcclusion)
         {
-            _depthTextureProvider.SetEnvironmentDepthEnabled(true);
+            _environmentDepthManager.enabled = true;
         }
 
         // Enable the ghosts so their per object shader keywords are enabled after global disable.

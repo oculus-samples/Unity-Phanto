@@ -12,35 +12,35 @@
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.unity.xr.oculus": "4.2.0-exp-env-depth.2"
+        "com.unity.xr.oculus": "4.2.0"
       },
-      "hash": "0596292096cb962a0e856ba6bd1ba6146b8f9625"
+      "hash": "ae4c6e30122c0624e965434c750ee389cd172bc8"
     },
     "com.meta.xr.sdk.audio": {
-      "version": "64.0.0",
+      "version": "67.0.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://npm.developer.oculus.com"
     },
     "com.meta.xr.sdk.core": {
-      "version": "64.0.0",
+      "version": "67.0.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://npm.developer.oculus.com"
     },
     "com.meta.xr.sdk.haptics": {
-      "version": "64.0.0",
+      "version": "67.0.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.meta.xr.sdk.core": "64.0.0"
+        "com.meta.xr.sdk.core": "67.0.0"
       },
       "url": "https://npm.developer.oculus.com"
     },
     "com.meta.xr.sdk.interaction": {
-      "version": "64.0.0",
+      "version": "67.0.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -50,12 +50,12 @@
       "url": "https://npm.developer.oculus.com"
     },
     "com.meta.xr.sdk.interaction.ovr": {
-      "version": "64.0.0",
+      "version": "67.0.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.meta.xr.sdk.interaction": "64.0.0",
-        "com.meta.xr.sdk.core": "64.0.0"
+        "com.meta.xr.sdk.interaction": "67.0.0",
+        "com.meta.xr.sdk.core": "67.0.0"
       },
       "url": "https://npm.developer.oculus.com"
     },
@@ -233,7 +233,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.xr.oculus": {
-      "version": "4.2.0-exp-env-depth.2",
+      "version": "4.2.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {

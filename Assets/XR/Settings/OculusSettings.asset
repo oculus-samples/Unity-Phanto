@@ -19,15 +19,15 @@ MonoBehaviour:
   DashSupport: 1
   LowOverheadMode: 0
   OptimizeBufferDiscards: 1
-  PhaseSync: 0
+  PhaseSync: 1
   SymmetricProjection: 1
   SubsampledLayout: 0
   FoveatedRenderingMethod: 0
   LateLatching: 0
   LateLatchingDebug: 0
-  EnableTrackingOriginStageMode: 1
+  EnableTrackingOriginStageMode: 0
   SpaceWarp: 0
   TargetQuest2: 1
-  TargetQuestPro: 1
-  TargetQuest3: 1
+  TargetQuestPro: 0
+  TargetQuest3: 0
   SystemSplashScreen: {fileID: 0}

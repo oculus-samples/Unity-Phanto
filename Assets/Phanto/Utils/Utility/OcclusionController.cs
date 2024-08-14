@@ -1,7 +1,7 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using System.Collections.Generic;
-using Meta.XR.Depth;
+using Meta.XR.EnvironmentDepth;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,7 +13,7 @@ namespace PhantoUtils
     public class OcclusionController : MonoBehaviour
     {
         [SerializeField]
-        private OcclusionType occlusionType = OcclusionType.HardOcclusion;
+        private OcclusionShadersMode occlusionType = OcclusionShadersMode.HardOcclusion;
 
         private readonly List<Renderer> renderers = new List<Renderer>();
 
@@ -37,17 +37,17 @@ namespace PhantoUtils
 
                 switch (occlusionType)
                 {
-                    case OcclusionType.HardOcclusion:
-                        material.DisableKeyword(EnvironmentDepthOcclusionController.SoftOcclusionKeyword);
-                        material.EnableKeyword(EnvironmentDepthOcclusionController.HardOcclusionKeyword);
+                    case OcclusionShadersMode.HardOcclusion:
+                        material.DisableKeyword(EnvironmentDepthManager.SoftOcclusionKeyword);
+                        material.EnableKeyword(EnvironmentDepthManager.HardOcclusionKeyword);
                         break;
-                    case OcclusionType.SoftOcclusion:
-                        material.DisableKeyword(EnvironmentDepthOcclusionController.HardOcclusionKeyword);
-                        material.EnableKeyword(EnvironmentDepthOcclusionController.SoftOcclusionKeyword);
+                    case OcclusionShadersMode.SoftOcclusion:
+                        material.DisableKeyword(EnvironmentDepthManager.HardOcclusionKeyword);
+                        material.EnableKeyword(EnvironmentDepthManager.SoftOcclusionKeyword);
                         break;
                     default:
-                        material.DisableKeyword(EnvironmentDepthOcclusionController.HardOcclusionKeyword);
-                        material.DisableKeyword(EnvironmentDepthOcclusionController.SoftOcclusionKeyword);
+                        material.DisableKeyword(EnvironmentDepthManager.HardOcclusionKeyword);
+                        material.DisableKeyword(EnvironmentDepthManager.SoftOcclusionKeyword);
                         break;
                 }
             }

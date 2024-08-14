@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 243118712052451497}
   - component: {fileID: 243118712052451496}
   - component: {fileID: 243118712052451499}
-  - component: {fileID: 6728796766562302736}
   m_Layer: 0
   m_Name: ectoStream
   m_TagString: Untagged
@@ -4832,19 +4831,6 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!114 &6728796766562302736
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 243118712052451498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 274a64d85f5fba84590d087e68040223, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  occlusionType: 1
 --- !u!1 &243118713122997172
 GameObject:
   m_ObjectHideFlags: 0

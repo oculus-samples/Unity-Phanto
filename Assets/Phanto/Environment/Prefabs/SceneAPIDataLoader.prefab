@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 2860742088389963647}
   - component: {fileID: 5251702753280430205}
   - component: {fileID: 574839282008313859}
+  - component: {fileID: 781206736029290896}
   m_Layer: 0
   m_Name: SceneAPIDataLoader
   m_TagString: Untagged
@@ -80,6 +81,7 @@ MonoBehaviour:
   ovrSceneManagerPrefab: {fileID: 0}
   sceneRoot: {fileID: 870420489042344082}
   settings: {fileID: 11400000, guid: 61528d2c3bc76004096051ba59c378d2, type: 2}
+  loadAllRooms: 0
   SceneDataLoaded:
     m_PersistentCalls:
       m_Calls:
@@ -131,5 +133,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  forceSceneMesher: 0
   hideSceneMesh: 0
   generateNavMesh: 1
+--- !u!114 &781206736029290896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7973531395778442178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16064396d4a402843ae2422b10b9c674, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneDataLoader: {fileID: 5251702753280430205}

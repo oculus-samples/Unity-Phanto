@@ -19,12 +19,12 @@ Shader "XPD/CrystalsOcclusion"
 
         CGPROGRAM
         // Physically based Standard lighting model, and enable shadows on all light types
-        #pragma surface surf Standard fullforwardshadows
+        #pragma surface surf Standard finalcolor:colorModifier fullforwardshadows keepalpha
 
         #pragma multi_compile _ HARD_OCCLUSION SOFT_OCCLUSION
 
         #include "UnityCG.cginc"
-        #include "Packages/com.meta.xr.depthapi/Runtime/BiRP/EnvironmentOcclusionBiRP.cginc"
+        #include "Packages/com.meta.xr.sdk.core/Shaders/EnvironmentDepth/BiRP/EnvironmentOcclusionBiRP.cginc"
 
         // Use shader model 3.0 target, to get nicer looking lighting
         #pragma target 3.0
@@ -59,12 +59,6 @@ Shader "XPD/CrystalsOcclusion"
 
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
-            float occlusionValue = META_DEPTH_GET_OCCLUSION_VALUE_WORLDPOS(IN.worldPos, _EnvironmentDepthBias);
-
-            if (occlusionValue < 0.5) {
-                discard;
-            }
-
             // Albedo comes from a texture tinted by color
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
 
@@ -72,18 +66,23 @@ Shader "XPD/CrystalsOcclusion"
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
-            o.Alpha = 1;
+            o.Alpha = c.a;
 
             // Add rim lighting
             half rim = 1.0 - saturate(dot(normalize(IN.viewDir), o.Normal));
             o.Emission = _RimColor.rgb * pow(rim, _RimPower);
-
+                    
             // Apply normal map
             o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
 
             // Apply emission map
             fixed3 emissionColor = tex2D(_EmissionMap, IN.uv_EmissionMap).rgb; // Added emission map application
             o.Emission += emissionColor; // Added emission color to output emission
+        }
+
+        void colorModifier (Input IN, SurfaceOutputStandard o, inout fixed4 color)
+        {
+            META_DEPTH_OCCLUDE_OUTPUT_PREMULTIPLY_WORLDPOS(IN.worldPos, color, _EnvironmentDepthBias)
         }
         ENDCG
     }
