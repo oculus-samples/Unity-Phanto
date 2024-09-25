@@ -585,11 +585,11 @@ This project makes use of the following plugins and software:
 # License
 
 This codebase is available as both a reference and a template for mixed reality
-projects. The [Oculus License](./LICENSE.txt) applies to the SDK and supporting
-material. The MIT License applies to only certain, clearly marked documents. If
-an individual file does not indicate which license it is subject to, then the
-Oculus License applies.
+projects.
 
+The majority of Phanto is licensed under [MIT License](./LICENSE.txt), however files from [Text Mesh Pro](http://www.unity3d.com/legal/licenses/Unity_Companion_License) are licensed under their respective licensing terms.
+
+## Dependencies
 [XRGizmos](https://github.com/darktable/XRGizmos.git) sourced from
 https://github.com/darktable/XRGizmos.git. The License for XRGizmos can be found
 in [here](https://github.com/darktable/XRGizmos/blob/main/LICENSE.txt).
