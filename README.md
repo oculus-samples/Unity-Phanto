@@ -22,7 +22,7 @@ following our
 
 ## Requirements
 
-- Recommended Unity version: 2022.3.20f1
+- Recommended Unity version: 2022.3.20f1 or higher
 - Mac or Windows
 - Unity OVR Integration package v67 (included in the project)
 
@@ -279,7 +279,7 @@ mixed reality that responds to the scene.
 
 1. Clone the project using:
    `git clone https://github.com/oculus-samples/Unity-Phanto`
-2. Recommended Unity version - 2022.3.20f1.
+2. Recommended Unity version - 2022.3.20f1 or higher.
 
 ## Using the project's scenes
 
