@@ -24,7 +24,7 @@ following our
 
 - Recommended Unity version: 2022.3.20f1 or higher
 - Mac or Windows
-- Unity OVR Integration package v67 (included in the project)
+- Unity [OVR Integration package v67](https://developers.meta.com/horizon/downloads/package/meta-xr-interaction-sdk-ovr-integration/67.0) (included in the project)
 
 <br><br>
 
@@ -58,7 +58,7 @@ does not respect the physicality of the user’s environment. Improper Occlusion
 can result in a misperception of actionable space.
 
 - See
-  [Occlusions with Virtual Content](https://developer.oculus.com/resources/mr-health-safety-guideline/#passthrough)
+  [Occlusions with Virtual Content](https://developers.meta.com/horizon/resources/mr-health-depth#occlusion-with-virtual-content)
 
 - To avoid improper occlusion, developers should ensure that users have (1)
   completed Space Setup and (2) granted Spatial Data permission (setup design)
