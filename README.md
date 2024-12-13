@@ -60,8 +60,8 @@ can result in a misperception of actionable space.
 - See
   [Occlusions with Virtual Content](https://developers.meta.com/horizon/resources/mr-health-depth#occlusion-with-virtual-content)
 
-- To avoid improper occlusion, developers should ensure that users have (1)
-  completed Space Setup and (2) granted Spatial Data permission (setup design)
+- To avoid improper occlusion, developers should ensure that users have
+  completed Space Setup and granted [Spatial Data permission](https://developers.meta.com/horizon/documentation/unity/unity-spatial-data-perm/)(setup design)
   to allow proper occlusion in content placement, mesh collisions, and air
   navigation.
 
