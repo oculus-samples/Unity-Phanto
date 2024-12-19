@@ -8,7 +8,7 @@ Project Phanto is a Unity reference app, showcasing the latest Presence Platform
 features, highlighting scene mesh, Scene Model, and Scene API objects
 
 The
-[scene mesh](https://developer.oculus.com/documentation/unity/scene-best-practices/)
+[scene mesh](https://developers.meta.com/horizon/documentation/unity/scene-best-practices/#using-the-scene-mesh)
 is a low-fidelity, high-coverage artifact which describes the boundary between
 free and occupied space in a room. It is generated automatically during the
 Space Setup experience, and available for applications to query via Scene API.
