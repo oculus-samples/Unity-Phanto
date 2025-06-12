@@ -28,3 +28,5 @@ Assets/Resources/buildinfo.json
 Assets/Resources/buildinfo.json.meta
 
 imgui.ini
+
+.utmp/*
