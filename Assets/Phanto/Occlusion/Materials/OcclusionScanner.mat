@@ -33,3 +33,4 @@ Material:
     - _RightEye: 0
     m_Colors: []
   m_BuildTextureStacks: []
+  m_AllowLocking: 1

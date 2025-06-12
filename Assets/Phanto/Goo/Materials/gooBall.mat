@@ -104,3 +104,4 @@ Material:
     - _SplatColor1: {r: 1, g: 0.5, b: 0, a: 1}
     - _SplatColor2: {r: 1, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1

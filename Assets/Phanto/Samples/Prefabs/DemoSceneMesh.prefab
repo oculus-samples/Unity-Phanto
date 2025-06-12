@@ -106,6 +106,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f7908265c95d43459d60793234f63fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _transform: {fileID: 2146653554543461218}
+  _gameObject: {fileID: 2146653554543461216}
+  _sceneAnchor: {fileID: 4025537716497158586}
 --- !u!23 &2146653554543461021
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -123,6 +126,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -248,6 +254,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

@@ -85,3 +85,4 @@ Material:
     - _WireColor: {r: 1, g: 0, b: 0, a: 1}
     - _WireframeColor: {r: 0, g: 1, b: 0.6461568, a: 0.6509804}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1

@@ -57,7 +57,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4526382015355322387, guid: 9206d7abd0594d04e80e20427b08d06b, type: 3}
-      propertyPath: clips.Array.data[0]
+      propertyPath: 'clips.Array.data[0]'
       value: 
       objectReference: {fileID: 8300000, guid: 8fd4617405c33014794be25755eb21c3, type: 3}
     m_RemovedComponents: []

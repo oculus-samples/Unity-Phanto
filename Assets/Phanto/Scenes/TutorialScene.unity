@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -38,13 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -67,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -684,15 +680,15 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5251702753280430205, guid: 3cfa20e58676d4e6bbc91111fb9425f7, type: 3}
-      propertyPath: staticMeshPrefabs.Array.data[0]
+      propertyPath: 'staticMeshPrefabs.Array.data[0]'
       value: 
       objectReference: {fileID: 5573095153157919297, guid: 3d57813a04826c1429c49df9e81abc52, type: 3}
     - target: {fileID: 5251702753280430205, guid: 3cfa20e58676d4e6bbc91111fb9425f7, type: 3}
-      propertyPath: staticMeshPrefabs.Array.data[1]
+      propertyPath: 'staticMeshPrefabs.Array.data[1]'
       value: 
       objectReference: {fileID: 9217987127016988226, guid: f47035349f9b68c4a95ba84a6fd1b3a0, type: 3}
     - target: {fileID: 5251702753280430205, guid: 3cfa20e58676d4e6bbc91111fb9425f7, type: 3}
-      propertyPath: staticMeshPrefabs.Array.data[2]
+      propertyPath: 'staticMeshPrefabs.Array.data[2]'
       value: 
       objectReference: {fileID: 9217987127016988226, guid: f47035349f9b68c4a95ba84a6fd1b3a0, type: 3}
     - target: {fileID: 5251702753280430205, guid: 3cfa20e58676d4e6bbc91111fb9425f7, type: 3}
@@ -944,7 +940,7 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3371210163301897188, guid: e502aa6b44ac8c34db5c490ea17b351d, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
     - target: {fileID: 3958840384670615011, guid: e502aa6b44ac8c34db5c490ea17b351d, type: 3}
@@ -1205,23 +1201,23 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 829664434}
     - target: {fileID: 8319220963948685500, guid: 13fc8de213bddc749bfe8d1f8118fb3b, type: 3}
-      propertyPath: phantoms.Array.data[0]
+      propertyPath: 'phantoms.Array.data[0]'
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8319220963948685500, guid: 13fc8de213bddc749bfe8d1f8118fb3b, type: 3}
-      propertyPath: phantoms.Array.data[1]
+      propertyPath: 'phantoms.Array.data[1]'
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8319220963948685500, guid: 13fc8de213bddc749bfe8d1f8118fb3b, type: 3}
-      propertyPath: phantoms.Array.data[2]
+      propertyPath: 'phantoms.Array.data[2]'
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8319220963948685500, guid: 13fc8de213bddc749bfe8d1f8118fb3b, type: 3}
-      propertyPath: phantoms.Array.data[3]
+      propertyPath: 'phantoms.Array.data[3]'
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8319220963948685500, guid: 13fc8de213bddc749bfe8d1f8118fb3b, type: 3}
-      propertyPath: phantoms.Array.data[4]
+      propertyPath: 'phantoms.Array.data[4]'
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8319220963948685500, guid: 13fc8de213bddc749bfe8d1f8118fb3b, type: 3}

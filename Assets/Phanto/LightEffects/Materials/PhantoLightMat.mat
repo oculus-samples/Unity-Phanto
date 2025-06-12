@@ -98,3 +98,4 @@ Material:
     - _Midlight: {r: 0.91355044, g: 0.2971698, b: 1, a: 1}
     - _SourcePos: {r: -0.3, g: 0.25, b: 0, a: 1}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
