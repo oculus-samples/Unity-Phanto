@@ -85,7 +85,12 @@ namespace Phanto
 
             if (Time.time - _startTime < 2.0f) return;
 
-            if (_lifeTime > maxlifeTime || rigidbody.velocity.sqrMagnitude <= Vector3.kEpsilon * Vector3.kEpsilon)
+#if UNITY_6000_0_OR_NEWER
+            var sqrMagnitude = rigidbody.linearVelocity.sqrMagnitude;
+#else
+            var sqrMagnitude = rigidbody.velocity.sqrMagnitude;
+#endif
+            if (_lifeTime > maxlifeTime || sqrMagnitude <= Vector3.kEpsilon * Vector3.kEpsilon)
             {
                 PoolManagerSingleton.Instance.Discard(gameObject);
             }

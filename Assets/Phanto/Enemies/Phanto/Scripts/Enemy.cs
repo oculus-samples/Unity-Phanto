@@ -178,7 +178,11 @@ namespace Phanto
                 targetVel.normalized * maxVelocity,
                 easingDists.y * (Mathf.Sqrt(targetVel.magnitude) - easingDists.x));
             var reachedTarget = targetVel.sqrMagnitude <= 0.1f;
+#if UNITY_6000_0_OR_NEWER
+            targetVel -= rigidbody.linearVelocity;
+#else
             targetVel -= rigidbody.velocity;
+#endif
 
             var accel = targetVel / Time.fixedDeltaTime;
             if (accel.sqrMagnitude > maxAcceleration * maxAcceleration) accel = accel.normalized * maxAcceleration;
@@ -216,7 +220,11 @@ namespace Phanto
             var hoverNoise = Vector3.up;
             if (hoverRadius != 0f) hoverNoise *= 0.5f * hoverRadius * GenerateHoverSin(HoverComponent.Y, 2f * Mathf.PI);
             targetVel += hoverNoise;
+#if UNITY_6000_0_OR_NEWER
+            targetVel -= rigidbody.linearVelocity;
+#else
             targetVel -= rigidbody.velocity;
+#endif
 
             var accel = targetVel / Time.fixedDeltaTime;
             if (accel.sqrMagnitude > maxAcceleration * maxAcceleration) accel = accel.normalized * maxAcceleration;
@@ -232,7 +240,11 @@ namespace Phanto
             var hoverNoise = Vector3.up;
             if (hoverRadius != 0f) hoverNoise *= 0.5f * hoverRadius * GenerateHoverSin(HoverComponent.Y, 2f * Mathf.PI);
             targetVel += hoverNoise;
-            targetVel -= rigidbody.velocity;
+#if UNITY_6000_0_OR_NEWER
+            targetVel -= rigidbody.linearVelocity;
+#else
+            targetVel -= rigidbody.linearVelocity;
+#endif
 
             var accel = targetVel / Time.fixedDeltaTime;
             if (accel.sqrMagnitude > maxAcceleration * maxAcceleration) accel = accel.normalized * maxAcceleration;
