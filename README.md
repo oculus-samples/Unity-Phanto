@@ -22,7 +22,7 @@ following our
 
 ## Requirements
 
-- Recommended Unity version: 2022.3.20f1 or higher
+- Recommended Unity version: 6 or higher
 - Mac or Windows
 - Unity [OVR Integration package v67](https://developers.meta.com/horizon/downloads/package/meta-xr-interaction-sdk-ovr-integration/67.0) (included in the project)
 
