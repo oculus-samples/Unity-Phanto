@@ -2,6 +2,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Meta.XR.MRUtilityKit;
 using Phantom.Environment.Scripts;
 using PhantoUtils;
 using PhantoUtils.VR;
@@ -9,36 +11,35 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Assertions;
 using static NavMeshConstants;
-using static OVRSceneManager.Classification;
 
-[RequireComponent(typeof(OVRSceneRoom))]
+[RequireComponent(typeof(MRUKRoom))]
 public class SceneQuery : MonoBehaviour
 {
-    private static readonly string[] Boundaries = new[] { WallFace, InvisibleWallFace, Floor, Ceiling };
-    public static readonly string[] Openings = new[] { DoorFrame, WindowFrame, InvisibleWallFace };
+    private static readonly string[] Boundaries = new[] { MRUKAnchor.SceneLabels.WALL_FACE, MRUKAnchor.SceneLabels.INVISIBLE_WALL_FACE, MRUKAnchor.SceneLabels.FLOOR, MRUKAnchor.SceneLabels.CEILING }.Select(e => e.ToString()).ToArray();
+    public static readonly string[] Openings = new[] { MRUKAnchor.SceneLabels.DOOR_FRAME, MRUKAnchor.SceneLabels.WINDOW_FRAME, MRUKAnchor.SceneLabels.INVISIBLE_WALL_FACE }.Select(e => e.ToString()).ToArray();
 
     private static readonly Vector3[] PathCorners = new Vector3[1024];
 
     // Scene anchors have transform.forward as their "up" direction.
     private static readonly Vector3 AnchorUp = Vector3.forward;
 
-    private static readonly Dictionary<OVRSceneRoom, SceneQuery> SceneQueries =
-        new Dictionary<OVRSceneRoom, SceneQuery>();
+    private static readonly Dictionary<MRUKRoom, SceneQuery> SceneQueries =
+        new Dictionary<MRUKRoom, SceneQuery>();
 
     private Transform _roomTransform;
-    private OVRSceneRoom _room;
+    private MRUKRoom _room;
 
-    private readonly SpatialHash<OVRSemanticClassification> _spatialHash = new(0.05f);
+    private readonly SpatialHash<MRUKAnchor> _spatialHash = new(0.05f);
 
-    private readonly List<Component> _roomFurnishings = new();
+    private readonly List<MRUKAnchor> _roomFurnishings = new();
 
-    private readonly Dictionary<Transform, OVRSceneVolume> _sceneVolumes = new();
-    private readonly Dictionary<Transform, OVRScenePlane> _scenePlanes = new();
+    private readonly Dictionary<Transform, MRUKAnchor> _sceneVolumes = new();
+    private readonly Dictionary<Transform, MRUKAnchor> _scenePlanes = new();
 
-    private readonly Dictionary<Transform, OVRSemanticClassification> _semanticClassifications = new();
+    private readonly Dictionary<Transform, MRUKAnchor> _semanticClassifications = new();
 
-    private readonly List<(Transform, OVRScenePlane, float)>
-        _candidates = new List<(Transform, OVRScenePlane, float)>();
+    private readonly List<(Transform, MRUKAnchor, float)>
+        _candidates = new List<(Transform, MRUKAnchor, float)>();
 
     private readonly List<PhantoAnchorInfo> _anchorInfos = new List<PhantoAnchorInfo>();
 
@@ -76,10 +77,10 @@ public class SceneQuery : MonoBehaviour
             Debug.LogWarning($"Attempted to initialize twice: {name}", this);
             return;
         }
-        Initialize(GetComponentsInChildren<OVRSemanticClassification>(true));
+        Initialize(GetComponentsInChildren<MRUKAnchor>(true));
     }
 
-    private void Initialize(IEnumerable<OVRSemanticClassification> semanticClassifications)
+    private void Initialize(IEnumerable<MRUKAnchor> semanticClassifications)
     {
         TryGetComponent(out _room);
         _roomTransform = _room.transform;
@@ -92,6 +93,11 @@ public class SceneQuery : MonoBehaviour
 
         foreach (var sc in semanticClassifications)
         {
+            if (sc.GlobalMesh != null)
+            {
+                Debug.Log("Skipping Scene Mesh in room furnishings");
+                continue;
+            }
             if (!sc.TryGetComponent(out PhantoAnchorInfo anchorInfo))
             {
                 anchorInfo = sc.gameObject.AddComponent<PhantoAnchorInfo>();
@@ -104,7 +110,7 @@ public class SceneQuery : MonoBehaviour
 
             _semanticClassifications.Add(tform, sc);
 
-            if (sc.TryGetComponent<OVRSceneVolume>(out var volume))
+            if (sc.TryGetComponent<MRUKAnchor>(out var volume))
             {
                 _sceneVolumes.TryAdd(tform, volume);
                 if (!boundary)
@@ -112,7 +118,7 @@ public class SceneQuery : MonoBehaviour
                     _roomFurnishings.Add(volume);
                 }
             }
-            else if (sc.TryGetComponent<OVRScenePlane>(out var plane))
+            else if (sc.TryGetComponent<MRUKAnchor>(out var plane))
             {
                 _scenePlanes.TryAdd(tform, plane);
                 if (!boundary)
@@ -127,7 +133,7 @@ public class SceneQuery : MonoBehaviour
     }
 
     public static bool TryGetClosestSemanticClassification(Vector3 worldPoint, Vector3 normal,
-        out OVRSemanticClassification result)
+        out MRUKAnchor result)
     {
         var closest = float.MaxValue;
         result = null;
@@ -147,7 +153,7 @@ public class SceneQuery : MonoBehaviour
         return result != null;
     }
 
-    private (OVRSemanticClassification, float) GetClosestSemanticClassificationInternal(Vector3 worldPoint,
+    private (MRUKAnchor, float) GetClosestSemanticClassificationInternal(Vector3 worldPoint,
         Vector3 normal)
     {
         float distance;
@@ -156,7 +162,7 @@ public class SceneQuery : MonoBehaviour
 
         if (!_spatialHash.TryGetCell(roomSpacePoint, out var classifications))
         {
-            OVRSemanticClassification result = null;
+            MRUKAnchor result = null;
             (result, distance) = BruteForceSearch(worldPoint, normal);
 
             if (result != null)
@@ -182,10 +188,10 @@ public class SceneQuery : MonoBehaviour
         return (null, float.MaxValue);
     }
 
-    private (OVRSemanticClassification, float) BruteForceSearch(Vector3 worldPoint, Vector3 normal)
+    private (MRUKAnchor, float) BruteForceSearch(Vector3 worldPoint, Vector3 normal)
     {
         var minDistance = float.MaxValue;
-        OVRSemanticClassification result = null;
+        MRUKAnchor result = null;
         MonoBehaviour sceneElement = null;
 
         // iterate through the scene objects to find which "top" is closest to the point.
@@ -243,9 +249,9 @@ public class SceneQuery : MonoBehaviour
             var (tForm, scenePlane, distance) = _candidates[i];
 
             var delta = Mathf.Abs(distance - minDistance);
-            var area = scenePlane.Height * scenePlane.Width;
+            var area = scenePlane.PlaneRect.Value.width * scenePlane.PlaneRect.Value.height;
 
-            if (sceneElement is OVRScenePlane)
+            if (sceneElement is MRUKAnchor)
             {
                 // if we're comparing two planes that are nearly the same distance from point
                 // prefer the smaller plane (e.g. door instead of wall).
@@ -268,70 +274,70 @@ public class SceneQuery : MonoBehaviour
         return (result, minDistance);
     }
 
-    private static bool InBounds(Ray ray, OVRScenePlane scenePlane, out float distance)
+    private static bool InBounds(Ray ray, MRUKAnchor sceneAnchor, out float distance)
     {
-        var plane = new Plane(AnchorUp, Vector3.zero);
-        plane.Raycast(ray, out distance);
-
-        if (distance == 0.0f)
+        if (sceneAnchor.PlaneRect.HasValue)
         {
-            distance = float.MaxValue;
-            return false;
-        }
+            var plane = new Plane(AnchorUp, Vector3.zero);
+            plane.Raycast(ray, out distance);
 
-        // point where ray intersects plane
-        var point = ray.GetPoint(distance);
+            if (distance == 0.0f)
+            {
+                distance = float.MaxValue;
+                return false;
+            }
 
-        var halfDimensions = scenePlane.Dimensions / 2;
+            // point where ray intersects plane
+            var point = ray.GetPoint(distance);
 
-        // large negative distance means plane on other side of room
-        // make sure point is inside bounds of OVRScenePlane.
-        if (distance < -0.5f || Mathf.Abs(point.x) > halfDimensions.x || Mathf.Abs(point.y) > halfDimensions.y)
-        {
-            distance = float.MaxValue;
-            return false;
-        }
+            var halfDimensions = sceneAnchor.PlaneRect.Value.size / 2;
 
-        distance = Mathf.Abs(distance);
-        return true;
-    }
+            // large negative distance means plane on other side of room
+            // make sure point is inside bounds of MRUKAnchor.
+            if (distance < -0.5f || Mathf.Abs(point.x) > halfDimensions.x || Mathf.Abs(point.y) > halfDimensions.y)
+            {
+                distance = float.MaxValue;
+                return false;
+            }
 
-    private static bool InBounds(Ray ray, OVRSceneVolume sceneVolume, out float distance)
-    {
-        var dimensions = sceneVolume.Dimensions;
-
-        // test if point is inside the volume.
-        var bounds = new Bounds(Vector3.zero, dimensions);
-        var offset = sceneVolume.Offset;
-        offset.z -= bounds.extents.z;
-        bounds.center = offset;
-
-        if (bounds.Contains(ray.origin))
-        {
-            distance = 0f;
+            distance = Mathf.Abs(distance);
             return true;
         }
-
-        var result = bounds.IntersectRay(ray, out distance);
-
-        if (distance == 0.0f)
+        else
         {
-            distance = float.MaxValue;
-            return false;
+            var dimensions = sceneAnchor.VolumeBounds.Value.size;
+
+            // test if point is inside the volume.
+            var bounds = new Bounds(Vector3.zero, dimensions);
+
+            if (bounds.Contains(ray.origin))
+            {
+                distance = 0f;
+                return true;
+            }
+
+            var result = bounds.IntersectRay(ray, out distance);
+
+            if (distance == 0.0f)
+            {
+                distance = float.MaxValue;
+                return false;
+            }
+
+            distance = Mathf.Abs(distance);
+            return result;
         }
 
-        distance = Mathf.Abs(distance);
-        return result;
     }
 
-    private OVRSemanticClassification GetClassification(Transform tForm)
+    private MRUKAnchor GetClassification(Transform tForm)
     {
         _semanticClassifications.TryGetValue(tForm, out var semanticClassification);
 
         return semanticClassification;
     }
 
-    public static bool TryGetVolume(OVRSemanticClassification classification, out OVRSceneVolume volume)
+    public static bool TryGetVolume(MRUKAnchor classification, out MRUKAnchor volume)
     {
         var xform = classification.transform;
 
@@ -347,7 +353,7 @@ public class SceneQuery : MonoBehaviour
         return false;
     }
 
-    public static bool TryGetPlane(OVRSemanticClassification classification, out OVRScenePlane plane)
+    public static bool TryGetPlane(MRUKAnchor classification, out MRUKAnchor plane)
     {
         var xform = classification.transform;
 
@@ -546,10 +552,10 @@ public class SceneQuery : MonoBehaviour
     /// </summary>
     /// <param name="room"></param>
     /// <returns></returns>
-    public static Plane GetLid(OVRSceneRoom room)
+    public static Plane GetLid(MRUKRoom room)
     {
-        var floorPos = room.Floor.transform.position;
-        var ceilingPos = room.Ceiling.transform.position;
+        var floorPos = room.FloorAnchor.transform.position;
+        var ceilingPos = room.CeilingAnchor.transform.position;
 
         var lid = new Plane(Vector3.down, ceilingPos);
 
@@ -562,7 +568,7 @@ public class SceneQuery : MonoBehaviour
 
         var maxHeight = float.MinValue;
 
-        foreach (var furniture in sceneQuery._roomFurnishings)
+        foreach (MRUKAnchor furniture in sceneQuery._roomFurnishings)
         {
             if (furniture == null)
             {
@@ -573,20 +579,24 @@ public class SceneQuery : MonoBehaviour
 
             var furnitureTransform = furniture.transform;
 
-            switch (furniture)
+            if (furniture.VolumeBounds.HasValue == false && furniture.PlaneBoundary2D == null)
             {
-                case OVRSceneVolume volume:
-                    height = floorPlane.GetDistanceToPoint(furnitureTransform.position);
-                    break;
-                case OVRScenePlane plane:
-                    height = 0;
-                    foreach (var point in plane.Boundary)
-                    {
-                        var worldPoint = furnitureTransform.TransformPoint(point);
-                        height = Mathf.Max(height, floorPlane.GetDistanceToPoint(worldPoint));
-                    }
+                Debug.Log($"Skipping {furniture.name} since it does not have boundary or volume");
+                continue;
+            }
 
-                    break;
+            if (furniture.VolumeBounds.HasValue)
+            {
+                height = floorPlane.GetDistanceToPoint(furnitureTransform.position);
+            }
+            else
+            {
+                height = 0;
+                foreach (var point in furniture.PlaneBoundary2D)
+                {
+                    var worldPoint = furnitureTransform.TransformPoint(point);
+                    height = Mathf.Max(height, floorPlane.GetDistanceToPoint(worldPoint));
+                }
             }
 
             if (height > maxHeight)
@@ -617,7 +627,7 @@ public class SceneQuery : MonoBehaviour
     /// <param name="otherRoom"></param>
     /// <param name="sibling"></param>
     /// <returns></returns>
-    public static bool TryGetLinkedOpening(PhantoAnchorInfo sourceOpening, OVRSceneRoom otherRoom,
+    public static bool TryGetLinkedOpening(PhantoAnchorInfo sourceOpening, MRUKRoom otherRoom,
         out PhantoAnchorInfo sibling)
     {
         if (!SceneQueries.TryGetValue(otherRoom, out var sceneQuery))
@@ -663,10 +673,10 @@ public class SceneQuery : MonoBehaviour
     /// </summary>
     /// <param name="point">world space point</param>
     /// <returns></returns>
-    public static OVRSceneRoom GetRoomContainingPoint(Vector3 point)
+    public static MRUKRoom GetRoomContainingPoint(Vector3 point)
     {
         var minDistance = float.MaxValue;
-        OVRSceneRoom result = null;
+        MRUKRoom result = null;
 
         foreach (var room in SceneQueries.Keys)
         {
@@ -688,14 +698,14 @@ public class SceneQuery : MonoBehaviour
     /// <param name="point"></param>
     /// <param name="result"></param>
     /// <returns>true if this point is within a room</returns>
-    public static bool TryGetRoomContainingPoint(Vector3 point, out OVRSceneRoom result)
+    public static bool TryGetRoomContainingPoint(Vector3 point, out MRUKRoom result)
     {
         foreach (var room in SceneQueries.Keys)
         {
-            var floorTransform = room.Floor.transform;
+            var floorTransform = room.FloorAnchor.transform;
             var floorPoint = Vector3.ProjectOnPlane(floorTransform.InverseTransformPoint(point), Vector3.forward);
 
-            if (PointInPolygon2D(room.Floor.Boundary, floorPoint))
+            if (PointInPolygon2D(room.FloorAnchor.PlaneBoundary2D, floorPoint))
             {
                 result = room;
                 return true;
@@ -716,9 +726,9 @@ public class SceneQuery : MonoBehaviour
     /// <param name="back">point on the floor behind the opening</param>
     /// <param name="otherRoom">room this opening connects to</param>
     /// <returns></returns>
-    public static bool TryGetConnectingRoom(OVRSceneRoom room, PhantoAnchorInfo opening, out Vector3 front,
+    public static bool TryGetConnectingRoom(MRUKRoom room, PhantoAnchorInfo opening, out Vector3 front,
         out Vector3 back,
-        out OVRSceneRoom otherRoom)
+        out MRUKRoom otherRoom)
     {
         otherRoom = null;
         back = default;
@@ -758,26 +768,24 @@ public class SceneQuery : MonoBehaviour
         }
 
         // otherwise set front and back to positions on floor for navmesh link.
-        front = frontRoom.Floor.ClosestPointOnPlane(front);
-        back = backRoom.Floor.ClosestPointOnPlane(back);
-
+        Debug.LogError("We reached here, and we should not");
         return true;
     }
 
-    private static float DistanceFromRoom(OVRSceneRoom room, Vector3 point)
+    private static float DistanceFromRoom(MRUKRoom room, Vector3 point)
     {
         var roomTransform = room.transform;
-        var floorTransform = room.Floor.transform;
+        var floorTransform = room.FloorAnchor.transform;
 
         var localSpacePoint = roomTransform.InverseTransformPoint(point);
 
         // local space bounding box for room.
         var roomBounds = new Bounds(Vector3.zero, Vector3.zero);
 
-        roomBounds.Encapsulate(room.Ceiling.transform.localPosition);
+        roomBounds.Encapsulate(room.CeilingAnchor.transform.localPosition);
         roomBounds.Encapsulate(floorTransform.localPosition);
 
-        foreach (var wall in room.Walls)
+        foreach (var wall in room.WallAnchors)
         {
             roomBounds.Encapsulate(wall.transform.localPosition);
         }
@@ -786,7 +794,7 @@ public class SceneQuery : MonoBehaviour
         {
             var floorPoint = Vector3.ProjectOnPlane(floorTransform.InverseTransformPoint(point), Vector3.forward);
 
-            if (PointInPolygon2D(room.Floor.Boundary, floorPoint))
+            if (PointInPolygon2D(room.FloorAnchor.PlaneBoundary2D, floorPoint))
             {
                 return 0;
             }
@@ -830,10 +838,10 @@ public class SceneQuery : MonoBehaviour
         return collision != 0;
     }
 
-    public static Bounds GetRoomBounds(OVRSceneRoom room)
+    public static Bounds GetRoomBounds(MRUKRoom room)
     {
-        var floor = room.Floor;
-        var ceiling = room.Ceiling;
+        var floor = room.FloorAnchor;
+        var ceiling = room.CeilingAnchor;
         Assert.IsNotNull(floor);
         Assert.IsNotNull(ceiling);
 
@@ -842,12 +850,12 @@ public class SceneQuery : MonoBehaviour
 
         var bounds = new Bounds(floorTransform.position, Vector3.zero);
 
-        foreach (var point in floor.Boundary)
+        foreach (var point in floor.PlaneBoundary2D)
         {
             bounds.Encapsulate(floorTransform.TransformPoint(point));
         }
 
-        foreach (var point in ceiling.Boundary)
+        foreach (var point in ceiling.PlaneBoundary2D)
         {
             bounds.Encapsulate(ceilingTransform.TransformPoint(point));
         }

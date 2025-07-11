@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Meta.XR.MRUtilityKit;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -17,7 +18,7 @@ namespace Phantom.Environment.Scripts
     public class SceneBoundsChecker : MonoBehaviour
     {
         private static Bounds? _currentBounds;
-        private static OVRSceneRoom _currentRoom;
+        private static MRUKRoom _currentRoom;
 
         [SerializeField] private OVRCameraRig cameraRig;
 
@@ -34,17 +35,17 @@ namespace Phantom.Environment.Scripts
         private bool axisAlignFloor = true;
 
         private Coroutine _boundsPollingCoroutine;
-        private OVRScenePlane _floorPlane;
+        private MRUKAnchor _floorPlane;
 
         private Transform _floorTransform;
         private Transform _trackingSpaceTransform;
         private Transform _headTransform;
 
-        private static event Action<OVRSceneRoom, Bounds> _boundsChanged;
+        private static event Action<MRUKRoom, Bounds> _boundsChanged;
         /// <summary>
         /// The user has moved from one room to another.
         /// </summary>
-        public static event Action<OVRSceneRoom, Bounds> BoundsChanged
+        public static event Action<MRUKRoom, Bounds> BoundsChanged
         {
             add
             {
@@ -159,7 +160,7 @@ namespace Phantom.Environment.Scripts
         {
             _currentRoom = null;
             var wait = new WaitForSeconds(0.25f);
-            OVRSceneRoom room = null;
+            MRUKRoom room = null;
 
             // wait until room is loaded.
             do
@@ -168,7 +169,7 @@ namespace Phantom.Environment.Scripts
             } while (!SceneQuery.TryGetRoomContainingPoint(cameraRig.centerEyeAnchor.position, out room));
 
             var timeoutStopwatch = Stopwatch.StartNew();
-            while (room.Floor == null || room.Floor.Boundary.Count == 0 || room.Walls.Length == 0)
+            while (room.FloorAnchor == null || room.FloorAnchor.PlaneBoundary2D.Count == 0 || room.WallAnchors.Count == 0)
             {
                 if (timeoutStopwatch.ElapsedMilliseconds > 3000)
                 {
@@ -181,15 +182,15 @@ namespace Phantom.Environment.Scripts
 
             _trackingSpaceTransform = cameraRig.trackingSpace;
 
-            // OVRSceneRoom can get destroyed while we're waiting.
-            if (room == null || room.Floor == null)
+            // MRUKRoom can get destroyed while we're waiting.
+            if (room == null || room.FloorAnchor == null)
             {
                 CancelBoundsPolling();
                 StartBoundsPolling();
                 yield break;
             }
 
-            _floorPlane = room.Floor;
+            _floorPlane = room.FloorAnchor;
             _floorTransform = _floorPlane.transform;
 
             if (!axisAlignFloor || IsFloorAligned)

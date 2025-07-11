@@ -3,14 +3,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using Meta.XR.MRUtilityKit;
 using OVRSimpleJSON;
 using PhantoUtils;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
-using Classification = OVRSceneManager.Classification;
+using Object = UnityEngine.Object;
 
 namespace Phantom.Environment.Scripts
 {
@@ -20,18 +22,17 @@ namespace Phantom.Environment.Scripts
         public enum SceneDataSource
         {
             SceneApi,
-            StaticMeshData
+            StaticMeshDataPrefab,
+            StaticMeshDataJson
         }
 
-        // Scene API data
-        private static readonly string[] MeshClassifications =
-            { "GlobalMesh", Classification.GlobalMesh };
+        // A reference to the MRUK prefab.
+        [SerializeField] private MRUK MRUKPrefab;
 
-        // A reference to the OVRSceneManager prefab.
-        [SerializeField] private OVRSceneManager ovrSceneManagerPrefab;
-
-        // The root transform of the OVRSceneManager.
+        // The root transform of the MRUK.
         [SerializeField] private Transform sceneRoot;
+
+        [SerializeField] private AnchorPrefabSpawner anchorPrefavSpawner;
 
         [SerializeField] private SceneDataLoaderSettings settings;
 
@@ -46,12 +47,12 @@ namespace Phantom.Environment.Scripts
         // UnityEvent fired when a new scene model is available.
         public UnityEvent NewSceneModelAvailable = new();
 
-        private OVRSceneManager ovrSceneManager;
-        private Transform staticMesh;
+        private MRUK _mruk;
+        private Transform _staticMesh;
 
         private void Awake()
         {
-            Assert.IsNotNull(ovrSceneManagerPrefab, $"{nameof(ovrSceneManagerPrefab)} cannot be null.");
+            Assert.IsNotNull(MRUKPrefab, $"{nameof(MRUKPrefab)} cannot be null.");
             Assert.IsNotNull(sceneRoot, $"{nameof(sceneRoot)} cannot be null.");
         }
 
@@ -63,7 +64,7 @@ namespace Phantom.Environment.Scripts
 
         private void OnDestroy()
         {
-            if (ovrSceneManager != null) ovrSceneManager.SceneModelLoadedSuccessfully -= OnSceneAPIDataLoaded;
+            if (_mruk != null) _mruk.SceneLoadedEvent.RemoveListener(OnSceneAPIDataLoaded);
         }
 
 #if UNITY_EDITOR
@@ -79,27 +80,7 @@ namespace Phantom.Environment.Scripts
             if (settings.LoadSceneOnStart)
             {
                 Debug.Log($"{Application.productName}: Loading scene.");
-#if UNITY_EDITOR
-                if (!OVRManager.isHmdPresent && !string.IsNullOrEmpty(settings.SceneJson))
-                {
-                    LoadStaticMesh(settings.SceneJson);
-                    return;
-                }
-#endif
-
-                switch (settings.SceneDataSource)
-                {
-                    // Scene API data.
-                    case SceneDataSource.SceneApi:
-                        StartCoroutine(LoadSceneAPIData());
-                        break;
-                    // Static mesh data.
-                    case SceneDataSource.StaticMeshData:
-                        LoadStaticMesh(settings.SceneJson);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                StartCoroutine(LoadSceneAPIData());
             }
         }
 
@@ -110,79 +91,79 @@ namespace Phantom.Environment.Scripts
         {
             Debug.Log($"{Application.productName}: Loading scene model.");
 
-            if (ovrSceneManager == null)
+            if (_mruk == null)
             {
                 // Scene Manager from previous scene.
-                var existingManager = FindObjectOfType<OVRSceneManager>();
+                var existingManager = FindObjectOfType<MRUK>();
 
                 if (existingManager != null) DestroyImmediate(existingManager.gameObject);
 
-                ovrSceneManager = Instantiate(ovrSceneManagerPrefab, transform);
-                ovrSceneManager.ActiveRoomsOnly = !loadAllRooms;
+                _mruk = Instantiate(MRUKPrefab, transform);
+                anchorPrefavSpawner = _mruk.GetComponent<AnchorPrefabSpawner>();
+                Assert.IsNotNull(anchorPrefavSpawner, $"{nameof(anchorPrefavSpawner)} cannot be null.");
+                anchorPrefavSpawner.SpawnOnStart =
+                    loadAllRooms ? MRUK.RoomFilter.AllRooms : MRUK.RoomFilter.CurrentRoomOnly;
             }
 
-            // Set the initial room root.
-            ovrSceneManager.InitialAnchorParent = sceneRoot;
+            _mruk.RoomCreatedEvent.AddListener((room =>
+            {
+                Debug.Log($"{Application.productName}: {nameof(SceneDataLoader)}: RoomCreatedEvent ");
+                // Set the initial room root.
+                room.transform.parent = sceneRoot;
+                anchorPrefavSpawner.onPrefabSpawned.AddListener(() =>
+                {
+                    StartCoroutine(WaitForPrefabSpawned());
+                });
+            }));
 
             // Wait for the manager to fully load the scene so we can get its dimensions and create
-            ovrSceneManager.SceneModelLoadedSuccessfully += () =>
+            _mruk.SceneLoadedEvent.AddListener((() =>
             {
                 Debug.Log($"{Application.productName}: {nameof(SceneDataLoader)}: SceneModelLoadedSuccessfully ");
                 OnSceneAPIDataLoaded();
-            };
-            // Wait until the manager has completed one update to start the loading process.
-            ovrSceneManager.SceneCaptureReturnedWithoutError += () =>
+            }));
+
+            switch (settings.SceneDataSource)
             {
-                Debug.Log(
-                    $"{Application.productName}: {nameof(SceneDataLoader)}: SceneCaptureReturnedWithoutError ");
-            };
-            // Catch the various errors that can occur when the scene capture is started.
-            ovrSceneManager.UnexpectedErrorWithSceneCapture += () =>
-            {
-                Debug.LogError(
-                    $"{Application.productName}: {nameof(SceneDataLoader)}: UnexpectedErrorWithSceneCapture ");
-                NoSceneModelAvailable?.Invoke();
-            };
-            ovrSceneManager.NoSceneModelToLoad += () =>
-            {
-                Debug.LogError($"{Application.productName}: {nameof(SceneDataLoader)}: NoSceneModelToLoad ");
-                NoSceneModelAvailable?.Invoke();
-            };
-            ovrSceneManager.NewSceneModelAvailable += () =>
-            {
-                Debug.Log($"{Application.productName}: {nameof(SceneDataLoader)}: NewSceneModelAvailable ");
-                if (ovrSceneManager.LoadSceneModel())
-                {
-                    NewSceneModelAvailable?.Invoke();
-                }
-            };
+                // Scene API data.
+                case SceneDataSource.SceneApi:
+                    _mruk.SceneSettings.DataSource = MRUK.SceneDataSource.DeviceWithJsonFallback;
+                    _mruk.SceneSettings.LoadSceneOnStartup = true;
+                    _mruk.LoadSceneFromDevice();
+                    break;
+                // Static mesh data.
+                case SceneDataSource.StaticMeshDataPrefab:
+                    _mruk.SceneSettings.DataSource = MRUK.SceneDataSource.Prefab;
+                    _mruk.LoadSceneFromPrefab(_mruk.SceneSettings.RoomPrefabs[0]);
+                    // LoadStaticMesh(settings.SceneJson);
+                    break;
+                case SceneDataSource.StaticMeshDataJson:
+                    _mruk.SceneSettings.DataSource = MRUK.SceneDataSource.Json;
+                    _mruk.LoadSceneFromJsonString(_mruk.SceneSettings.SceneJsons[0].ToString());
+                    // LoadStaticMesh(settings.SceneJson);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
             yield return null;
         }
+
+        public IEnumerator WaitForPrefabSpawned()
+        {
+            this.gameObject.SetLayerRecursively(LayerMask.NameToLayer("GlobalMesh"));
+            this.gameObject.SetTagRecursively("GlobalMesh");
+            yield return null;
+        }
+
+
 
         /// <summary>
         /// Rescan the scene to update the list of available meshes.
         /// </summary>
         public void Rescan()
         {
-            ovrSceneManager.RequestSceneCapture();
-        }
-
-        /// <summary>
-        /// Load a static mesh from a JSON string.
-        /// </summary>
-        private void LoadStaticMesh(string jsonText)
-        {
-            var json = JSON.Parse(jsonText);
-
-            var instantiatedMesh = JsonSceneBuilder.SpawnSceneRoom(json, sceneRoot, ovrSceneManagerPrefab);
-
-            if (settings.CenterStaticMesh)
-                // Center mesh on tracking space.
-                AlignStaticMesh(instantiatedMesh);
-            SceneDataLoaded?.Invoke(sceneRoot);
-
-            var debugSceneEntities = gameObject.AddComponent<DebugSceneEntities>();
-            debugSceneEntities.StaticSceneModelLoaded();
+            OVRScene.RequestSpaceSetup();
         }
 
         /// <summary>
@@ -202,8 +183,8 @@ namespace Phantom.Environment.Scripts
             else
                 foreach (var mf in meshFilters)
                 {
-                    if (mf.TryGetComponent<OVRSemanticClassification>(out var semanticClassification)
-                        && semanticClassification.Contains(OVRSceneManager.Classification.GlobalMesh))
+                    if (mf.TryGetComponent<MRUKAnchor>(out var semanticClassification)
+                        && semanticClassification.Contains(MRUKAnchor.SceneLabels.GLOBAL_MESH.ToString()))
                     {
                         globalMesh = mf;
                         break;
@@ -230,19 +211,6 @@ namespace Phantom.Environment.Scripts
             SceneDataLoaded?.Invoke(sceneRoot);
         }
 
-        public OVRSceneAnchor GetSceneMeshPrefab()
-        {
-            foreach (var prefabOverride in ovrSceneManagerPrefab.PrefabOverrides)
-            {
-                if (prefabOverride.ClassificationLabel == OVRSceneManager.Classification.GlobalMesh)
-                {
-                    return prefabOverride.Prefab;
-                }
-            }
-
-            return null;
-        }
-
         /// <summary>
         ///     Brittle method for finding the global mesh in a prefab that contains multiple static meshes.
         /// </summary>
@@ -267,9 +235,9 @@ namespace Phantom.Environment.Scripts
             return null;
         }
 
-        public static void AddAnchorReferenceCount(OVRSceneAnchor anchor)
+        public static void AddAnchorReferenceCount(MRUKAnchor anchor)
         {
-            var anchorReferenceCountDictionary = typeof(OVRSceneAnchor).GetField("AnchorReferenceCountDictionary",
+            var anchorReferenceCountDictionary = typeof(MRUKAnchor).GetField("AnchorReferenceCountDictionary",
                 BindingFlags.NonPublic | BindingFlags.Static);
 
             if (anchorReferenceCountDictionary != null)
@@ -278,11 +246,22 @@ namespace Phantom.Environment.Scripts
 
                 if (refCountStaticField is Dictionary<OVRSpace, int> refCountDictionary)
                 {
-                    refCountDictionary[anchor.Space] = 1;
+                    // refCountDictionary[anchor.Space] = 1;
 
                     anchorReferenceCountDictionary.SetValue(null, refCountDictionary);
                 }
             }
+        }
+
+        // Get Scene Mesh prefab override from AnchorPrefavSpawner
+        public GameObject GetSceneMeshPrefab()
+        {
+            var meshes = anchorPrefavSpawner.PrefabsToSpawn.Select((group => group))
+                .Where(group => group.Labels == MRUKAnchor.SceneLabels.GLOBAL_MESH).ToList();
+            if (meshes.Count == 0)
+                return null;
+
+            return meshes.First().Prefabs.FirstOrDefault();
         }
     }
 }

@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meshFilter: {fileID: 7912803727231614162}
-  volumeMeshFilter: {fileID: 4634805430562909109}
+  volumeMeshFilter: {fileID: 6517284632280882174}
 --- !u!33 &7912803727231614162
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -123,9 +123,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3142467400957245745}
-  - component: {fileID: 4430182240210341399}
   - component: {fileID: 6517284632280882174}
-  - component: {fileID: 4634805430562909109}
   - component: {fileID: 6385859610126220658}
   - component: {fileID: 746104339465464814}
   m_Layer: 6
@@ -151,18 +149,6 @@ Transform:
   - {fileID: 4212133270733692493}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4430182240210341399
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3254348751681064241}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ab3ec25e32ce0c4380714d75e39cb05, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!33 &6517284632280882174
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -171,18 +157,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3254348751681064241}
   m_Mesh: {fileID: 0}
---- !u!114 &4634805430562909109
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3254348751681064241}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ad2d11993f599542b0d0c2ba898434a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!64 &6385859610126220658
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -219,4 +193,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _transform: {fileID: 3142467400957245745}
   _gameObject: {fileID: 3254348751681064241}
-  _sceneAnchor: {fileID: 4430182240210341399}
+  _sceneAnchor: {fileID: 0}

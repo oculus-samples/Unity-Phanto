@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Meta.XR.MRUtilityKit;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
@@ -110,13 +111,13 @@ public static class NavMeshBookKeeper
     ///     Spherecast from the ceiling down to the triangle to verify it's in an "open" area.
     /// </summary>
     /// <param name="rooms"></param>
-    public static IEnumerator ValidateRooms(IReadOnlyList<OVRSceneRoom> rooms)
+    public static IEnumerator ValidateRooms(IReadOnlyList<MRUKRoom> rooms)
     {
         var stopwatch = Stopwatch.StartNew();
 
         foreach (var room in rooms)
         {
-            var ceilingTransform = room.Ceiling.transform;
+            var ceilingTransform = room.CeilingAnchor.transform;
             var ceilingPlane = new Plane(ceilingTransform.forward, ceilingTransform.position);
 
             // verify each triangle is not under furniture.
@@ -148,11 +149,11 @@ public static class NavMeshBookKeeper
     ///     Spherecast from the ceiling down to the triangle to verify it's in an "open" area.
     /// </summary>
     /// <param name="room"></param>
-    public static IEnumerator ValidateScene(OVRSceneRoom room)
+    public static IEnumerator ValidateScene(MRUKRoom room)
     {
         var stopwatch = Stopwatch.StartNew();
 
-        var ceilingTransform = room.Ceiling.transform;
+        var ceilingTransform = room.CeilingAnchor.transform;
         var ceilingPlane = new Plane(ceilingTransform.forward, ceilingTransform.position);
 
         // verify each triangle is not under furniture.

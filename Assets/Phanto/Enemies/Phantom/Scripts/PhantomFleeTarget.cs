@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Linq;
+using Meta.XR.MRUtilityKit;
 using Phanto.Enemies.DebugScripts;
 using UnityEngine;
 using Utilities.XR;
@@ -89,7 +90,7 @@ namespace Phantom
             Hide();
         }
 
-        public override void Initialize(OVRSemanticClassification classification, OVRSceneRoom _)
+        public override void Initialize(MRUKAnchor classification, MRUKRoom _)
         {
 
         }

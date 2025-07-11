@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Meta.XR.MRUtilityKit;
 using PhantoUtils;
 using UnityEngine;
 
@@ -16,27 +17,21 @@ namespace Phantom.Environment.Scripts
         [SerializeField, HideInInspector] private Transform _transform;
         [SerializeField, HideInInspector] private GameObject _gameObject;
 
-        [SerializeField, HideInInspector] private OVRSceneAnchor _sceneAnchor;
+        [SerializeField, HideInInspector] private MRUKAnchor _sceneAnchor;
 
-        private OVRSemanticClassification _semanticClassification;
-        private OVRSceneVolume _sceneVolume;
-        private OVRScenePlane _scenePlane;
-        private OVRSceneVolumeMeshFilter _sceneVolumeMeshFilter;
-        private OVRScenePlaneMeshFilter _scenePlaneMeshFilter;
-        private OVRSceneRoom _owningRoom;
+        private MRUKAnchor _semanticClassification;
+        private MRUKRoom _owningRoom;
 
-        public bool IsVolume => _hasVolume || _hasVolumeMeshFilter;
-        public bool IsPlane => _hasPlane || _hasPlaneMeshFilter;
+        public bool IsVolume => _hasVolume;
+        public bool IsPlane => _hasPlane;
 
         private bool _hasVolume;
-        private bool _hasVolumeMeshFilter;
         private bool _hasPlane;
-        private bool _hasPlaneMeshFilter;
 
         public Vector3 Position => _transform.position;
         public Pose Pose => new Pose(_transform.position, _transform.rotation);
 
-        public string Classification => _semanticClassification.Labels[0];
+        public string Classification => _semanticClassification.Label.ToString();
 
         public Vector3 Dimensions
         {
@@ -44,12 +39,12 @@ namespace Phantom.Environment.Scripts
             {
                 if (_hasVolume)
                 {
-                    return _sceneVolume.Dimensions;
+                    return _semanticClassification.VolumeBounds.Value.size;
                 }
 
                 if (_hasPlane)
                 {
-                    return _scenePlane.Dimensions;
+                    return _semanticClassification.PlaneRect.Value.size;
                 }
 
                 return default;
@@ -62,12 +57,12 @@ namespace Phantom.Environment.Scripts
             {
                 if (_hasVolume)
                 {
-                    return _sceneVolume.Width;
+                    return _semanticClassification.VolumeBounds.Value.size.x;
                 }
 
                 if (_hasPlane)
                 {
-                    return _scenePlane.Width;
+                    return _semanticClassification.PlaneRect.Value.width;
                 }
 
                 return default;
@@ -80,12 +75,12 @@ namespace Phantom.Environment.Scripts
             {
                 if (_hasVolume)
                 {
-                    return _sceneVolume.Height;
+                    return _semanticClassification.VolumeBounds.Value.size.y;
                 }
 
                 if (_hasPlane)
                 {
-                    return _scenePlane.Height;
+                    return _semanticClassification.PlaneRect.Value.height;
                 }
 
                 return default;
@@ -98,7 +93,7 @@ namespace Phantom.Environment.Scripts
             {
                 if (_hasVolume)
                 {
-                    return _sceneVolume.Depth;
+                    return _semanticClassification.VolumeBounds.Value.size.z;
                 }
 
                 return default;
@@ -114,21 +109,14 @@ namespace Phantom.Environment.Scripts
 
         private IEnumerator Start()
         {
-            while (!_sceneAnchor.Space.Valid) yield return null;
-
-            _owningRoom = GetComponentInParent<OVRSceneRoom>(true);
-
-            _hasVolume = TryGetComponent(out _sceneVolume);
-            _hasVolumeMeshFilter = TryGetComponent(out _sceneVolumeMeshFilter);
-
-            _hasPlane = TryGetComponent(out _scenePlane);
-            _hasPlaneMeshFilter = TryGetComponent(out _scenePlaneMeshFilter);
-
+            _owningRoom = GetComponentInParent<MRUKRoom>(true);
             while (!TryGetComponent(out _semanticClassification)) yield return null;
 
-            var handle = (ushort)_sceneAnchor.Space.Handle;
+            _hasVolume = _semanticClassification.VolumeBounds.HasValue;
 
-            _gameObject.SetSuffix($"{Classification}_{handle:X4}_{(IsVolume ? "V" : "P")}");
+            _hasPlane = _semanticClassification.PlaneRect.HasValue;
+
+            _gameObject.SetSuffix($"{Classification}_{(IsVolume ? "V" : "P")}");
         }
 
         private void FindDependencies()
@@ -138,7 +126,12 @@ namespace Phantom.Environment.Scripts
 
             if (_sceneAnchor == null)
             {
-                _sceneAnchor = GetComponent<OVRSceneAnchor>();
+                _sceneAnchor = GetComponent<MRUKAnchor>();
+            }
+
+            if (_sceneAnchor == null)
+            {
+                _sceneAnchor = GetComponentInParent<MRUKAnchor>();
             }
         }
 
@@ -151,7 +144,7 @@ namespace Phantom.Environment.Scripts
         {
             foreach (var item in comparison)
             {
-                if (_semanticClassification.Contains(item))
+                if (_semanticClassification != null && _semanticClassification.ToString().Contains(item))
                 {
                     return true;
                 }
@@ -192,8 +185,8 @@ namespace Phantom.Environment.Scripts
 #endif
 
         /// <summary>
-        /// Projects world space point onto OVRScenePlane and
-        /// returns whether that point is within the bounds of the OVRScenePlane.
+        /// Projects world space point onto MRUKAnchor and
+        /// returns whether that point is within the bounds of the MRUKAnchor.
         /// </summary>
         /// <param name="point"></param>
         /// <param name="distance">distance to plane will be negative if point is behind plane</param>
@@ -209,7 +202,7 @@ namespace Phantom.Environment.Scripts
             var projectedPoint = ClosestPointOnPlane(point, out distance);
 
             var localPoint = _transform.InverseTransformPoint(projectedPoint);
-            return SceneQuery.PointInPolygon2D(_scenePlane.Boundary, localPoint);
+            return SceneQuery.PointInPolygon2D(_semanticClassification.PlaneBoundary2D, localPoint);
         }
     }
 }

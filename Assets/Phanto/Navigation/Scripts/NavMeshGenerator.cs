@@ -1,6 +1,7 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using System.Collections.Generic;
+using Meta.XR.MRUtilityKit;
 using Phanto.Enemies.DebugScripts;
 using Phantom.Environment.Scripts;
 using PhantoUtils;
@@ -10,7 +11,6 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Assertions;
 using static NavMeshGenerateLinks;
-using Classification = OVRSceneManager.Classification;
 
 /// <summary>
 ///     Handles nav mesh generation from scene data.
@@ -42,7 +42,7 @@ public class NavMeshGenerator : MonoBehaviour
 
     private readonly List<NavMeshTriangle> _validTriangles = new();
 
-    private OVRSceneRoom _sceneRoom;
+    private MRUKRoom _sceneRoom;
     private readonly List<PhantoAnchorInfo> _openings = new List<PhantoAnchorInfo>();
 
     public NavMeshSurface FloorNavMeshSurface { get; private set; }
@@ -61,11 +61,11 @@ public class NavMeshGenerator : MonoBehaviour
     {
         DebugDrawManager.DebugDrawEvent += DebugDraw;
 
-        _sceneRoom = GetComponentInParent<OVRSceneRoom>();
+        _sceneRoom = GetComponentInParent<MRUKRoom>();
         Assert.IsNotNull(_sceneRoom);
 
         NavMeshGenerators.Add(_sceneRoom, this);
-        NavMeshGenerators.Add(_sceneRoom.Floor, this);
+        NavMeshGenerators.Add(_sceneRoom.FloorAnchor, this);
         NavMeshGenerators.Add(transform, this);
         NavMeshGenerators.Add(gameObject, this);
     }
@@ -77,7 +77,7 @@ public class NavMeshGenerator : MonoBehaviour
         Assert.IsNotNull(_sceneRoom);
 
         NavMeshGenerators.Remove(_sceneRoom);
-        NavMeshGenerators.Remove(_sceneRoom.Floor);
+        NavMeshGenerators.Remove(_sceneRoom.FloorAnchor);
         NavMeshGenerators.Remove(transform);
         NavMeshGenerators.Remove(gameObject);
     }
@@ -93,17 +93,17 @@ public class NavMeshGenerator : MonoBehaviour
         navMeshSurface.ClearNavMeshTriangles();
     }
 
-    public void Initialize(OVRSceneRoom room, Bounds meshBounds, bool furnitureInScene)
+    public void Initialize(MRUKRoom room, Bounds meshBounds, bool furnitureInScene)
     {
         _sceneRoom = room;
 
-        Assert.IsNotNull(room.Ceiling);
-        Assert.IsNotNull(room.Floor);
+        Assert.IsNotNull(room.CeilingAnchor);
+        Assert.IsNotNull(room.FloorAnchor);
 
-        var ceilingTransform = room.Ceiling.transform;
+        var ceilingTransform = room.CeilingAnchor.transform;
         CeilingPlane = new Plane(ceilingTransform.forward, ceilingTransform.position);
 
-        var floorTransform = room.Floor.transform;
+        var floorTransform = room.FloorAnchor.transform;
         FloorPlane = new Plane(floorTransform.forward, floorTransform.position);
 
         var floorPoint = floorTransform.position;
@@ -115,11 +115,11 @@ public class NavMeshGenerator : MonoBehaviour
         else
             // if there's no furniture in the scene extend the navmesh volume to encompass 1/2 of the room.
             // this should provide some walkable surfaces on unmarked furniture.
-            floorPoint.y += (room.Ceiling.transform.position.y - room.Floor.transform.position.y) * 0.5f;
+            floorPoint.y += (room.CeilingAnchor.transform.position.y - room.FloorAnchor.transform.position.y) * 0.5f;
 
         var navMeshVolumeBounds = new Bounds(floorPoint, Vector3.zero);
 
-        foreach (var point in room.Floor.Boundary)
+        foreach (var point in room.FloorAnchor.PlaneBoundary2D)
         {
             navMeshVolumeBounds.Encapsulate(floorTransform.TransformPoint(point));
         }
@@ -297,7 +297,7 @@ public class NavMeshGenerator : MonoBehaviour
         return floor._validTriangles.RandomElement();
     }
 
-    public static bool TryGetNavMeshGenerator(OVRSceneRoom room, out NavMeshGenerator result)
+    public static bool TryGetNavMeshGenerator(MRUKRoom room, out NavMeshGenerator result)
     {
         return NavMeshGenerators.TryGetValue(room, out result);
     }
@@ -335,12 +335,12 @@ public class NavMeshGeneratorEditor : Editor
             GUILayout.Space(16);
             if (GUILayout.Button("Bake"))
             {
-                var room = FindObjectOfType<OVRSceneRoom>();
+                var room = FindObjectOfType<MRUKRoom>();
 
-                var floorTransform = room.Floor.transform;
+                var floorTransform = room.FloorAnchor.transform;
                 var bounds = new Bounds(floorTransform.position, Vector3.zero);
-                bounds.Encapsulate(floorTransform.TransformPoint(room.Floor.Dimensions / 2.0f));
-                bounds.Encapsulate(floorTransform.TransformPoint(room.Floor.Dimensions / -2.0f));
+                bounds.Encapsulate(floorTransform.TransformPoint(room.FloorAnchor.PlaneRect.Value.size / 2.0f));
+                bounds.Encapsulate(floorTransform.TransformPoint(room.FloorAnchor.PlaneRect.Value.size / -2.0f));
                 bounds.Expand(0.3f);
 
                 var generator = target as NavMeshGenerator;

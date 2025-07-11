@@ -2,6 +2,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Meta.XR.MRUtilityKit;
 using UnityEngine;
 
 namespace Phanto.Audio.Scripts
@@ -33,7 +35,7 @@ namespace Phanto.Audio.Scripts
                 }
             }
 
-            foreach (var classString in OVRSceneManager.Classification.List)
+            foreach (var classString in Enum.GetNames(typeof(MRUKAnchor.SceneLabels)).ToList())
             {
                 // Skip entries we don't care about.
                 if (classString == "DESK" || classString == "GLOBAL_MESH")

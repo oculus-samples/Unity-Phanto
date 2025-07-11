@@ -355,7 +355,7 @@ namespace Phanto.Audio.Scripts
                 return;
             }
 
-            var label = semanticClassification.Labels[0];
+            var label = semanticClassification.Label.ToString();
 
             if (string.IsNullOrEmpty(label) || !_semanticSfxDictionary.TryGetValue(label, out var queue))
             {

@@ -2,6 +2,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using Meta.XR.MRUtilityKit;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -13,20 +14,21 @@ public class SceneVolumeMeshWireframe : MonoBehaviour
     [Tooltip("The mesh filter containing the mesh to be rendered.")]
     [SerializeField] private MeshFilter meshFilter;
 
-    [Tooltip("The OVRSceneVolumeMeshFilter mesh filter.")]
-    [SerializeField] private OVRSceneVolumeMeshFilter volumeMeshFilter;
+    [Tooltip("The MeshFilter mesh filter.")]
+    [SerializeField] private MeshFilter volumeMeshFilter;
+
+    private MRUKAnchor _parentAnchor;
 
     private Mesh _mesh;
 
     private IEnumerator Start()
     {
-        while (!volumeMeshFilter.IsCompleted) yield return null;
-
         yield return null;
 
         var parentMeshFilter = volumeMeshFilter.GetComponent<MeshFilter>();
-
-        var parentMesh = parentMeshFilter.sharedMesh;
+        _parentAnchor = parentMeshFilter.gameObject.GetComponentInParent<MRUKAnchor>();
+        var parentMesh = _parentAnchor.GlobalMesh;
+        parentMeshFilter.sharedMesh = _parentAnchor.GlobalMesh;
 
         var vertices = new List<Vector3>();
         var triangles = new List<int>();
@@ -75,7 +77,7 @@ public class SceneVolumeMeshWireframe : MonoBehaviour
     {
         if (meshFilter == null) meshFilter = GetComponent<MeshFilter>();
 
-        if (volumeMeshFilter == null) volumeMeshFilter = GetComponentInParent<OVRSceneVolumeMeshFilter>();
+        if (volumeMeshFilter == null) volumeMeshFilter = GetComponentInParent<MeshFilter>();
     }
 #endif
 }

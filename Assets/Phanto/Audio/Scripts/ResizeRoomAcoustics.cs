@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.MRUtilityKit;
 using Phanto.Enemies.DebugScripts;
 using Phantom.Environment.Scripts;
 using PhantoUtils;
@@ -46,7 +47,7 @@ namespace Phanto.Audio.Scripts
         }
 #endif
 
-        private void OnBoundsChanged(OVRSceneRoom room, Bounds bounds)
+        private void OnBoundsChanged(MRUKRoom room, Bounds bounds)
         {
             _debugBounds = bounds;
             transform.position = bounds.center;

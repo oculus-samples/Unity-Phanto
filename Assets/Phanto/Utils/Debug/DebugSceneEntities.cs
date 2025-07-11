@@ -3,39 +3,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using Common;
+using Meta.XR.MRUtilityKit;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Utilities.XR;
 
-[RequireComponent(typeof(OVRSceneManager))]
+[RequireComponent(typeof(MRUK))]
 public class DebugSceneEntities : MonoBehaviour
 {
-    [SerializeField] private OVRSceneManager sceneManager;
 
     [SerializeField] private Color planeColor = Color.yellow;
     [SerializeField] private Color volumeColor = Color.cyan;
 
-    private readonly List<OVRScenePlane> _scenePlanes = new List<OVRScenePlane>();
-    private readonly List<OVRSceneVolume> _sceneVolumes = new List<OVRSceneVolume>();
+    private readonly List<MRUKAnchor> _scenePlanes = new List<MRUKAnchor>();
+    private readonly List<MRUKAnchor> _sceneVolumes = new List<MRUKAnchor>();
 
     private bool _visible = false;
     private readonly Vector3[] _linePoints = new Vector3[256];
 
     private void Awake()
     {
-        if (sceneManager != null)
+        if (MRUK.Instance != null)
         {
-            sceneManager.SceneModelLoadedSuccessfully += OnSceneModelLoadedSuccessfully;
+            MRUK.Instance.SceneLoadedEvent.AddListener(OnSceneModelLoadedSuccessfully);
         }
         DebugLogPanelControls.DebugMenuEvent += DebugMenuToggle;
     }
 
     private void OnDestroy()
     {
-        if (sceneManager != null)
+        if (MRUK.Instance != null)
         {
-            sceneManager.SceneModelLoadedSuccessfully -= OnSceneModelLoadedSuccessfully;
+            MRUK.Instance.SceneLoadedEvent.RemoveListener(OnSceneModelLoadedSuccessfully);
         }
+
         DebugLogPanelControls.DebugMenuEvent -= DebugMenuToggle;
     }
 
@@ -49,17 +50,17 @@ public class DebugSceneEntities : MonoBehaviour
         var count = _scenePlanes.Count;
         for (int i = 0; i < count; i++)
         {
-            DebugDraw(_scenePlanes[i]);
+            DebugDrawPlane(_scenePlanes[i]);
         }
 
         count = _sceneVolumes.Count;
         for (int i = 0; i < count; i++)
         {
-            DebugDraw(_sceneVolumes[i]);
+            DebugDrawVolume(_sceneVolumes[i]);
         }
     }
 
-    private void DebugDraw(OVRSceneVolume sceneVolume)
+    private void DebugDrawVolume(MRUKAnchor sceneVolume)
     {
         if (!sceneVolume.gameObject.activeInHierarchy)
         {
@@ -67,23 +68,15 @@ public class DebugSceneEntities : MonoBehaviour
         }
 
         var volumeTransform = sceneVolume.transform;
-        var dimensions = sceneVolume.Dimensions;
+        var dimensions = sceneVolume.VolumeBounds.Value.size;
         var pos = volumeTransform.position;
 
         pos.y -= dimensions.z * 0.5f;
 
-        if (sceneVolume.OffsetChildren)
-        {
-            var offset = sceneVolume.Offset;
-            (offset.x, offset.y, offset.z) = (-offset.x, offset.z, offset.y);
-
-            pos += offset;
-        }
-
         XRGizmos.DrawWireCube(pos, volumeTransform.rotation, dimensions, volumeColor);
     }
 
-    private void DebugDraw(OVRScenePlane scenePlane)
+    private void DebugDrawPlane(MRUKAnchor scenePlane)
     {
         if (!scenePlane.gameObject.activeInHierarchy)
         {
@@ -92,11 +85,11 @@ public class DebugSceneEntities : MonoBehaviour
 
         var planeTransform = scenePlane.transform;
 
-        var pointCount = Mathf.Min(scenePlane.Boundary.Count, _linePoints.Length);
+        var pointCount = Mathf.Min(scenePlane.PlaneBoundary2D.Count, _linePoints.Length);
 
         for (int i = 0; i < pointCount; i++)
         {
-            _linePoints[i] = planeTransform.TransformPoint(scenePlane.Boundary[i]);
+            _linePoints[i] = planeTransform.TransformPoint(scenePlane.PlaneBoundary2D[i]);
         }
 
         XRGizmos.DrawLineList(_linePoints, planeColor, true, pointCount);
@@ -119,10 +112,10 @@ public class DebugSceneEntities : MonoBehaviour
 
     private IEnumerator FindSceneComponents()
     {
-        var sceneRoom = FindObjectOfType<OVRSceneRoom>();
+        var sceneRoom = FindObjectOfType<MRUKRoom>();
         Assert.IsNotNull(sceneRoom);
 
-        while (sceneRoom.Walls.Length == 0)
+        while (sceneRoom.WallAnchors.Count == 0)
         {
             yield return null;
         }
@@ -131,24 +124,14 @@ public class DebugSceneEntities : MonoBehaviour
 
         foreach (var child in children)
         {
-            if (child.TryGetComponent<OVRSceneVolume>(out var volume))
+            if (child.TryGetComponent<MRUKAnchor>(out var volume))
             {
                 _sceneVolumes.Add(volume);
             }
-            else if (child.TryGetComponent<OVRScenePlane>(out var plane))
+            else if (child.TryGetComponent<MRUKAnchor>(out var plane))
             {
                 _scenePlanes.Add(plane);
             }
         }
     }
-
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        if (sceneManager == null)
-        {
-            sceneManager = GetComponent<OVRSceneManager>();
-        }
-    }
-#endif
 }

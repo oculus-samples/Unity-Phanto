@@ -1,6 +1,7 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using System.Collections.Generic;
+using Meta.XR.MRUtilityKit;
 using Phanto.Enemies.DebugScripts;
 using PhantoUtils;
 using Unity.AI.Navigation;
@@ -38,10 +39,10 @@ public class FurnitureNavMeshGenerator : MonoBehaviour
     private Bounds _objectBounds;
 
     private Transform _transform;
-    private OVRSceneRoom _room;
+    private MRUKRoom _room;
     public bool HasNavMesh => _validTriangles.Count > 0;
 
-    public OVRSemanticClassification Classification { get; private set; }
+    public MRUKAnchor Classification { get; private set; }
 
     private void Awake()
     {
@@ -88,7 +89,7 @@ public class FurnitureNavMeshGenerator : MonoBehaviour
         navMeshSurface.ClearNavMeshTriangles();
     }
 
-    public bool Initialize(OVRSemanticClassification classification)
+    public bool Initialize(MRUKAnchor classification)
     {
         Classification = classification;
 
@@ -102,12 +103,12 @@ public class FurnitureNavMeshGenerator : MonoBehaviour
         // Use the dimensions of the volume component to size the navmesh volume.
         var bounds = new Bounds(transform.position, Vector3.zero);
 
-        if (classification.TryGetComponent(out OVRSceneVolume volume))
+        if (classification.TryGetComponent(out MRUKAnchor volume) && volume.VolumeBounds.HasValue)
         {
-            var size = volume.Dimensions;
+            var size = volume.VolumeBounds.Value.size;
             (size.y, size.z) = (size.z, size.y);
 
-            var offset = volume.Offset;
+            var offset = Vector3.zero; // MRUK Anchors with zero offset
             (offset.y, offset.z) = (offset.z, offset.y);
 
             anchorPosition += offset;

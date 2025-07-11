@@ -9,8 +9,6 @@ namespace Phantom.Environment.Scripts
 {
     public class SceneDataLoaderSettings : ScriptableObject
     {
-        // JSON scene file.
-        [SerializeField] private TextAsset sceneJson;
 
         // Whether to load scene data on Start.
         [SerializeField] private bool loadSceneOnStart = true;
@@ -20,7 +18,6 @@ namespace Phantom.Environment.Scripts
 
         [SerializeField] private bool centerStaticMesh = true;
 
-        public string SceneJson => sceneJson != null ? sceneJson.text : null;
         public bool LoadSceneOnStart => loadSceneOnStart;
         public SceneDataLoader.SceneDataSource SceneDataSource => sceneDataSource;
         public bool CenterStaticMesh => centerStaticMesh;

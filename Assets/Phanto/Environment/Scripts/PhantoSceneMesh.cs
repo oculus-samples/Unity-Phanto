@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Meta.XR.MRUtilityKit;
 using Phanto;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -23,7 +24,7 @@ namespace Phantom.Environment.Scripts
 
         [SerializeField] private new Collider collider;
 
-        private OVRSceneRoom _room;
+        private MRUKRoom _room;
 
         private Transform _roomTransform;
 
@@ -43,13 +44,32 @@ namespace Phantom.Environment.Scripts
         {
             do
             {
-                _room = GetComponentInParent<OVRSceneRoom>(true);
+                _room = transform.parent.GetComponentInParent<MRUKRoom>(true);
                 yield return null;
             } while (_room == null);
 
             Assert.IsNotNull(_room);
             _roomTransform = _room.transform;
 
+            // Set mesh filter and collider
+            if (TryGetComponent(out MeshCollider meshCollider))
+            {
+                var anchor = GetComponentInParent<MRUKAnchor>();
+                if (anchor != null)
+                {
+                    meshCollider.sharedMesh = anchor.GlobalMesh;
+                }
+            }
+
+            // Set mesh filter and collider
+            if (TryGetComponent(out MeshFilter meshFilter))
+            {
+                var anchor = GetComponentInParent<MRUKAnchor>();
+                if (anchor != null)
+                {
+                    meshFilter.sharedMesh = anchor.GlobalMesh;
+                }
+            }
             _ready = true;
         }
 

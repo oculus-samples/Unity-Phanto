@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 870420489042344082}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: _SceneRoot
-  m_TagString: Untagged
+  m_TagString: GlobalMesh
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -78,8 +78,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ebe323b52b0c4070a4ef6288488cf57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ovrSceneManagerPrefab: {fileID: 0}
+  MRUKPrefab: {fileID: 0}
   sceneRoot: {fileID: 870420489042344082}
+  anchorPrefavSpawner: {fileID: 0}
   settings: {fileID: 11400000, guid: 61528d2c3bc76004096051ba59c378d2, type: 2}
   loadAllRooms: 0
   SceneDataLoaded:

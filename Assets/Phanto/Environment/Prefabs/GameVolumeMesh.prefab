@@ -9,8 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 883848081638612183}
-  - component: {fileID: 180559299020712268}
-  - component: {fileID: -1175808189989951143}
   m_Layer: 6
   m_Name: GameVolumeMesh
   m_TagString: GlobalMesh
@@ -34,33 +32,6 @@ Transform:
   - {fileID: 5811661611689851149}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &180559299020712268
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 367623080227869462}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ab3ec25e32ce0c4380714d75e39cb05, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &-1175808189989951143
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 367623080227869462}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f7908265c95d43459d60793234f63fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _transform: {fileID: 883848081638612183}
-  _gameObject: {fileID: 367623080227869462}
-  _sceneAnchor: {fileID: 180559299020712268}
 --- !u!1 &4001304096625656272
 GameObject:
   m_ObjectHideFlags: 0

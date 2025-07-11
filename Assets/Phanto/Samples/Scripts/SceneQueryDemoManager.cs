@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Meta.XR.MRUtilityKit;
 using Phanto.Audio.Scripts;
 using Phanto.Enemies.DebugScripts;
 using Phantom.Environment.Scripts;
@@ -65,7 +66,7 @@ namespace Phantom
         private Coroutine _phantomSpawnerCoroutine;
 
         private bool _sceneReady;
-        private OVRSceneRoom _sceneRoom = null;
+        private MRUKRoom _sceneRoom = null;
         private WaitForSeconds _spawnWait = new WaitForSeconds(1);
 
         private bool _started;
@@ -179,7 +180,7 @@ namespace Phantom
         /// <param name="sceneRoot"></param>
         public void OnSceneDataProcessed(Transform sceneRoot)
         {
-            _sceneRoom = sceneRoot.GetComponentInChildren<OVRSceneRoom>();
+            _sceneRoom = sceneRoot.GetComponentInChildren<MRUKRoom>();
 
             Assert.IsNotNull(_sceneRoom);
         }
@@ -292,13 +293,13 @@ namespace Phantom
             // so you have to defeat the whole wave.
 
             // find the navmesh verts closest to the corners of the room.
-            var floor = _sceneRoom.Floor;
-            var ceilingTransform = _sceneRoom.Ceiling.transform;
+            var floor = _sceneRoom.FloorAnchor;
+            var ceilingTransform = _sceneRoom.CeilingAnchor.transform;
             var ceilingPlane = new Plane(ceilingTransform.forward, ceilingTransform.position);
 
             var spawnPoints = new List<(Vector3 point, float pathLength)>();
 
-            foreach (var corner in floor.Boundary)
+            foreach (var corner in floor.PlaneBoundary2D)
             {
                 var cornerPos = floor.transform.TransformPoint(corner);
 
@@ -567,10 +568,10 @@ namespace Phantom
             _spatialHash.Add(pos, _spatialHashStopwatch.ElapsedMilliseconds);
         }
 
-        private void PlaySemanticSfx(Vector3 point, OVRSemanticClassification classification)
+        private void PlaySemanticSfx(Vector3 point, MRUKAnchor classification)
         {
             // Play a sound based on what you landed on.
-            var label = classification.Labels[0];
+            var label = classification.Label.ToString();
 
             if (string.IsNullOrEmpty(label) || !_semanticSfxDictionary.TryGetValue(label, out var queue))
             {
@@ -612,50 +613,39 @@ namespace Phantom
                     continue;
                 }
 
-                switch (element)
-                {
-                    case OVRSceneVolume volume:
-                        DebugDraw(volume);
-                        break;
-                    case OVRScenePlane plane:
-                        DebugDraw(plane);
-                        break;
-                }
+                var anchor = element.GetComponent<MRUKAnchor>();
+
+                DebugDraw(anchor);
             }
 
             DebugDrawSpatialHash();
         }
 
-        private void DebugDraw(OVRSceneVolume sceneVolume)
+        private void DebugDraw(MRUKAnchor sceneAnchor)
         {
-            var volumeTransform = sceneVolume.transform;
-            var dimensions = sceneVolume.Dimensions;
-            var pos = volumeTransform.position;
-
-            pos.y -= dimensions.z * 0.5f;
-
-            if (sceneVolume.OffsetChildren)
+            if (sceneAnchor.VolumeBounds.HasValue)
             {
-                var offset = sceneVolume.Offset;
-                (offset.x, offset.y, offset.z) = (-offset.x, offset.z, offset.y);
+                var volumeTransform = sceneAnchor.transform;
+                var dimensions = sceneAnchor.VolumeBounds.Value.size;
+                var pos = volumeTransform.position;
 
-                pos += offset;
+                pos.y -= dimensions.z * 0.5f;
+
+                XRGizmos.DrawWireCube(pos, volumeTransform.rotation, dimensions, Color.red);
+            }
+            else
+            {
+                var planeTransform = sceneAnchor.transform;
+                var pointCount = Mathf.Min(sceneAnchor.PlaneBoundary2D.Count, LINE_POINT_COUNT);
+
+                for (int i = 0; i < pointCount; i++)
+                {
+                    _linePoints[i] = planeTransform.TransformPoint(sceneAnchor.PlaneBoundary2D[i]);
+                }
+
+                XRGizmos.DrawLineList(_linePoints, Color.blue, true, pointCount);
             }
 
-            XRGizmos.DrawWireCube(pos, volumeTransform.rotation, dimensions, Color.red);
-        }
-
-        private void DebugDraw(OVRScenePlane scenePlane)
-        {
-            var planeTransform = scenePlane.transform;
-            var pointCount = Mathf.Min(scenePlane.Boundary.Count, LINE_POINT_COUNT);
-
-            for (int i = 0; i < pointCount; i++)
-            {
-                _linePoints[i] = planeTransform.TransformPoint(scenePlane.Boundary[i]);
-            }
-
-            XRGizmos.DrawLineList(_linePoints, Color.blue, true, pointCount);
         }
 
         private void DebugDrawSpatialHash()

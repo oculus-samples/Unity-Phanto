@@ -44,6 +44,14 @@ namespace PhantoUtils
             for (var i = 0; i < transform.childCount; ++i) SetLayerRecursively(transform.GetChild(i).gameObject, layer);
         }
 
+        public static void SetTagRecursively(this GameObject gameObject, string tag)
+        {
+            gameObject.tag = tag;
+
+            var transform = gameObject.transform;
+            for (var i = 0; i < transform.childCount; ++i) SetTagRecursively(transform.GetChild(i).gameObject, tag);
+        }
+
         public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
         {
             var component = gameObject.GetComponent<T>();

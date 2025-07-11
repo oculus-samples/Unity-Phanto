@@ -15,7 +15,6 @@ MonoBehaviour:
   debugTypes: []
   immersiveDebuggerEnabled: 0
   immersiveDebuggerDisplayAtStartup: 0
-  immersiveDebuggerToggleDisplayButton: 2
   showInspectors: 0
   showConsole: 0
   followOverride: 1
@@ -23,11 +22,20 @@ MonoBehaviour:
   showInfoLog: 0
   showWarningLog: 1
   showErrorLog: 1
-  overrideCameraRig: 0
-  cameraPathOverride: 
-  leftControllerPathOverride: 
-  rightControllerPathOverride: 
+  collapsedIdenticalLogEntries: 0
+  maximumNumberOfLogEntries: 1000
+  panelDistance: 1
   createEventSystem: 1
+  automaticLayerCullingUpdate: 1
   panelLayer: 20
   meshRendererLayer: 21
   overlayDepth: 10
+  inspectedDataEnabled: 
+  inspectedDataAssets: []
+  useCustomIntegrationConfig: 0
+  customIntegrationConfigClassName: 
+  hierarchyViewShowsPrivateMembers: 0
+  clickButton: 8193
+  toggleFollowTranslationButton: 0
+  toggleFollowRotationButton: 0
+  immersiveDebuggerToggleDisplayButton: 2

@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Meta.XR.MRUtilityKit;
 using Utilities.XR;
 using Phanto.Enemies.DebugScripts;
 using Phantom.Environment.Scripts;
@@ -22,7 +23,7 @@ namespace Phantom
 
         public static Action<bool> ShowWireframe;
 
-        private readonly Dictionary<Transform, OVRSemanticClassification> _sceneClassifications = new Dictionary<Transform, OVRSemanticClassification>();
+        private readonly Dictionary<Transform, MRUKAnchor> _sceneClassifications = new Dictionary<Transform, MRUKAnchor>();
 
         private bool _sceneReady;
         private bool _started;
@@ -101,7 +102,7 @@ namespace Phantom
             Transform closest = null;
             Vector3 closestPoint = default;
             float closestDistance = float.MaxValue;
-            OVRSemanticClassification closestClassification = null;
+            MRUKAnchor closestClassification = null;
 
             for (int i = 0; i < count; i++)
             {
@@ -111,7 +112,7 @@ namespace Phantom
                 {
                     if (!hit.transform.TryGetComponent(out classification))
                     {
-                        classification = hit.transform.GetComponentInParent<OVRSemanticClassification>();
+                        classification = hit.transform.GetComponentInParent<MRUKAnchor>();
                     }
 
                     _sceneClassifications[hit.transform] = classification;
@@ -122,7 +123,7 @@ namespace Phantom
                     continue;
                 }
 
-                if (!globalMeshHit.HasValue && classification.Labels[0] == OVRSceneManager.Classification.GlobalMesh)
+                if (!globalMeshHit.HasValue && classification.Label == MRUKAnchor.SceneLabels.GLOBAL_MESH)
                 {
                     globalMeshHit = hit;
                     continue;
@@ -144,7 +145,7 @@ namespace Phantom
 
                 XRGizmos.DrawPoint(closestPoint, Color.white, 0.05f);
                 XRGizmos.DrawAxis(closest, 0.15f, 0.006f);
-                XRGizmos.DrawString(closestClassification.Labels[0], pos + new Vector3(0, 0.18f, 0), Quaternion.LookRotation(direction), Color.cyan, 0.05f, 0.1f, 0.004f);
+                XRGizmos.DrawString(closestClassification.Label.ToString(), pos + new Vector3(0, 0.18f, 0), Quaternion.LookRotation(direction), Color.cyan, 0.05f, 0.1f, 0.004f);
             }
 
             if (globalMeshHit.HasValue)

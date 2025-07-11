@@ -31,6 +31,6 @@ MonoBehaviour:
   TargetQuestPro: 0
   TargetQuest3: 1
   TargetQuest3S: 1
-  SystemSplashScreen: {fileID: 0}
+  SystemSplashScreen: {fileID: 2800000, guid: f509394a4ac02d040a05f0b5ca22edc6, type: 3}
   UseStickControlThumbsticks: 0
   OptimizeMultiviewRenderRegions: 0

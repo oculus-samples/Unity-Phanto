@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.MRUtilityKit;
 using Phantom.Environment.Scripts;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -33,7 +34,7 @@ public class SetupSceneQueries : MonoBehaviour
     /// <param name="root"></param>
     private void OnSceneDataLoaded(Transform root)
     {
-        var rooms = root.GetComponentsInChildren<OVRSceneRoom>(true);
+        var rooms = root.GetComponentsInChildren<MRUKRoom>(true);
 
         Assert.IsFalse(rooms.Length == 0);
 

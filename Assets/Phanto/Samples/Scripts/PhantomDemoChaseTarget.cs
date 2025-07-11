@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.MRUtilityKit;
 using Phanto.Enemies.DebugScripts;
 using Phantom;
 using PhantoUtils;
@@ -55,7 +56,7 @@ public class PhantomDemoChaseTarget : PhantomTarget
     }
 #endif
 
-    public override void Initialize(OVRSemanticClassification classification, OVRSceneRoom _)
+    public override void Initialize(MRUKAnchor classification, MRUKRoom _)
     {
     }
 

@@ -230,8 +230,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 670190173264333139}
-  - component: {fileID: 102490448831091297}
-  - component: {fileID: -8163892854347442829}
   - component: {fileID: 5240980793987310767}
   m_Layer: 0
   m_Name: GameWindowFrame
@@ -257,33 +255,6 @@ Transform:
   - {fileID: 8277223282008603880}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &102490448831091297
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4350422998566360405}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ab3ec25e32ce0c4380714d75e39cb05, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &-8163892854347442829
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4350422998566360405}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f7908265c95d43459d60793234f63fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _transform: {fileID: 670190173264333139}
-  _gameObject: {fileID: 4350422998566360405}
-  _sceneAnchor: {fileID: 102490448831091297}
 --- !u!114 &5240980793987310767
 MonoBehaviour:
   m_ObjectHideFlags: 0

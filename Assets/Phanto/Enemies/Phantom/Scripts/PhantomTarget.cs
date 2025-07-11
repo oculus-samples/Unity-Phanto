@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using Meta.XR.MRUtilityKit;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -66,7 +67,7 @@ namespace Phantom
             Destroy(gameObject);
         }
 
-        public abstract void Initialize(OVRSemanticClassification classification, OVRSceneRoom room);
+        public abstract void Initialize(MRUKAnchor classification, MRUKRoom room);
 
         public static bool TryGetTarget(Collider collider, out PhantomTarget target)
         {

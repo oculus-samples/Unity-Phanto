@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Meta.XR.MRUtilityKit;
 using Phantom.Environment.Scripts;
 using PhantoUtils;
 using PhantoUtils.VR;
@@ -13,7 +14,6 @@ using UnityEngine.AI;
 using UnityEngine.Assertions;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
-using Classification = OVRSceneManager.Classification;
 using static NavMeshConstants;
 
 namespace Phantom
@@ -25,7 +25,13 @@ namespace Phantom
     {
         // Objects that should be appropriate for placing a crystal on.
         public static readonly string[] CrystalSurfaces = new[]
-            { Classification.Table, Classification.Couch, Classification.Bed, Classification.Storage, Classification.Other };
+            {
+                MRUKAnchor.SceneLabels.TABLE.ToString(),
+                MRUKAnchor.SceneLabels.COUCH.ToString(),
+                MRUKAnchor.SceneLabels.BED.ToString(),
+                MRUKAnchor.SceneLabels.STORAGE.ToString(),
+                MRUKAnchor.SceneLabels.OTHER.ToString()
+            };
 
         [Tooltip("The prefab to spawn.")]
         [SerializeField]
@@ -84,7 +90,7 @@ namespace Phantom
 
         private Coroutine _extinguishGooCoroutine;
         private Coroutine _targetSpawnerCoroutine;
-        protected OVRSceneRoom _sceneRoom = null;
+        protected MRUKRoom _sceneRoom = null;
 
         private int _phantomsDestroyedCount;
         protected int _phantomWaveCount = 0;
@@ -264,7 +270,7 @@ namespace Phantom
 
         public void OnSceneDataProcessed(Transform sceneRoot)
         {
-            _sceneRoom = sceneRoot.GetComponentInChildren<OVRSceneRoom>();
+            _sceneRoom = sceneRoot.GetComponentInChildren<MRUKRoom>();
 
             Assert.IsNotNull(_sceneRoom);
         }
@@ -449,13 +455,13 @@ namespace Phantom
             // so you have to defeat the whole wave.
 
             // find the navmesh verts closest to the corners of the room.
-            var floor = _sceneRoom.Floor;
-            var ceilingTransform = _sceneRoom.Ceiling.transform;
+            var floor = _sceneRoom.FloorAnchor;
+            var ceilingTransform = _sceneRoom.CeilingAnchor.transform;
             var ceilingPlane = new Plane(ceilingTransform.forward, ceilingTransform.position);
 
             var spawnPoints = new List<(Vector3 point, float pathLength)>();
 
-            foreach (var corner in floor.Boundary)
+            foreach (var corner in floor.PlaneBoundary2D)
             {
                 var cornerPos = floor.transform.TransformPoint(corner);
 

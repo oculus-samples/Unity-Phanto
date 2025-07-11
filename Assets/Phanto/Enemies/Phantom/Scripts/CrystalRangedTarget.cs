@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Meta.XR.MRUtilityKit;
 using PhantoUtils;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -17,7 +18,7 @@ namespace Phantom
         [SerializeField] private Crystal cornerCrystal;
         [SerializeField] private GameObject portalQuad;
 
-        private OVRScenePlane _scenePlane;
+        private MRUKAnchor _scenePlane;
 
         private Transform _transform;
 
@@ -37,12 +38,12 @@ namespace Phantom
             DestroyCrystals();
         }
 
-        public override void Initialize(OVRSemanticClassification classification, OVRSceneRoom room)
+        public override void Initialize(MRUKAnchor classification, MRUKRoom room)
         {
             _semanticClassification = classification;
             _transform = transform;
 
-            gameObject.SetSuffix($"{classification.Labels[0]}_{(ushort)gameObject.GetInstanceID():X4}");
+            gameObject.SetSuffix($"{classification.Label.ToString()}_{(ushort)gameObject.GetInstanceID():X4}");
             classification.GetComponentsInChildren(true, _colliders);
             Register(this, _colliders);
 
@@ -149,16 +150,16 @@ namespace Phantom
             Activate(false);
         }
 
-        private void SpawnCrystals(OVRSceneRoom room)
+        private void SpawnCrystals(MRUKRoom room)
         {
             Assert.IsNotNull(_transform);
             Assert.IsNotNull(_scenePlane);
-            Assert.IsTrue(_scenePlane.Boundary.Count != 0);
+            Assert.IsTrue(_scenePlane.PlaneBoundary2D.Count != 0);
 
             var forward = _transform.forward;
             var origin = _transform.position - (forward * 0.03f);
 
-            var boundary = _scenePlane.Boundary;
+            var boundary = _scenePlane.PlaneBoundary2D;
             var count = boundary.Count;
 
             var offset = Vector3.zero;

@@ -2,13 +2,14 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Meta.XR.MRUtilityKit;
 using Phanto.Enemies.DebugScripts;
 using PhantoUtils;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Assertions;
 using Utilities.XR;
-using Classification = OVRSceneManager.Classification;
 
 namespace Phantom
 {
@@ -18,16 +19,21 @@ namespace Phantom
     /// </summary>
     public class RangedFurnitureTarget : PhantomTarget
     {
-        protected static readonly string[] PlanarTargets = new[] { OVRSceneManager.Classification.DoorFrame, OVRSceneManager.Classification.WindowFrame, OVRSceneManager.Classification.WallArt };
+        protected static readonly string[] PlanarTargets = new[]
+        {
+            MRUKAnchor.SceneLabels.DOOR_FRAME,
+            MRUKAnchor.SceneLabels.WINDOW_FRAME,
+            MRUKAnchor.SceneLabels.WALL_ART
+        }.Select((e => e.ToString())).ToArray();
 
         protected readonly List<Collider> _colliders = new();
         protected bool _active = true;
 
-        protected OVRSemanticClassification _semanticClassification;
+        protected MRUKAnchor _semanticClassification;
         protected readonly List<NavMeshTriangle> _triangles = new List<NavMeshTriangle>();
         private RaycastHit[] sphereCastHits = new RaycastHit[256];
 
-        public string Classification => _semanticClassification.Labels[0];
+        public MRUKAnchor.SceneLabels Classification => _semanticClassification.Label;
 
         public override bool Flee => false;
 
@@ -56,11 +62,11 @@ namespace Phantom
             DebugDrawManager.DebugDrawEvent -= DebugDraw;
         }
 
-        public override void Initialize(OVRSemanticClassification classification, OVRSceneRoom _)
+        public override void Initialize(MRUKAnchor classification, MRUKRoom _)
         {
             _semanticClassification = classification;
 
-            gameObject.SetSuffix($"{classification.Labels[0]}_{(ushort)gameObject.GetInstanceID():X4}");
+            gameObject.SetSuffix($"{classification.Label}_{(ushort)gameObject.GetInstanceID():X4}");
             classification.GetComponentsInChildren(true, _colliders);
             Register(this, _colliders);
 

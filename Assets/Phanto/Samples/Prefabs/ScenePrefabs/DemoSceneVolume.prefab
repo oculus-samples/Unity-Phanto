@@ -9,9 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 883848081638612183}
-  - component: {fileID: 180559299020712268}
   - component: {fileID: -3059306154370166179}
-  - component: {fileID: 6607262911618420336}
   - component: {fileID: 5421998175128272588}
   m_Layer: 0
   m_Name: DemoSceneVolume
@@ -36,18 +34,6 @@ Transform:
   - {fileID: 7295636111124035213}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &180559299020712268
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 367623080227869462}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ab3ec25e32ce0c4380714d75e39cb05, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-3059306154370166179
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,21 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _transform: {fileID: 883848081638612183}
   _gameObject: {fileID: 367623080227869462}
-  _sceneAnchor: {fileID: 180559299020712268}
---- !u!114 &6607262911618420336
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 367623080227869462}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c4c07da5cd8e024e81c2b08152058fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _scaleChildren: 1
-  _offsetChildren: 0
+  _sceneAnchor: {fileID: 0}
 --- !u!114 &5421998175128272588
 MonoBehaviour:
   m_ObjectHideFlags: 0

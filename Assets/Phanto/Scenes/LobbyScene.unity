@@ -730,6 +730,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4900000, guid: 80f6e87e08fc1324384c9f3527b48ea6, type: 3}
     - target: {fileID: 5251702753280430205, guid: 3cfa20e58676d4e6bbc91111fb9425f7, type: 3}
+      propertyPath: MRUKPrefab
+      value: 
+      objectReference: {fileID: 1528496712236453952, guid: 57d87f07e8b84e744b7063f0b5110d8b, type: 3}
+    - target: {fileID: 5251702753280430205, guid: 3cfa20e58676d4e6bbc91111fb9425f7, type: 3}
       propertyPath: loadAllRooms
       value: 1
       objectReference: {fileID: 0}
@@ -748,7 +752,7 @@ PrefabInstance:
     - target: {fileID: 5251702753280430205, guid: 3cfa20e58676d4e6bbc91111fb9425f7, type: 3}
       propertyPath: ovrSceneManagerPrefab
       value: 
-      objectReference: {fileID: 4014341437880758335, guid: 57d87f07e8b84e744b7063f0b5110d8b, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 5251702753280430205, guid: 3cfa20e58676d4e6bbc91111fb9425f7, type: 3}
       propertyPath: useStaticMeshDataInEditor
       value: 1

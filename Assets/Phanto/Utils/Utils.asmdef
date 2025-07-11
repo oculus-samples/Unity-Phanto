@@ -8,7 +8,8 @@
         "Oculus.Interaction.OVR",
         "darktable.xrgizmos",
         "depthapi",
-        "Meta.XR.EnvironmentDepth"
+        "Meta.XR.EnvironmentDepth",
+        "meta.xr.mrutilitykit"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

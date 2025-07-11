@@ -223,7 +223,7 @@ namespace Phantom
 
             var ceilingPlane = SceneQuery.GetLid(_sceneRoom);
 
-            var floorTransform = _sceneRoom.Floor.transform;
+            var floorTransform = _sceneRoom.FloorAnchor.transform;
             var floorPlane = new Plane(floorTransform.forward, floorTransform.position);
 
             var spawnPoints = new List<(Vector3 point, float pathLength)>();

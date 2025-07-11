@@ -1,8 +1,27 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+/*
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ * All rights reserved.
+ *
+ * Licensed under the Oculus SDK License Agreement (the "License");
+ * you may not use the Oculus SDK except in compliance with the License,
+ * which is provided at the time of installation or download, or which
+ * otherwise accompanies this software in either electronic or hard copy form.
+ *
+ * You may obtain a copy of the License at
+ *
+ * https://developer.oculus.com/licenses/oculussdk/
+ *
+ * Unless required by applicable law or agreed to in writing, the Oculus SDK
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Meta.XR.MRUtilityKit;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -10,39 +29,39 @@ public static class SceneMesher
 {
     private const MeshColliderCookingOptions COOKING_OPTIONS = MeshColliderCookingOptions.UseFastMidphase | MeshColliderCookingOptions.CookForFasterSimulation | MeshColliderCookingOptions.WeldColocatedVertices | MeshColliderCookingOptions.EnableMeshCleaning;
 
-    public static GameObject CreateMesh(OVRSceneRoom sceneRoom, GameObject sceneGameObject, float borderSize = 0.1f, bool worldUnits = false)
+    public static GameObject CreateMesh(MRUKRoom sceneRoom, GameObject sceneGameObject, float borderSize = 0.1f, bool worldUnits = false)
     {
         Assert.IsNotNull(sceneRoom);
 
-        var classifications = sceneRoom.GetComponentsInChildren<OVRSemanticClassification>(true);
+        var classifications = sceneRoom.GetComponentsInChildren<MRUKAnchor>(true);
 
         var cornerPoints = GetClockwiseFloorOutline(sceneRoom);
-        var volumes = new List<OVRSceneVolume>();
-        var planes = new List<OVRScenePlane>();
+        var volumes = new List<MRUKAnchor>();
+        var planes = new List<MRUKAnchor>();
 
-        var ceilingHeight = sceneRoom.Ceiling.transform.position.y - sceneRoom.Floor.transform.position.y;
+        var ceilingHeight = sceneRoom.CeilingAnchor.transform.position.y - sceneRoom.FloorAnchor.transform.position.y;
 
         foreach (var classification in classifications)
         {
-            switch (classification.Labels[0])
+            switch (classification.Label)
             {
-                case OVRSceneManager.Classification.Table:
-                case OVRSceneManager.Classification.Couch:
-                case OVRSceneManager.Classification.Other:
-                case OVRSceneManager.Classification.Storage:
-                case OVRSceneManager.Classification.Bed:
-                case OVRSceneManager.Classification.Screen:
-                case OVRSceneManager.Classification.Lamp:
-                case OVRSceneManager.Classification.Plant:
-                    if (classification.TryGetComponent<OVRSceneVolume>(out var volume))
+                case MRUKAnchor.SceneLabels.TABLE:
+                case MRUKAnchor.SceneLabels.COUCH:
+                case MRUKAnchor.SceneLabels.OTHER:
+                case MRUKAnchor.SceneLabels.STORAGE:
+                case MRUKAnchor.SceneLabels.BED:
+                case MRUKAnchor.SceneLabels.SCREEN:
+                case MRUKAnchor.SceneLabels.LAMP:
+                case MRUKAnchor.SceneLabels.PLANT:
+                    if (classification.TryGetComponent<MRUKAnchor>(out var volume))
                     {
                         volumes.Add(volume);
                     }
                     break;
-                case OVRSceneManager.Classification.DoorFrame:
-                case OVRSceneManager.Classification.WindowFrame:
-                case OVRSceneManager.Classification.WallArt:
-                    if (classification.TryGetComponent<OVRScenePlane>(out var plane))
+                case MRUKAnchor.SceneLabels.DOOR_FRAME:
+                case MRUKAnchor.SceneLabels.WINDOW_FRAME:
+                case MRUKAnchor.SceneLabels.WALL_ART:
+                    if (classification.TryGetComponent<MRUKAnchor>(out var plane))
                     {
                         planes.Add(plane);
                     }
@@ -59,14 +78,14 @@ public static class SceneMesher
     /// <summary>
     /// The saved walls may not be clockwise, and they may not be in order.
     /// </summary>
-    private static List<Vector3> GetClockwiseFloorOutline(OVRSceneRoom sceneRoom)
+    private static List<Vector3> GetClockwiseFloorOutline(MRUKRoom sceneRoom)
     {
         List<Vector3> cornerPoints = new List<Vector3>();
 
-        var floor = sceneRoom.Floor;
+        var floor = sceneRoom.FloorAnchor;
         var floorTransform = floor.transform;
 
-        foreach (var corner in floor.Boundary)
+        foreach (var corner in floor.PlaneBoundary2D)
         {
             cornerPoints.Add(floorTransform.TransformPoint(corner));
         }
@@ -81,8 +100,8 @@ public static class SceneMesher
     /// Each 4-edged wall has 8 vertices; 4 vertices for the corners, plus 4 for inset vertices (to make the border effect).
     /// The floor/ceiling mesh is similarly twice as many vertices; one set for the outline, another set for inset vertices.
     /// </summary>
-    private static void PopulateSceneMesh(List<Vector3> cornerPoints, IReadOnlyList<OVRSceneVolume> sceneCubes,
-        IReadOnlyList<OVRScenePlane> sceneQuads, float ceiling, GameObject sceneGameObject, float borderSize, bool mappingInWorldUnits)
+    private static void PopulateSceneMesh(List<Vector3> cornerPoints, IReadOnlyList<MRUKAnchor> sceneCubes,
+        IReadOnlyList<MRUKAnchor> sceneQuads, float ceiling, GameObject sceneGameObject, float borderSize, bool mappingInWorldUnits)
     {
         var sceneMesh = new Mesh();
         if (!sceneGameObject.TryGetComponent<MeshFilter>(out var meshFilter))
@@ -268,12 +287,9 @@ public static class SceneMesher
         {
             var volume = furnishings[i];
             var cube = volume.transform;
-            Vector3 dim = volume.Dimensions;
+            Vector3 dim = volume.VolumeBounds.Value.size;
 
-            var volumeOffset = volume.Offset;
-            (volumeOffset.x, volumeOffset.y, volumeOffset.z) = (volumeOffset.x, volumeOffset.z, volumeOffset.y);
-
-            Vector3 cubeCenter = cube.position + volumeOffset;
+            Vector3 cubeCenter = cube.position;// + volumeOffset;
 
             // each cube face gets an 8-vertex mesh
             for (int j = 0; j < 6; j++)
@@ -371,7 +387,7 @@ public static class SceneMesher
             Vector3 quadNorm = -quadTransform.forward;
             Vector4 quadTan = quadTransform.right;
 
-            Vector2 localScale = quad.Dimensions;
+            Vector2 localScale = quad.PlaneRect.Value.size;
 
             Vector3 xDim = localScale.x * quadTransform.right;
             Vector3 yDim = localScale.y * quadTransform.up;
@@ -478,7 +494,7 @@ public static class SceneMesher
         {
             classification = sceneGameObject.AddComponent<OVRSemanticClassification>();
 
-            var list = new List<string> { OVRSceneManager.Classification.GlobalMesh };
+            var list = new List<string> { MRUKAnchor.SceneLabels.GLOBAL_MESH.ToString() };
 
             var labelsField = classification.GetType().GetField("_labels",
                 BindingFlags.NonPublic | BindingFlags.Instance);

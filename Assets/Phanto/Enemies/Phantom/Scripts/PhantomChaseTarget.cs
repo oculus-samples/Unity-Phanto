@@ -2,6 +2,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using Meta.XR.MRUtilityKit;
 using Phanto;
 using Phanto.Enemies.DebugScripts;
 using Phantom;
@@ -67,7 +68,7 @@ public class PhantomChaseTarget : PhantomTarget
     }
 #endif
 
-    public override void Initialize(OVRSemanticClassification classification, OVRSceneRoom _)
+    public override void Initialize(MRUKAnchor classification, MRUKRoom _)
     {
     }
 

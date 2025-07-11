@@ -43,8 +43,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2422082641916487225}
-  - component: {fileID: 3162078243991069327}
-  - component: {fileID: -9162269059676378510}
   m_Layer: 6
   m_Name: LobbyFloorCeilingOverride
   m_TagString: GlobalMesh
@@ -68,33 +66,6 @@ Transform:
   - {fileID: 8192604512153394775}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3162078243991069327
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1945299702924657857}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ab3ec25e32ce0c4380714d75e39cb05, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &-9162269059676378510
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1945299702924657857}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f7908265c95d43459d60793234f63fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _transform: {fileID: 2422082641916487225}
-  _gameObject: {fileID: 1945299702924657857}
-  _sceneAnchor: {fileID: 3162078243991069327}
 --- !u!1 &4703453817912370244
 GameObject:
   m_ObjectHideFlags: 0

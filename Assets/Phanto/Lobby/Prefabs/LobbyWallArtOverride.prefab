@@ -229,9 +229,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7569720830941341405}
-  - component: {fileID: 2517829481823597454}
-  - component: {fileID: 8085622685095274258}
-  - component: {fileID: 8540456684956597418}
   m_Layer: 9
   m_Name: LobbyWallArtOverride
   m_TagString: Untagged
@@ -256,47 +253,6 @@ Transform:
   - {fileID: 460763279585958426}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2517829481823597454
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4720391380867116068}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ab3ec25e32ce0c4380714d75e39cb05, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8085622685095274258
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4720391380867116068}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f7908265c95d43459d60793234f63fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _transform: {fileID: 7569720830941341405}
-  _gameObject: {fileID: 4720391380867116068}
-  _sceneAnchor: {fileID: 2517829481823597454}
---- !u!114 &8540456684956597418
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4720391380867116068}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29ed0e0807c8fba47bb33b89172401e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _scaleChildren: 1
-  _offsetChildren: 1
 --- !u!1 &4997869287346154142
 GameObject:
   m_ObjectHideFlags: 0

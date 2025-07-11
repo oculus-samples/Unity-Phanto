@@ -4,11 +4,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Meta.XR.MRUtilityKit;
 using PhantoUtils;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
-using Classification = OVRSceneManager.Classification;
 
 namespace Phantom.Environment.Scripts
 {
@@ -20,25 +20,25 @@ namespace Phantom.Environment.Scripts
         // Items in the room probably large enough for phantoms to hop on
         private static readonly string[] WalkableFurniture =
         {
-            Classification.Table, Classification.Couch,
-            Classification.Other, Classification.Storage,
-            Classification.Bed,
+            MRUKAnchor.SceneLabels.TABLE.ToString(), MRUKAnchor.SceneLabels.COUCH.ToString(),
+            MRUKAnchor.SceneLabels.OTHER.ToString(), MRUKAnchor.SceneLabels.STORAGE.ToString(),
+            MRUKAnchor.SceneLabels.BED.ToString(),
         };
 
         // Items in the room that phantoms shouldn't hop on
         private static readonly string[] RangedTargets =
         {
-            Classification.Screen,
-            Classification.Lamp,
-            Classification.Plant,
+            MRUKAnchor.SceneLabels.SCREEN.ToString(),
+            MRUKAnchor.SceneLabels.LAMP.ToString(),
+            MRUKAnchor.SceneLabels.PLANT.ToString(),
         };
 
         // Items in the room that phantoms can spit goo at
         private static readonly string[] WallMountedTargets =
         {
-            Classification.WallArt,
-            Classification.WindowFrame,
-            Classification.DoorFrame,
+            MRUKAnchor.SceneLabels.WALL_ART.ToString(),
+            MRUKAnchor.SceneLabels.WINDOW_FRAME.ToString(),
+            MRUKAnchor.SceneLabels.DOOR_FRAME.ToString(),
         };
 
         [SerializeField] private NavMeshGenerator navMeshGeneratorPrefab;
@@ -54,8 +54,8 @@ namespace Phantom.Environment.Scripts
         [SerializeField] private bool hideSceneMesh;
         [SerializeField] private bool generateNavMesh = true;
 
-        private readonly List<OVRSemanticClassification> _semanticClassifications =
-            new List<OVRSemanticClassification>();
+        private readonly List<MRUKAnchor> _semanticClassifications =
+            new List<MRUKAnchor>();
 
         private bool _sceneReady;
 
@@ -102,52 +102,51 @@ namespace Phantom.Environment.Scripts
                 yield return null;
             } while (!_sceneReady);
 
-            var rooms = GetComponentsInChildren<OVRSceneRoom>(true);
+            var rooms = GetComponentsInChildren<MRUKRoom>(true);
 
             Assert.IsTrue(rooms.Length > 0);
 
             // Process each room, generate navmesh, modify scene mesh etc.
             foreach (var room in rooms)
             {
-                while (room.Walls.Length == 0) yield return null;
+                while (room.WallAnchors.Count == 0) yield return null;
 
                 Debug.Log($"Post-processing scene: {room.name}");
 
-                List<OVRSemanticClassification> sceneMeshes = new();
-                List<OVRSemanticClassification> walkableFurniture = new();
-                List<OVRSemanticClassification> targetableFurniture = new();
+                List<MRUKAnchor> sceneMeshes = new();
+                List<MRUKAnchor> walkableFurniture = new();
+                List<MRUKAnchor> targetableFurniture = new();
 
                 Bounds sceneMeshBounds = default;
 
                 room.GetComponentsInChildren(true, _semanticClassifications);
 
-                // All the scene objects we care about should have a semantic classification, regardless of type
-                foreach (var semanticObject in _semanticClassifications)
+                var sceneMeshAnchor = room.GlobalMeshAnchor;
+                if (sceneMeshAnchor != null)
                 {
-                    if (semanticObject.Contains(Classification.GlobalMesh))
+                    // To support using static mesh on device.
+                    // if (semanticObject.TryGetComponent<MeshFilter>(out var volumeMeshFilter)
+                    // && volumeMeshFilter.enabled)
+                    // yield return new WaitUntil(() => volumeMeshFilter.IsCompleted);
+
+                    var meshFilter = sceneMeshAnchor.GetComponentInChildren<MeshFilter>();
+                    meshFilter.sharedMesh = sceneMeshAnchor.GlobalMesh;
+                    var vertices = new List<Vector3>();
+                    var meshIndices = room.GlobalMeshAnchor.GlobalMesh.triangles;
+                    do
                     {
-                        // To support using static mesh on device.
-                        if (semanticObject.TryGetComponent<OVRSceneVolumeMeshFilter>(out var volumeMeshFilter)
-                            && volumeMeshFilter.enabled)
-                            yield return new WaitUntil(() => volumeMeshFilter.IsCompleted);
+                        yield return null;
+                        meshFilter.sharedMesh.GetVertices(vertices);
+                    } while (vertices.Count == 0);
 
-                        var meshFilter = semanticObject.GetComponent<MeshFilter>();
-                        var vertices = new List<Vector3>();
-
-                        do
-                        {
-                            yield return null;
-                            meshFilter.sharedMesh.GetVertices(vertices);
-                        } while (vertices.Count == 0);
-
-                        sceneMeshBounds = GetMeshBounds(meshFilter.transform, vertices);
+                    sceneMeshBounds = GetMeshBounds(room.GlobalMeshAnchor.transform, sceneMeshAnchor.GlobalMesh.vertices.ToList());
 #if UNITY_EDITOR
-                        if (meshFilter == null) meshFilter = semanticObject.GetComponentInChildren<MeshFilter>();
+                        if (meshFilter == null) meshFilter = sceneMeshAnchor.GetComponentInChildren<MeshFilter>();
 
                         if (meshFilter == null)
-                            Debug.LogError("No mesh filter on object classified as SceneMesh.", semanticObject);
+                            Debug.LogError("No mesh filter on object classified as SceneMesh.", sceneMeshAnchor);
 
-                        if (semanticObject.TryGetComponent<MeshCollider>(out var meshCollider))
+                        if (sceneMeshAnchor.TryGetComponent<MeshCollider>(out var meshCollider))
                             while (meshCollider.sharedMesh == null)
                             {
                                 Debug.Log("waiting for mesh collider bake!");
@@ -157,12 +156,17 @@ namespace Phantom.Environment.Scripts
                         yield return null;
 #endif
 
-                        Debug.Log($"Scene mesh found with {meshFilter.sharedMesh.triangles.Length} triangles.");
-                        sceneMeshes.Add(semanticObject);
-                        continue;
-                    }
+                    Debug.Log($"Scene mesh found with {sceneMeshAnchor.GlobalMesh.triangles.Length} triangles.");
+                    sceneMeshes.Add(sceneMeshAnchor);
+                }
 
-                    if (semanticObject.ContainsAny(WalkableFurniture))
+                // Wait a frame to scene mesh to process
+                yield return null;
+
+                // All the scene objects we care about should have a semantic classification, regardless of type
+                foreach (var semanticObject in _semanticClassifications)
+                {
+                    if (semanticObject.Label.ContainsAny(WalkableFurniture))
                     {
                         // Need to make sure floor is set up before furniture is set up.
                         walkableFurniture.Add(semanticObject);
@@ -189,7 +193,7 @@ namespace Phantom.Environment.Scripts
                 if (sceneMeshes.Count == 0)
                 {
                     // have to wait until the floor's boundary is loaded for meshing to work.
-                    while (room.Floor.Boundary.Count == 0)
+                    while (room.FloorAnchor.PlaneBoundary2D.Count == 0)
                     {
                         yield return null;
                     }
@@ -225,7 +229,7 @@ namespace Phantom.Environment.Scripts
                     if (sceneMeshes.Count == 0)
                     {
                         Debug.LogWarning("No scene mesh found in scene.");
-                        meshTransform = room.Floor.transform;
+                        meshTransform = room.FloorAnchor.transform;
                     }
                     else
                     {
@@ -237,7 +241,7 @@ namespace Phantom.Environment.Scripts
 
                     foreach (var furniture in walkableFurniture)
                     {
-                        Debug.Log($"Preparing furniture for: {string.Join(",", furniture.Labels)}");
+                        Debug.Log($"Preparing furniture for: {string.Join(",", furniture.Label)}");
                         if (!PrepareFurniture(furniture))
                         {
                             // no navmesh was generated for this piece of furniture.
@@ -264,11 +268,11 @@ namespace Phantom.Environment.Scripts
             SceneDataProcessed?.Invoke(sceneRoot);
         }
 
-        private OVRSemanticClassification CreateFallbackSceneMesh(OVRSceneRoom ovrSceneRoom)
+        private MRUKAnchor CreateFallbackSceneMesh(MRUKRoom MRUKRoom)
         {
             var sceneDataLoader = GetComponent<SceneDataLoader>();
 
-            // get the SceneMesh prefab from the OVRSceneManager;
+            // get the SceneMesh prefab from the MRUK;
             var sceneMeshPrefab = sceneDataLoader.GetSceneMeshPrefab();
 
             if (sceneMeshPrefab == null)
@@ -278,9 +282,9 @@ namespace Phantom.Environment.Scripts
             }
 
             var fallbackInstance = Instantiate(sceneMeshPrefab);
-            var go = SceneMesher.CreateMesh(ovrSceneRoom, fallbackInstance.gameObject, 0.01f, true);
+            var go = SceneMesher.CreateMesh(MRUKRoom, fallbackInstance, 0.01f, true);
 
-            if (go.TryGetComponent<OVRSceneAnchor>(out var anchor))
+            if (go.TryGetComponent<MRUKAnchor>(out var anchor))
             {
                 // set the anchor handle id.
                 JsonSceneBuilder.SetUuid(anchor, Guid.NewGuid(), JsonSceneBuilder.NextHandle);
@@ -288,12 +292,12 @@ namespace Phantom.Environment.Scripts
                 SceneDataLoader.AddAnchorReferenceCount(anchor);
             }
 
-            go.transform.SetParent(ovrSceneRoom.transform);
+            go.transform.SetParent(MRUKRoom.transform);
 
-            return go.GetComponent<OVRSemanticClassification>();
+            return go.GetComponent<MRUKAnchor>();
         }
 
-        private void PrepareTargetableFurniture(OVRSemanticClassification classification, OVRSceneRoom room)
+        private void PrepareTargetableFurniture(MRUKAnchor classification, MRUKRoom room)
         {
             PhantomTarget targetable;
 
@@ -305,7 +309,7 @@ namespace Phantom.Environment.Scripts
             targetable.Initialize(classification, room);
         }
 
-        private bool PrepareFurniture(OVRSemanticClassification classification)
+        private bool PrepareFurniture(MRUKAnchor classification)
         {
             var furnitureNavmesh = Instantiate(furnitureNavMeshGeneratorPrefab, classification.transform);
             if (!furnitureNavmesh.Initialize(classification))
@@ -317,7 +321,7 @@ namespace Phantom.Environment.Scripts
             return true;
         }
 
-        private void PrepareNavmesh(Transform meshTransform, OVRSceneRoom room, Bounds meshBounds,
+        private void PrepareNavmesh(Transform meshTransform, MRUKRoom room, Bounds meshBounds,
             bool furnitureInScene)
         {
             var navmeshGenerator = Instantiate(navMeshGeneratorPrefab, meshTransform);
@@ -328,5 +332,7 @@ namespace Phantom.Environment.Scripts
         {
             _sceneReady = true;
         }
+
+
     }
 }

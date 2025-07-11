@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8296821287357421177}
-  - component: {fileID: 4014341437880758335}
-  - component: {fileID: 2108646853413920765}
-  - component: {fileID: 5130440767633878256}
+  - component: {fileID: 1528496712236453952}
+  - component: {fileID: 798726332916697438}
+  - component: {fileID: -1740976955047629264}
   m_Layer: 0
   m_Name: LobbyOVRSceneManager
   m_TagString: Untagged
@@ -34,7 +34,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4014341437880758335
+--- !u!114 &1528496712236453952
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -43,41 +43,68 @@ MonoBehaviour:
   m_GameObject: {fileID: 3610238575619966178}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2253d75e3ddc644b8153409c62dd74e, type: 3}
+  m_Script: {fileID: 11500000, guid: de27d7f2f20024e18898941292d6c164, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlanePrefab: {fileID: 4942890925560137935, guid: 971d7a9facfab554aab5fdf2d8a7f3ef, type: 3}
-  VolumePrefab: {fileID: 5805981955114608310, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
-  PrefabOverrides:
-  - Prefab: {fileID: 4430182240210341399, guid: 5d07255aabd787d42946fa90c375e3bb, type: 3}
-    ClassificationLabel: GLOBAL_MESH
-    _editorClassificationIndex: 16
-  - Prefab: {fileID: 2517829481823597454, guid: a18203aef9f1a974e933a7c66bdd8251, type: 3}
-    ClassificationLabel: WALL_ART
-    _editorClassificationIndex: 14
-  - Prefab: {fileID: 1044746447884124657, guid: ce327112ff92e8d42bd31867b502183e, type: 3}
-    ClassificationLabel: COUCH
-    _editorClassificationIndex: 4
-  - Prefab: {fileID: 3162078243991069327, guid: 7e13f7eb4830a584f910e037ce672273, type: 3}
-    ClassificationLabel: FLOOR
-    _editorClassificationIndex: 0
-  - Prefab: {fileID: 3162078243991069327, guid: 7e13f7eb4830a584f910e037ce672273, type: 3}
-    ClassificationLabel: CEILING
-    _editorClassificationIndex: 1
-  - Prefab: {fileID: 4795010734887376439, guid: 3207a9fa181b40647b386a6eb72735e0, type: 3}
-    ClassificationLabel: WALL_FACE
-    _editorClassificationIndex: 2
-  - Prefab: {fileID: 2517829481823597454, guid: d703b3fd1f6065748895954444a29a16, type: 3}
-    ClassificationLabel: DOOR_FRAME
-    _editorClassificationIndex: 5
-  - Prefab: {fileID: 2517829481823597454, guid: b42b859bb73f73f4da07a554d25053e2, type: 3}
-    ClassificationLabel: WINDOW_FRAME
-    _editorClassificationIndex: 6
-  ActiveRoomsOnly: 1
-  VerboseLogging: 0
-  MaxSceneAnchorUpdatesPerFrame: 3
-  _initialAnchorParent: {fileID: 0}
---- !u!114 &2108646853413920765
+  <SceneLoadedEvent>k__BackingField:
+    m_PersistentCalls:
+      m_Calls: []
+  <RoomCreatedEvent>k__BackingField:
+    m_PersistentCalls:
+      m_Calls: []
+  <RoomUpdatedEvent>k__BackingField:
+    m_PersistentCalls:
+      m_Calls: []
+  <RoomRemovedEvent>k__BackingField:
+    m_PersistentCalls:
+      m_Calls: []
+  EnableWorldLock: 0
+  TrackingSpaceOffset:
+    e00: 1
+    e01: 0
+    e02: 0
+    e03: 0
+    e10: 0
+    e11: 1
+    e12: 0
+    e13: 0
+    e20: 0
+    e21: 0
+    e22: 1
+    e23: 0
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 1
+  SceneSettings:
+    DataSource: 2
+    RoomIndex: -1
+    RoomPrefabs:
+    - {fileID: 5618556046422172173, guid: 4b454e8ccd6764ccdbcd91586969863f, type: 3}
+    - {fileID: 5618556046422172173, guid: 029ede24e76b24d0888dc235dd0b96f2, type: 3}
+    - {fileID: 5618556046422172173, guid: caa3755f1f2184eb7a9fd17b7cf1f1d3, type: 3}
+    - {fileID: 1766085727792645261, guid: 989283c9dcb36a24aac11a601001dce0, type: 3}
+    - {fileID: 5618556046422172173, guid: b2217186fc11b47638c925d674e7f526, type: 3}
+    - {fileID: 5618556046422172173, guid: 531aeca35d703a64cb0e1fd73a128fc0, type: 3}
+    - {fileID: 5618556046422172173, guid: 3aaa7f66d6713834ca31af8c3d9bebda, type: 3}
+    - {fileID: 5618556046422172173, guid: 1550cf68ffa5a344e881275021bc3ffe, type: 3}
+    - {fileID: 5618556046422172173, guid: 31818101cde292945ab80af5d14bec54, type: 3}
+    - {fileID: 5618556046422172173, guid: c2bd5595e9fe2493a92d4bc0bb264603, type: 3}
+    SceneJsons:
+    - {fileID: 4900000, guid: a42277f85740284419b7a33b4785317d, type: 3}
+    LoadSceneOnStartup: 0
+    SeatWidth: 0.6
+    SceneJson: 
+    <TrackerConfiguration>k__BackingField:
+      <KeyboardTrackingEnabled>k__BackingField: 0
+    <TrackableAdded>k__BackingField:
+      m_PersistentCalls:
+        m_Calls: []
+    <TrackableRemoved>k__BackingField:
+      m_PersistentCalls:
+        m_Calls: []
+  _immersiveSceneDebuggerPrefab: {fileID: 7641788235762528044, guid: 950d12aea00a70449b5b7b746f142acf, type: 3}
+--- !u!114 &798726332916697438
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -86,10 +113,85 @@ MonoBehaviour:
   m_GameObject: {fileID: 3610238575619966178}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1c4a1713e5d1b4409a95470bcf9e5b8, type: 3}
+  m_Script: {fileID: 11500000, guid: 3d607ba0c0320e446ba9d62671d9d7a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5130440767633878256
+  SpawnOnStart: 0
+  SeedValue: 0
+  PrefabsToSpawn:
+  - Labels: 8293
+    Prefabs:
+    - {fileID: 6610717597411313667, guid: 971d7a9facfab554aab5fdf2d8a7f3ef, type: 3}
+    PrefabSelection: 0
+    MatchAspectRatio: 0
+    CalculateFacingDirection: 0
+    Scaling: 0
+    Alignment: 0
+    IgnorePrefabSize: 1
+  - Labels: 8088
+    Prefabs:
+    - {fileID: 7071516059734796515, guid: 197eb2173ee11ae4da671446e0a79626, type: 3}
+    PrefabSelection: 0
+    MatchAspectRatio: 0
+    CalculateFacingDirection: 0
+    Scaling: 0
+    Alignment: 2
+    IgnorePrefabSize: 1
+  - Labels: 3
+    Prefabs:
+    - {fileID: 1945299702924657857, guid: 7e13f7eb4830a584f910e037ce672273, type: 3}
+    PrefabSelection: 0
+    MatchAspectRatio: 0
+    CalculateFacingDirection: 0
+    Scaling: 0
+    Alignment: 0
+    IgnorePrefabSize: 1
+  - Labels: 32768
+    Prefabs:
+    - {fileID: 3970719012149513594, guid: 3207a9fa181b40647b386a6eb72735e0, type: 3}
+    PrefabSelection: 0
+    MatchAspectRatio: 0
+    CalculateFacingDirection: 0
+    Scaling: 0
+    Alignment: 0
+    IgnorePrefabSize: 1
+  - Labels: 8192
+    Prefabs:
+    - {fileID: 4720391380867116068, guid: a18203aef9f1a974e933a7c66bdd8251, type: 3}
+    PrefabSelection: 0
+    MatchAspectRatio: 0
+    CalculateFacingDirection: 0
+    Scaling: 0
+    Alignment: 0
+    IgnorePrefabSize: 1
+  - Labels: 64
+    Prefabs:
+    - {fileID: 4720391380867116068, guid: b42b859bb73f73f4da07a554d25053e2, type: 3}
+    PrefabSelection: 0
+    MatchAspectRatio: 0
+    CalculateFacingDirection: 0
+    Scaling: 0
+    Alignment: 0
+    IgnorePrefabSize: 1
+  - Labels: 16
+    Prefabs:
+    - {fileID: 4381510867811127204, guid: ce327112ff92e8d42bd31867b502183e, type: 3}
+    PrefabSelection: 0
+    MatchAspectRatio: 0
+    CalculateFacingDirection: 0
+    Scaling: 0
+    Alignment: 2
+    IgnorePrefabSize: 1
+  - Labels: 16384
+    Prefabs:
+    - {fileID: 3254348751681064241, guid: 5d07255aabd787d42946fa90c375e3bb, type: 3}
+    PrefabSelection: 0
+    MatchAspectRatio: 0
+    CalculateFacingDirection: 0
+    Scaling: 0
+    Alignment: 0
+    IgnorePrefabSize: 1
+--- !u!114 &-1740976955047629264
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

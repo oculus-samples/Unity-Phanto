@@ -3,6 +3,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Meta.XR.MRUtilityKit;
 using Phanto;
 using Phanto.Audio.Scripts;
 using Phanto.Enemies.DebugScripts;
@@ -719,14 +720,14 @@ namespace Phantom
         private void ShowTargetThought(PhantomTarget target)
         {
             Thought thought = Thought.None;
-            string label = null;
+            MRUKAnchor.SceneLabels label = MRUKAnchor.SceneLabels.OTHER;
 
             switch (target)
             {
                 case PhantomChaseTarget chaseTarget:
                     if (SceneQuery.TryGetClosestSemanticClassification(chaseTarget.GetAttackPoint(), Vector3.up, out var classification))
                     {
-                        label = classification.Labels[0];
+                        label = classification.Label;
                     }
                     break;
                 case RangedFurnitureTarget furnitureTarget:
@@ -739,37 +740,37 @@ namespace Phantom
 
             switch (label)
             {
-                case OVRSceneManager.Classification.Couch:
+                case MRUKAnchor.SceneLabels.COUCH:
                     thought = Thought.Couch;
                     break;
-                case OVRSceneManager.Classification.Other:
+                case MRUKAnchor.SceneLabels.OTHER:
                     thought = Thought.Other;
                     break;
-                case OVRSceneManager.Classification.Storage:
+                case MRUKAnchor.SceneLabels.STORAGE:
                     thought = Thought.Storage;
                     break;
-                case OVRSceneManager.Classification.Bed:
+                case MRUKAnchor.SceneLabels.BED:
                     thought = Thought.Bed;
                     break;
-                case OVRSceneManager.Classification.Table:
+                case MRUKAnchor.SceneLabels.TABLE:
                     thought = Thought.Table;
                     break;
-                case OVRSceneManager.Classification.DoorFrame:
+                case MRUKAnchor.SceneLabels.DOOR_FRAME:
                     thought = Thought.Door;
                     break;
-                case OVRSceneManager.Classification.WindowFrame:
+                case MRUKAnchor.SceneLabels.WINDOW_FRAME:
                     thought = Thought.Window;
                     break;
-                case OVRSceneManager.Classification.Screen:
+                case MRUKAnchor.SceneLabels.SCREEN:
                     thought = Thought.Screen;
                     break;
-                case OVRSceneManager.Classification.Lamp:
+                case MRUKAnchor.SceneLabels.LAMP:
                     thought = Thought.Lamp;
                     break;
-                case OVRSceneManager.Classification.Plant:
+                case MRUKAnchor.SceneLabels.PLANT:
                     thought = Thought.Plant;
                     break;
-                case OVRSceneManager.Classification.WallArt:
+                case MRUKAnchor.SceneLabels.WALL_ART:
                     thought = Thought.WallArt;
                     break;
                 default:

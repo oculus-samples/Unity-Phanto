@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22b68742f2341874b9e15d7ae0b2645e, type: 3}
   m_Name: SceneDataLoaderSettings
   m_EditorClassIdentifier: 
-  sceneJson: {fileID: 4900000, guid: 80f6e87e08fc1324384c9f3527b48ea6, type: 3}
   loadSceneOnStart: 1
   sceneDataSource: 0
   centerStaticMesh: 1
