@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// (c) Meta Platforms, Inc. and affiliates. Confidential and proprietary.
 
 #define LOAD_DEBUG_PANEL // Remove if you don't want the debug panel to be available.
 

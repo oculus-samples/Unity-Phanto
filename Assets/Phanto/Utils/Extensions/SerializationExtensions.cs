@@ -1,4 +1,4 @@
-﻿// Copyright (c) Meta Platforms, Inc. and affiliates.
+﻿// (c) Meta Platforms, Inc. and affiliates. Confidential and proprietary.
 
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
