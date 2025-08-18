@@ -115,7 +115,7 @@ namespace Phanto
         {
             do
             {
-                _phantoLightEffect = FindObjectOfType<PhantoLightEffect>();
+                _phantoLightEffect = FindFirstObjectByType<PhantoLightEffect>();
                 yield return null;
             } while (_phantoLightEffect == null);
 

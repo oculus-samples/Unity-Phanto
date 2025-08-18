@@ -112,7 +112,7 @@ public class DebugSceneEntities : MonoBehaviour
 
     private IEnumerator FindSceneComponents()
     {
-        var sceneRoom = FindObjectOfType<MRUKRoom>();
+        var sceneRoom = FindFirstObjectByType<MRUKRoom>();
         Assert.IsNotNull(sceneRoom);
 
         while (sceneRoom.WallAnchors.Count == 0)

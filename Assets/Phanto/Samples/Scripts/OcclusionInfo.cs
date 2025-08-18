@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.EnvironmentDepth;
 using PhantoUtils;
 using TMPro;
 using UnityEngine;
@@ -12,7 +13,7 @@ public class OcclusionInfo : MonoBehaviour
 
     private void Start()
     {
-        if (!OcclusionKeywordToggle.SupportsOcclusion)
+        if (!EnvironmentDepthManager.IsSupported)
         {
             text.text = Unsupported;
         }

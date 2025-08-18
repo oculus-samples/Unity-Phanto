@@ -40,7 +40,7 @@ public class DebugDrawingShowcase : MonoBehaviour
 
         do
         {
-            _graphyManager = FindObjectOfType<GraphyManager>(true);
+            _graphyManager = FindFirstObjectByType<GraphyManager>(FindObjectsInactive.Include);
         } while (_graphyManager == null);
 
         _graphyManager.gameObject.SetActive(true);

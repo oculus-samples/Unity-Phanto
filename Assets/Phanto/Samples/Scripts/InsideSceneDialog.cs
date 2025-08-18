@@ -62,7 +62,7 @@ public class InsideSceneDialog : MonoBehaviour
 
         if (!OVRManager.instance.TryGetComponent(out _cameraRig))
         {
-            _cameraRig = FindObjectOfType<OVRCameraRig>();
+            _cameraRig = FindFirstObjectByType<OVRCameraRig>();
         }
 
         _ready = _cameraRig != null;

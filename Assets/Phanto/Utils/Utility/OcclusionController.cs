@@ -25,7 +25,7 @@ namespace PhantoUtils
 
         private void UpdateMaterialKeywords()
         {
-            if (!OcclusionKeywordToggle.SupportsOcclusion)
+            if (!EnvironmentDepthManager.IsSupported)
             {
                 Debug.LogWarning($"{nameof(OcclusionController)} unsupported device. Not setting occlusion keywords.");
                 return;

@@ -335,7 +335,7 @@ public class NavMeshGeneratorEditor : Editor
             GUILayout.Space(16);
             if (GUILayout.Button("Bake"))
             {
-                var room = FindObjectOfType<MRUKRoom>();
+                var room = FindFirstObjectByType<MRUKRoom>();
 
                 var floorTransform = room.FloorAnchor.transform;
                 var bounds = new Bounds(floorTransform.position, Vector3.zero);

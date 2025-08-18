@@ -103,7 +103,7 @@ namespace Phantom
             while (_navMeshGenerator == null)
             {
                 yield return null;
-                _navMeshGenerator = FindObjectOfType<NavMeshGenerator>();
+                _navMeshGenerator = FindFirstObjectByType<NavMeshGenerator>();
             }
 
             for (var i = 0; i < spawnCount; i++)

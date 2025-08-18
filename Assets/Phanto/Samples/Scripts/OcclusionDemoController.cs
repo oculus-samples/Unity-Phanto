@@ -42,7 +42,7 @@ public class OcclusionDemoController : MonoBehaviour
 
     private void DisableOcclusion()
     {
-        if (OcclusionKeywordToggle.SupportsOcclusion)
+        if (EnvironmentDepthManager.IsSupported)
         {
             _environmentDepthManager.enabled = true;
         }

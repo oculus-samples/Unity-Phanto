@@ -10,7 +10,7 @@ public class GUICameraFinder : MonoBehaviour
 {
     private void Start()
     {
-        var cameraRig = FindObjectOfType<OVRCameraRig>();
+        var cameraRig = FindFirstObjectByType<OVRCameraRig>();
         if (cameraRig)
         {
             var canvas = GetComponent<Canvas>();

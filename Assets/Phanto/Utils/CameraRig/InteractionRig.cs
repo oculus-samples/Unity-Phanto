@@ -26,8 +26,8 @@ namespace PhantoUtils.VR
         [SerializeField] private Transform leftHandRoot;
         [SerializeField] private Transform rightHandRoot;
 
-        [SerializeField] private OVRControllerVisual leftControllerVisual;
-        [SerializeField] private OVRControllerVisual rightControllerVisual;
+        [SerializeField] private ControllerVisual leftControllerVisual;
+        [SerializeField] private ControllerVisual rightControllerVisual;
 
         [SerializeField] private RayInteractor leftControllerRayInteractor;
         [SerializeField] private RayInteractor leftHandRayInteractor;
@@ -125,7 +125,7 @@ namespace PhantoUtils.VR
                 if (leftControllerRayInteractor == null)
                     leftControllerRayInteractor = leftControllerRoot.GetComponentInChildren<RayInteractor>();
                 if (leftControllerVisual == null)
-                    leftControllerVisual = leftControllerRoot.GetComponentInChildren<OVRControllerVisual>();
+                    leftControllerVisual = leftControllerRoot.GetComponentInChildren<ControllerVisual>();
             }
 
             if (rightControllerRoot != null)
@@ -133,7 +133,7 @@ namespace PhantoUtils.VR
                 if (rightControllerRayInteractor == null)
                     rightControllerRayInteractor = rightControllerRoot.GetComponentInChildren<RayInteractor>();
                 if (rightControllerVisual == null)
-                    rightControllerVisual = rightControllerRoot.GetComponentInChildren<OVRControllerVisual>();
+                    rightControllerVisual = rightControllerRoot.GetComponentInChildren<ControllerVisual>();
             }
 
             if (leftHandRoot != null)

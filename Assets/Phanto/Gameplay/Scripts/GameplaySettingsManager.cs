@@ -24,7 +24,7 @@ public class GameplaySettingsManager : SingletonMonoBehaviour<GameplaySettingsMa
 
         Assert.IsNotNull(gameplaySettings, $"{nameof(gameplaySettings)} cannot be null.");
 
-        var waveAdvanceManager = FindObjectOfType<UIWaveChangeManager>();
+        var waveAdvanceManager = FindFirstObjectByType<UIWaveChangeManager>();
         _wavesAvailable = waveAdvanceManager != null;
         if (_wavesAvailable)
         {

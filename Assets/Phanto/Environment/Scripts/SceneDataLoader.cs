@@ -94,7 +94,7 @@ namespace Phantom.Environment.Scripts
             if (_mruk == null)
             {
                 // Scene Manager from previous scene.
-                var existingManager = FindObjectOfType<MRUK>();
+                var existingManager = FindFirstObjectByType<MRUK>();
 
                 if (existingManager != null) DestroyImmediate(existingManager.gameObject);
 

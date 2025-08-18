@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Meta.XR.EnvironmentDepth;
 using PhantoUtils;
 using UnityEngine;
 using UnityEngine.Android;
@@ -50,7 +51,7 @@ public class ScenePermissionGrantedBroadcaster : MonoBehaviour
         {
             yield return _wait;
             if (Permission.HasUserAuthorizedPermission(SCENE_PERMISSION)
-                || !OcclusionKeywordToggle.SupportsOcclusion)
+                || !EnvironmentDepthManager.IsSupported)
             {
                 OVRPermissionsRequester_PermissionGranted(SCENE_PERMISSION);
                 break;

@@ -37,7 +37,7 @@ namespace PhantoUtils
             }
 
             // For HMDs that don't support occlusion turn off both keywords.
-            if (!SupportsOcclusion)
+            if (!EnvironmentDepthManager.IsSupported)
             {
                 _occlusionType = OcclusionShadersMode.None;
                 SetOcclusionState(_occlusionType);
@@ -92,19 +92,5 @@ namespace PhantoUtils
             }
         }
 
-        public static bool SupportsOcclusion
-        {
-            get
-            {
-                switch (OVRPlugin.GetSystemHeadsetType())
-                {
-                    case OVRPlugin.SystemHeadset.Meta_Quest_3:
-                    case OVRPlugin.SystemHeadset.Meta_Link_Quest_3:
-                        return true;
-                }
-
-                return false;
-            }
-        }
     }
 }

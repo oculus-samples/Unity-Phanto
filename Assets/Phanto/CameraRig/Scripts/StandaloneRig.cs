@@ -12,7 +12,7 @@ public class StandaloneRig : MonoBehaviour
 
     private void Awake()
     {
-        if (FindObjectOfType<CameraRig>() == null) Instantiate(CameraRigPrefab);
+        if (FindFirstObjectByType<CameraRig>() == null) Instantiate(CameraRigPrefab);
         gameObject.SetActive(false);
     }
 }

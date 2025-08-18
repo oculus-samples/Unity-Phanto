@@ -8,7 +8,7 @@ public class OcclusionSupportCheck : MonoBehaviour
 {
     private void Start()
     {
-        if (!OcclusionKeywordToggle.SupportsOcclusion && TryGetComponent<EnvironmentDepthManager>(out var depthOcclusionController))
+        if (!EnvironmentDepthManager.IsSupported && TryGetComponent<EnvironmentDepthManager>(out var depthOcclusionController))
         {
             depthOcclusionController.OcclusionShadersMode = OcclusionShadersMode.None;
         }
