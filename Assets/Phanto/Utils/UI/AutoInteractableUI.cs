@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using Oculus.Interaction;
 using Oculus.Interaction.Surfaces;
 using UnityEngine;
@@ -7,6 +8,7 @@ using UnityEngine.Assertions;
 
 namespace PhantoUtils.VR
 {
+    [MetaCodeSample("Phanto")]
     [DefaultExecutionOrder(-1)]
     public class AutoInteractableUI : MonoBehaviour
     {

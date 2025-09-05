@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using Utilities.XR;
 
+[MetaCodeSample("Phanto")]
 public class OcclusionScannerController : MonoBehaviour
 {
     private const string DepthScale = "_DepthScale";

@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace Phantom.Environment.Scripts
     /// <summary>
     /// Post processes scene data after scene loading.
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class PhantoScenePostProcessor : MonoBehaviour
     {
         // Items in the room probably large enough for phantoms to hop on

@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using Oculus.Haptics;
@@ -14,6 +15,7 @@ using UnityEngine.Serialization;
 /// <summary>
 /// Manages wave popup visibility and timing
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class UIWaveChangeManager : MonoBehaviour
 {
     [Tooltip("Wave popup reference")]

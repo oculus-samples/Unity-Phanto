@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections.Generic;
 using Meta.XR.MRUtilityKit;
 using Phanto.Enemies.DebugScripts;
@@ -15,6 +16,7 @@ using static NavMeshGenerateLinks;
 /// <summary>
 ///     Handles nav mesh generation from scene data.
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class NavMeshGenerator : MonoBehaviour
 {
     private const float EdgeExpansion = NavMeshConstants.OneFoot;
@@ -323,6 +325,7 @@ public class NavMeshGenerator : MonoBehaviour
 }
 
 #if UNITY_EDITOR
+[MetaCodeSample("Phanto")]
 [CustomEditor(typeof(NavMeshGenerator))]
 public class NavMeshGeneratorEditor : Editor
 {

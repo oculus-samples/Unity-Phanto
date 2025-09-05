@@ -2,11 +2,13 @@
 
 #if UNITY_EDITOR
 
+using Meta.XR.Samples;
 using UnityEditor;
 using UnityEngine;
 
 namespace Common.Editor
 {
+    [MetaCodeSample("Phanto")]
     public static class ApplicationPersistentDataPathMenuItem
     {
         [MenuItem("File/Open Application Persistent Data Path")]

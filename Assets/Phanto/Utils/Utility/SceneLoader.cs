@@ -1,10 +1,12 @@
 ﻿// Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace PhantoUtils
 {
+    [MetaCodeSample("Phanto")]
     [DefaultExecutionOrder(1)]
     public class SceneLoader : MonoBehaviour
     {

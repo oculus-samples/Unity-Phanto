@@ -1,10 +1,12 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using UnityEngine;
 
 namespace Phanto.Enemies.DebugScripts
 {
+    [MetaCodeSample("Phanto")]
     public class DebugDrawManager : MonoBehaviour
     {
         public static bool DebugDraw { get; set; }

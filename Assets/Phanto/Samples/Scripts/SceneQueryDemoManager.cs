@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,6 +20,7 @@ using static NavMeshConstants;
 
 namespace Phantom
 {
+    [MetaCodeSample("Phanto")]
     public class SceneQueryDemoManager : MonoBehaviour, IPhantomManager, ICollisionDemo
     {
         private const float CELL_SIZE = 0.10f;

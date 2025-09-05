@@ -1,10 +1,12 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using System.Collections.Generic;
 using Phanto.Enemies.DebugScripts;
 using UnityEngine;
 
+[MetaCodeSample("Phanto")]
 public class CrystalChaseTarget : PhantomChaseTarget, ICrystalTarget
 {
     [SerializeField] private Transform attackPoint;

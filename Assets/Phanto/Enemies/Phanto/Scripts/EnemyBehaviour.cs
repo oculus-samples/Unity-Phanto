@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -10,6 +11,7 @@ namespace Phanto
     /// <summary>
     ///     Abstract base class for the behaviour of an Enemy
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public abstract class EnemyBehaviour<B> : MonoBehaviour,
         IDamageable,
         EnemyProximitySensor.IProximityTrigger where B : EnemyBehaviour<B>

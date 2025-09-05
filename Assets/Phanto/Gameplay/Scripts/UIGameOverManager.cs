@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using Phanto.Audio.Scripts;
 using TMPro;
 using UnityEngine;
@@ -7,6 +8,7 @@ using UnityEngine;
 /// <summary>
 ///     Responsible for managing UI Game over pop-ups
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class UIGameOverManager : MonoBehaviour
 {
     [SerializeField] private GameObject winPopup;

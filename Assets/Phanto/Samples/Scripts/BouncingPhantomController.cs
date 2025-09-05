@@ -1,10 +1,12 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using Phantom;
 using PhantoUtils;
 using UnityEngine;
 
+[MetaCodeSample("Phanto")]
 public class BouncingPhantomController : MonoBehaviour
 {
     private readonly WaitForSeconds _lifeSpan = new(5.0f);

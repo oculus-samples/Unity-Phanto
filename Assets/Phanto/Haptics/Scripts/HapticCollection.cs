@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,9 +8,11 @@ using Oculus.Haptics;
 using PhantoUtils;
 using UnityEngine;
 
+[MetaCodeSample("Phanto")]
 [CreateAssetMenu(menuName = "Phanto/Haptics/Haptics Collection")]
 public class HapticCollection : ScriptableObject
 {
+    [MetaCodeSample("Phanto")]
     [Serializable]
     public class HapticEntry
     {

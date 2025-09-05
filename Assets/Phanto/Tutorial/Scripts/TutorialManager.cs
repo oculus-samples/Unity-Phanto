@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using Oculus.Haptics;
@@ -15,6 +16,7 @@ using UnityEngine.SceneManagement;
 /// <summary>
 /// Manages the Tutorial Pages
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class TutorialManager : MonoBehaviour
 {
     public const KeyCode ACTION_KEY = KeyCode.Alpha1;

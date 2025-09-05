@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using Phanto;
 using Phanto.Audio.Scripts;
 using PhantoUtils;
@@ -15,6 +16,7 @@ namespace Phantom
     /// </summary>
     public partial class PhantomBehaviour
     {
+        [MetaCodeSample("Phanto")]
         private abstract class BasePhantomState : IEnemyState<PhantomBehaviour>
         {
             protected static readonly Vector3 CubeSize = new(0.05f, 0.1f, 0.05f);
@@ -36,6 +38,7 @@ namespace Phantom
             }
         }
 
+        [MetaCodeSample("Phanto")]
         private class Roam : BasePhantomState
         {
             public override uint GetStateID()
@@ -75,6 +78,7 @@ namespace Phantom
             }
         }
 
+        [MetaCodeSample("Phanto")]
         private class Chase : BasePhantomState
         {
             private PhantomTarget _target;
@@ -129,6 +133,7 @@ namespace Phantom
             }
         }
 
+        [MetaCodeSample("Phanto")]
         private class CrystalRoam : BasePhantomState
         {
             public override uint GetStateID()
@@ -167,6 +172,7 @@ namespace Phantom
             }
         }
 
+        [MetaCodeSample("Phanto")]
         private class CrystalChase : BasePhantomState
         {
             private PhantomTarget _target;
@@ -215,6 +221,7 @@ namespace Phantom
             }
         }
 
+        [MetaCodeSample("Phanto")]
         private class Flee : BasePhantomState
         {
             private PhantomFleeTarget _target;
@@ -314,6 +321,7 @@ namespace Phantom
             }
         }
 
+        [MetaCodeSample("Phanto")]
         private class DirectAttack : BasePhantomState
         {
             private readonly float _duration = 1.0f;
@@ -364,6 +372,7 @@ namespace Phantom
             }
         }
 
+        [MetaCodeSample("Phanto")]
         private class RangedAttack : BasePhantomState
         {
             private readonly float _duration = 1.5f;
@@ -414,6 +423,7 @@ namespace Phantom
             }
         }
 
+        [MetaCodeSample("Phanto")]
         private class Pain : BasePhantomState
         {
             public override uint GetStateID()
@@ -447,6 +457,7 @@ namespace Phantom
             }
         }
 
+        [MetaCodeSample("Phanto")]
         private class Die : BasePhantomState
         {
             private readonly float _duration = 1.0f;
@@ -503,6 +514,7 @@ namespace Phantom
             }
         }
 
+        [MetaCodeSample("Phanto")]
         private class Spawn : BasePhantomState
         {
             private readonly float _duration = 1.0f;
@@ -561,6 +573,7 @@ namespace Phantom
             }
         }
 
+        [MetaCodeSample("Phanto")]
         private class DemoRoam : BasePhantomState
         {
             public override uint GetStateID()

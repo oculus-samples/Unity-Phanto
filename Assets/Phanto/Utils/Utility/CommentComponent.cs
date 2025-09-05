@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ namespace PhantoUtils
     /// <summary>
     /// Just adds a visible comment to a game object.
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class CommentComponent : MonoBehaviour
     {
         [SerializeField, Multiline(4)] internal string comment;
@@ -15,6 +17,7 @@ namespace PhantoUtils
         public string Comment => comment;
 
 #if UNITY_EDITOR
+        [MetaCodeSample("Phanto")]
         [CustomEditor(typeof(CommentComponent))]
         public class CommentComponentEditor : Editor
         {

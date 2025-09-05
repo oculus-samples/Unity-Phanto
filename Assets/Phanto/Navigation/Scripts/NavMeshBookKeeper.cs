@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ using Debug = UnityEngine.Debug;
 ///     Utility to keep track of which triangles in the NavMesh
 ///     are associated with a specific surface.
 /// </summary>
+[MetaCodeSample("Phanto")]
 public static class NavMeshBookKeeper
 {
     private static List<NavMeshTriangle> _triangles;

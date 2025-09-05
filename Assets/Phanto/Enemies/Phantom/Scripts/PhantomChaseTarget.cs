@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using System.Collections.Generic;
 using Meta.XR.MRUtilityKit;
@@ -14,6 +15,7 @@ using Utilities.XR;
 /// <summary>
 ///     Chases a target with physics.
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class PhantomChaseTarget : PhantomTarget
 {
     [SerializeField] private GameObject gooPrefab;

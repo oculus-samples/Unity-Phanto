@@ -1,9 +1,11 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 
 namespace Phanto
 {
+    [MetaCodeSample("Phanto")]
     public static class WeaponUtils
     {
         /*

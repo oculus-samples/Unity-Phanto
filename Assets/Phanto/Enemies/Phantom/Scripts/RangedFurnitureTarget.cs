@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace Phantom
     ///     This is for furniture that isn't walkable (lamp, plant, etc.)
     ///     Phantoms will approach these targets and perform a ranged attack to goo them.
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class RangedFurnitureTarget : PhantomTarget
     {
         protected static readonly string[] PlanarTargets = new[]

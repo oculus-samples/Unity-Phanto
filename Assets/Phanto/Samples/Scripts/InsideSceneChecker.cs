@@ -1,11 +1,13 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using Phantom.Environment.Scripts;
 using UnityEngine;
 using UnityEngine.Assertions;
 
+[MetaCodeSample("Phanto")]
 public class InsideSceneChecker : MonoBehaviour
 {
     private const float MaxCeilingRayLength = 100.0f;

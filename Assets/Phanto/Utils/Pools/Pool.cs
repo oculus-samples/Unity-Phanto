@@ -1,9 +1,11 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 
 namespace Phanto
 {
+    [MetaCodeSample("Phanto")]
     public abstract class Pool<T> where T : class
     {
         public Callbacks callbacks;

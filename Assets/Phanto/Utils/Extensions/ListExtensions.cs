@@ -1,11 +1,13 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
 
 namespace PhantoUtils
 {
+    [MetaCodeSample("Phanto")]
     public static class ListExtensions
     {
         public static T RandomElement<T>(this IReadOnlyList<T> list)

@@ -1,9 +1,11 @@
 ﻿// Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 
 namespace PhantoUtils.VR
 {
+    [MetaCodeSample("Phanto")]
     public static class ApplicationUtils
     {
         public static bool IsDesktop()

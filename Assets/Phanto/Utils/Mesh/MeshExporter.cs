@@ -1,8 +1,10 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using UnityEngine;
 
+[MetaCodeSample("Phanto")]
 public class MeshExporter : MonoBehaviour
 {
     [SerializeField] private OVRInput.RawButton _exportButton;

@@ -1,10 +1,12 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using OVRSimpleJSON;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[MetaCodeSample("Phanto")]
 public class BuildInfo : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI info;

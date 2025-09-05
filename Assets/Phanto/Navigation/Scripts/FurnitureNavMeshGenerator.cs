@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections.Generic;
 using Meta.XR.MRUtilityKit;
 using Phanto.Enemies.DebugScripts;
@@ -15,6 +16,7 @@ using static NavMeshGenerateLinks;
 /// <summary>
 ///     This script generates the navigation mesh for a given furniture.
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class FurnitureNavMeshGenerator : MonoBehaviour
 {
     private static readonly Dictionary<Object, FurnitureNavMeshGenerator> _navMeshGenerators =
@@ -313,6 +315,7 @@ public class FurnitureNavMeshGenerator : MonoBehaviour
 }
 
 #if UNITY_EDITOR
+[MetaCodeSample("Phanto")]
 [CustomEditor(typeof(FurnitureNavMeshGenerator))]
 public class FurnitureNavMeshGeneratorEditor : Editor
 {

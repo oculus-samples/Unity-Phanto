@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections.Generic;
 using Meta.XR.EnvironmentDepth;
 using UnityEditor;
@@ -10,6 +11,7 @@ namespace PhantoUtils
     /// <summary>
     /// Sets occlusion type for this object.
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class OcclusionController : MonoBehaviour
     {
         [SerializeField]

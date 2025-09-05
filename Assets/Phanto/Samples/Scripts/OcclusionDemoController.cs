@@ -1,11 +1,13 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using Meta.XR.EnvironmentDepth;
 using PhantoUtils;
 using UnityEngine;
 
+[MetaCodeSample("Phanto")]
 public class OcclusionDemoController : MonoBehaviour
 {
     private const string HARD_OCCLUSION = "HARD_OCCLUSION";

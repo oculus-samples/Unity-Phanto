@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using Phanto.Enemies.DebugScripts;
 using Phantom.Environment.Scripts;
@@ -7,6 +8,7 @@ using PhantoUtils;
 using PhantoUtils.VR;
 using UnityEngine;
 
+[MetaCodeSample("Phanto")]
 public class PhantoDemoController : MonoBehaviour
 {
     [SerializeField] private Transform phanto;

@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using UnityEngine;
 /// <summary>
 /// This class represents an arc line, to highlight the placement of the blaster
 /// </summary>
+[MetaCodeSample("Phanto")]
 [RequireComponent(typeof(LineRenderer))]
 [RequireComponent(typeof(EctoBlasterSpawner))]
 public class EctoBlasterTrajectoryLine : MonoBehaviour

@@ -1,11 +1,13 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 namespace PhantoUtils
 {
+    [MetaCodeSample("Phanto")]
     public class ToggleImageChange : MonoBehaviour
     {
         [SerializeField] private Image _targetImage;

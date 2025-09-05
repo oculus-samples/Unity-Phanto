@@ -1,10 +1,12 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.IO;
 using System.Text;
 using UnityEngine;
 
+[MetaCodeSample("Phanto")]
 public static class MeshExporterObj
 {
     public static (string, int) ConvertToObjString(MeshFilter meshFilter, int triangleStartIndex = 0)

@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using UnityEngine.Events;
 /// <summary>
 /// Source for Phanto statistics
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class PhantoStatisticsSource : StatisticsSource
 {
     [SerializeField] private GameplaySettingsManager settingsManager;

@@ -1,10 +1,12 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 
 namespace PhantoUtils
 {
 
+    [MetaCodeSample("Phanto")]
     public static class RigidbodyExtensions
     {
         public static void LaunchProjectile(this Rigidbody rigidbody, Vector3 position, Vector3 launchVector)

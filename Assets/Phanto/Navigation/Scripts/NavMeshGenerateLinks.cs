@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -7,6 +8,7 @@ using UnityEngine.AI;
 /// <summary>
 /// Generates UnityEngine.AI.NavMeshLink objects from a list of Nav
 /// </summary>
+[MetaCodeSample("Phanto")]
 public static class NavMeshGenerateLinks
 {
     public static void GenInternalLinks(List<NavMeshTriangle> navMeshTriangles,

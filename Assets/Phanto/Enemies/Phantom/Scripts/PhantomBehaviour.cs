@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -17,6 +18,7 @@ namespace Phantom
     /// <summary>
     ///     Represents a behaviour of a Phantom
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public partial class PhantomBehaviour : EnemyBehaviour<PhantomBehaviour>
     {
         public enum StateID

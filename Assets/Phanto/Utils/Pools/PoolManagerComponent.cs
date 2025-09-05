@@ -1,11 +1,13 @@
 ﻿// Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using UnityEngine;
 using Logger = PhantoUtils.Logger;
 
 namespace Phanto
 {
+    [MetaCodeSample("Phanto")]
     public class PoolManagerComponent : MonoBehaviour
     {
         public enum Verbosity
@@ -209,12 +211,14 @@ namespace Phanto
                 Destroy(go);
         }
 
+        [MetaCodeSample("Phanto")]
         [Serializable]
         public abstract class CallbackProvider : MonoBehaviour
         {
             public abstract Pool<GameObject>.Callbacks GetPoolCallbacks();
         }
 
+        [MetaCodeSample("Phanto")]
         [Serializable]
         public class Poolable : MonoBehaviour
         {
@@ -237,6 +241,7 @@ namespace Phanto
             public CallbackProvider callbackProviderOverride;
         }
 
+        [MetaCodeSample("Phanto")]
         private static class DefaultCallbacks
         {
             public static GameObject Create(GameObject primitive)

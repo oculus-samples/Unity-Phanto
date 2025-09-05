@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,6 +11,7 @@ using UnityEngine.UI;
 
 namespace PhantoUtils.VR
 {
+    [MetaCodeSample("Phanto")]
     [DefaultExecutionOrder(-10000)]
     public class DebugLogScrollingTextView : MonoBehaviour
     {

@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +9,7 @@ using Phanto.Audio.Scripts;
 /// <summary>
 /// Manages statistics UI element
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class UIStatisticsManager : MonoBehaviour
 {
     [Header("UI Elements 2D")]

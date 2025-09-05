@@ -1,9 +1,11 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using PhantoUtils.VR;
 using UnityEngine;
 
+[MetaCodeSample("Phanto")]
 public class SoftParent : MonoBehaviour
 {
     public enum ParentTargetType

@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ namespace Phantom.LightEffects.Scripts
     ///     effect to a mesh renderer on tracking. This is used to apply
     ///     lighting effects on Phanto.
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class PhantoLightEffect : MonoBehaviour
     {
         private static readonly int BlendId = Shader.PropertyToID("_Blend");

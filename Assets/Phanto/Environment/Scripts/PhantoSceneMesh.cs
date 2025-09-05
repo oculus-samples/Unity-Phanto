@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace Phantom.Environment.Scripts
     /// <summary>
     /// The PhantoSceneMesh class stores information about a scene
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class PhantoSceneMesh : MonoBehaviour
     {
         private const float SPATIAL_HASH_CELL_SIZE = 0.05f;

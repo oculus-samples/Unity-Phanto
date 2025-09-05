@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Linq;
@@ -10,6 +11,7 @@ using Utilities.XR;
 
 namespace Phantom
 {
+    [MetaCodeSample("Phanto")]
     public class PhantomFleeTarget : PhantomTarget
     {
         private static readonly SpatialHash<PhantomFleeTarget> FleeTargetHash =

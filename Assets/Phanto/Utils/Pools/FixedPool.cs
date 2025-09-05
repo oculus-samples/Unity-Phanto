@@ -1,9 +1,11 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections.Generic;
 
 namespace Phanto
 {
+    [MetaCodeSample("Phanto")]
     public class FixedPool<T> : Pool<T> where T : class
     {
         private int index;

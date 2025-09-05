@@ -1,11 +1,13 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using UnityEngine;
 
 /// <summary>
 /// Manages time spent in gameplay, including highscore management
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class UIGameplayTimeManager : MonoBehaviour
 {
     private const string HIGHSCORE_KEY = "PHANTO_HIGH_SCORE_";

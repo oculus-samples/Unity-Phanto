@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 
 namespace Phantom.EctoBlaster.Scripts
@@ -7,6 +8,7 @@ namespace Phantom.EctoBlaster.Scripts
     /// <summary>
     ///     This script controls the blaster range indicator size and his visibility based on app input focus status
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class EctoBlasterRangeIndicator : MonoBehaviour
     {
         public void SetBlasterRangeIndicator(Vector3 size)

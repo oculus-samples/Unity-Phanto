@@ -1,13 +1,16 @@
 ﻿// Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace PhantoUtils
 {
+    [MetaCodeSample("Phanto")]
     public static class SingletonMonoBehaviour
     {
+        [MetaCodeSample("Phanto")]
         public class InstantiationSettings : Attribute
         {
             public bool dontDestroyOnLoad;
@@ -22,6 +25,7 @@ namespace PhantoUtils
     ///     the DontDestroyOnLoad behaviour.
     /// </summary>
     /// <remarks>Consider setting [DefaultExecutionOrder(-1)] on the derived class.</remarks>
+    [MetaCodeSample("Phanto")]
     public abstract class SingletonMonoBehaviour<T> : MonoBehaviour where T : SingletonMonoBehaviour<T>
     {
         private static T _instance;

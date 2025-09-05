@@ -1,10 +1,12 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using PhantoUtils;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
 
+[MetaCodeSample("Phanto")]
 public class GameplaySettingsManager : SingletonMonoBehaviour<GameplaySettingsManager>
 {
     public GameplaySettings gameplaySettings;

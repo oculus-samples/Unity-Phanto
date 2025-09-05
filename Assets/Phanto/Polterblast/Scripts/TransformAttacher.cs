@@ -2,11 +2,13 @@
 
 // @formatter:on
 
+using Meta.XR.Samples;
 using UnityEngine;
 
 /// <summary>
 /// Attaches transform to parent
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class TransformAttacher : MonoBehaviour
 {
     public string parentObjectName;

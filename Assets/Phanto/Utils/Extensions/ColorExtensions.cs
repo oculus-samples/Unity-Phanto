@@ -1,9 +1,11 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 
 namespace PhantoUtils
 {
+    [MetaCodeSample("Phanto")]
     public static class ColorExtensions
     {
         public static float GetHue(this Color color)

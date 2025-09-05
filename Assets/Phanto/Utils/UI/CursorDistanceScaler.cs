@@ -1,10 +1,12 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace PhantoUtils.VR
 {
+    [MetaCodeSample("Phanto")]
     public class CursorDistanceScaler : MonoBehaviour
     {
         [SerializeField] private float minScale = 0.025f;

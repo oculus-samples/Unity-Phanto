@@ -1,8 +1,10 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using UnityEngine;
 
+[MetaCodeSample("Phanto")]
 public class DemoGoo : MonoBehaviour
 {
     [SerializeField] private GooController gooController;

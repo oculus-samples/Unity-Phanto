@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Diagnostics;
@@ -19,6 +20,7 @@ namespace Phantom
     /// <summary>
     ///     Monitors the navigation state of a phantom.
     /// </summary>
+    [MetaCodeSample("Phanto")]
     [SelectionBase]
     public class PhantomController : MonoBehaviour
     {
@@ -751,6 +753,7 @@ namespace Phantom
     }
 
 #if UNITY_EDITOR
+    [MetaCodeSample("Phanto")]
     [CustomEditor(typeof(PhantomController))]
     public class PhantomControllerEditor : Editor
     {

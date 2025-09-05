@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using Phanto;
 using PhantoUtils.VR;
@@ -9,6 +10,7 @@ using UnityEngine.Serialization;
 /// <summary>
 /// Controls the "goo" in the game
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class GooController : MonoBehaviour
 {
     [SerializeField] private ParticleSystem impactDustPS;

@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections.Generic;
 using Phanto.Enemies.DebugScripts;
 using PhantoUtils;
@@ -10,6 +11,7 @@ using Utilities.XR;
 /// Positions a capsule over the player's head and torso
 /// to keep Phanto out of the player's personal space.
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class PersonalBubble : MonoBehaviour
 {
     private static readonly Dictionary<Object, PersonalBubble> PlayerBubbles = new();

@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using Random = UnityEngine.Random;
 /// <summary>
 /// Controls the triggering of a Polterblast.
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class PolterblastTrigger : MonoBehaviour
 {
     private static readonly Dictionary<Object, PolterblastTrigger> triggerDictionary =

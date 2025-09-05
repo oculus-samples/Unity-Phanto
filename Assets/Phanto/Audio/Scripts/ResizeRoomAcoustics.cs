@@ -1,6 +1,7 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using Meta.XR.MRUtilityKit;
+using Meta.XR.Samples;
 using Phanto.Enemies.DebugScripts;
 using Phantom.Environment.Scripts;
 using PhantoUtils;
@@ -12,6 +13,7 @@ namespace Phanto.Audio.Scripts
     /// <summary>
     ///     This script resizes the room acoustic properties based on the room bound
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class ResizeRoomAcoustics : MonoBehaviour
     {
         [SerializeField] private MetaXRAudioRoomAcousticProperties roomAcousticProperties;

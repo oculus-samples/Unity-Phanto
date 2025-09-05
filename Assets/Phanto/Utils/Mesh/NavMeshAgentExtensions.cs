@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -8,6 +9,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using Object = UnityEngine.Object;
 
+[MetaCodeSample("Phanto")]
 public static class NavMeshAgentExtensions
 {
     private static readonly string[] skipFields =

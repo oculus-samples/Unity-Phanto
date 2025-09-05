@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using Phanto.Enemies.DebugScripts;
 using Phantom.Environment.Scripts;
@@ -10,6 +11,7 @@ using UnityEngine;
 using Utilities.XR;
 using static NavMeshConstants;
 
+[MetaCodeSample("Phanto")]
 public class DebugDrawingShowcase : MonoBehaviour
 {
     [SerializeField] private Transform leftHand;

@@ -1,6 +1,7 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using Meta.XR.MRUtilityKit;
+using Meta.XR.Samples;
 using Phantom.Environment.Scripts;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -8,6 +9,7 @@ using UnityEngine.Assertions;
 /// <summary>
 /// SceneQuery components need to be attached to each loaded room at initialization.
 /// </summary>
+[MetaCodeSample("Phanto")]
 [RequireComponent(typeof(SceneDataLoader))]
 public class SetupSceneQueries : MonoBehaviour
 {

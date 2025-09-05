@@ -1,10 +1,12 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 
 /// <summary>
 /// NavMeshConstants is a class containing static properties for NavMesh related
 /// calculations.
+[MetaCodeSample("Phanto")]
 public static class NavMeshConstants
 {
     private const string SceneMesh = "GlobalMesh";

@@ -2,11 +2,13 @@
 
 #define LOAD_DEBUG_PANEL // Remove if you don't want the debug panel to be available.
 
+using Meta.XR.Samples;
 using System;
 using UnityEngine;
 
 namespace Common
 {
+    [MetaCodeSample("Phanto")]
     public class DebugLogPanelControls : MonoBehaviour
     {
         public static Action<bool> DebugMenuEvent;

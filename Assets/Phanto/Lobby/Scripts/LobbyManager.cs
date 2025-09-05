@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using Oculus.Haptics;
 using Phantom.Environment.Scripts;
 using PhantoUtils;
@@ -10,6 +11,7 @@ using UnityEngine.Android;
 /// <summary>
 /// Manages the state of the Lobby UI
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class LobbyManager : MonoBehaviour
 {
     private const string WINDOW_CLOSE_CLIP = "WindowClose";

@@ -2,6 +2,7 @@
 
 #if UNITY_EDITOR
 
+using Meta.XR.Samples;
 using System;
 using System.IO;
 using OVRSimpleJSON;
@@ -10,6 +11,7 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
+[MetaCodeSample("Phanto")]
 public class SaveBuildInfo : IPreprocessBuildWithReport
 {
     public int callbackOrder => -10;

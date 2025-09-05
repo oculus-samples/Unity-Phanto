@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections.Generic;
 using Meta.XR.MRUtilityKit;
@@ -11,6 +12,7 @@ namespace Phantom
     /// <summary>
     ///     Base class for all phantom targets in the game.
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public abstract class PhantomTarget : MonoBehaviour
     {
         private static readonly Dictionary<Collider, PhantomTarget> TargetCollection = new();

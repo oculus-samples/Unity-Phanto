@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using UnityEngine;
 using UnityEngine.Android;
 using UnityEngine.Events;
 
+[MetaCodeSample("Phanto")]
 public class ScenePermissionGrantedBroadcaster : MonoBehaviour
 {
     private const string SCENE_PERMISSION = "com.oculus.permission.USE_SCENE";

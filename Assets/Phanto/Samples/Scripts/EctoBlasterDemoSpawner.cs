@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using Phanto.Audio.Scripts;
 using Phanto.Enemies.DebugScripts;
 using PhantoUtils;
@@ -8,6 +9,7 @@ using Utilities.XR;
 
 namespace Phantom.EctoBlaster.Scripts
 {
+    [MetaCodeSample("Phanto")]
     public class EctoBlasterDemoSpawner : MonoBehaviour
     {
         [SerializeField] private GameObject blasterPrefab;

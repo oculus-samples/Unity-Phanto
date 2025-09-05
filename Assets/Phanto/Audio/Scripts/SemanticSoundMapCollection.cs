@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +9,10 @@ using UnityEngine;
 
 namespace Phanto.Audio.Scripts
 {
+    [MetaCodeSample("Phanto")]
     public class SemanticSoundMapCollection : ScriptableObject
     {
+        [MetaCodeSample("Phanto")]
         [Serializable]
         public class SemanticSoundMap
         {

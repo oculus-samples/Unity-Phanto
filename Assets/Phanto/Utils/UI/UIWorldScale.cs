@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ namespace PhantoUtils
     ///     appending and removing characters.
     ///     Usage: Attach to your text or assign the target text in the inspector. Include the ellipsis in your text.
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class UIWorldScale : MonoBehaviour
     {
         [SerializeField] private RectTransform targetTransform;

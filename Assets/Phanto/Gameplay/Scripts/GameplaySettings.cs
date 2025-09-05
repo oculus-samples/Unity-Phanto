@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,7 @@ using OVRSimpleJSON;
 using Phanto;
 using UnityEngine;
 
+[MetaCodeSample("Phanto")]
 [CreateAssetMenu(fileName = "Data", menuName = "Phanto/GameplaySettings", order = 1)]
 public class GameplaySettings : ScriptableObject
 {
@@ -36,12 +38,14 @@ public class GameplaySettings : ScriptableObject
         DefeatAllPhantoms
     }
 
+    [MetaCodeSample("Phanto")]
     public class GameSetting
     {
         [Tooltip("Whether this setting will apply to the wave")]
         public bool isEnabled = true;
     }
 
+    [MetaCodeSample("Phanto")]
     [System.Serializable]
     public class WaveSettings
     {
@@ -54,6 +58,7 @@ public class GameplaySettings : ScriptableObject
         public PhantomSetting phantomSetting;
     }
 
+    [MetaCodeSample("Phanto")]
     [System.Serializable]
     public class PhantoSetting : GameSetting
     {
@@ -76,6 +81,7 @@ public class GameplaySettings : ScriptableObject
         public PhantoBehaviour.Roam.RoamSettings roamSettings;
     }
 
+    [MetaCodeSample("Phanto")]
     [System.Serializable]
     public class PhantomSetting : GameSetting
     {
@@ -120,6 +126,7 @@ public class GameplaySettings : ScriptableObject
         public BlasterHands blasterHands = BlasterHands.LeftHand;
     }
 
+    [MetaCodeSample("Phanto")]
     [System.Serializable]
     public class GuiSettings : GameSetting
     {

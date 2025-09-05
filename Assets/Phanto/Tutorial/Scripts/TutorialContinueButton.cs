@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using Oculus.Haptics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,6 +8,7 @@ using UnityEngine.SceneManagement;
 /// <summary>
 /// Simple script to handle button events in Tutorial scene
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class TutorialContinueButton : MonoBehaviour
 {
     private const string RESTART_SCENE = "TutorialScene";

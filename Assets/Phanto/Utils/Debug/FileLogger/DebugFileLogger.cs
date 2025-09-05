@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.IO;
 using System.Text;
@@ -19,6 +20,7 @@ namespace PhantoUtils
      * </remarks>
      */
     [DefaultExecutionOrder(-10000)] // Set the execution order very early to catch as many startup logs as possible
+    [MetaCodeSample("Phanto")]
     public class DebugFileLogger : MonoBehaviour
     {
         private static readonly int InitialLogBufferBytes = 4096;

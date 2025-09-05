@@ -1,11 +1,13 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Meta.XR.EnvironmentDepth;
 
 namespace PhantoUtils
 {
+    [MetaCodeSample("Phanto")]
     public class OcclusionKeywordToggle : MonoBehaviour
     {
         private const string HARD_OCCLUSION = "HARD_OCCLUSION";

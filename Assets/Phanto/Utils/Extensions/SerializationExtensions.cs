@@ -1,10 +1,12 @@
 ﻿// Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace PhantoUtils
 {
+    [MetaCodeSample("Phanto")]
     public static class SerializationExtensions
     {
         public static byte[] ToByteArray(this object obj)

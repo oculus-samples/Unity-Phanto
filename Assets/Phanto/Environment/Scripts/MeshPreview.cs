@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ namespace Phantom.Environment.Scripts
     /// <summary>
     ///     This component previews a mesh renderer on a given GameObject.
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class MeshPreview : MonoBehaviour
     {
         [SerializeField] private string propertyName = "_Color";

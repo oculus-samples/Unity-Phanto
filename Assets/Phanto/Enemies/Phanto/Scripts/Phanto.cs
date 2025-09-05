@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using Random = UnityEngine.Random;
 
 namespace Phanto
 {
+    [MetaCodeSample("Phanto")]
     [RequireComponent(typeof(Enemy))]
     public class Phanto : MonoBehaviour
     {

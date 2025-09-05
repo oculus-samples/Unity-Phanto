@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace Phanto.Audio.Scripts
     /// <summary>
     /// Manages sound effects for Phanto
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class PhantoGooSfxManager : SingletonMonoBehaviour<PhantoGooSfxManager>
     {
         [SerializeField] private bool startMusicOnLoad;
@@ -464,6 +466,7 @@ namespace Phanto.Audio.Scripts
             }
         }
 
+        [MetaCodeSample("Phanto")]
         [Serializable]
         public class SfxContainer
         {

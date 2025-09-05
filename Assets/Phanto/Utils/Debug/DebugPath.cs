@@ -1,9 +1,11 @@
 ﻿// Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using UnityEngine;
 using Utilities.XR;
 
+[MetaCodeSample("Phanto")]
 public class DebugPath
 {
     private Vector3[] _points;

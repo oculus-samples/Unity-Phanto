@@ -1,11 +1,13 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections.Generic;
 using OVRSimpleJSON;
 using UnityEngine;
 using UnityEngine.Assertions;
 
+[MetaCodeSample("Phanto")]
 public static class XRSimConverter
 {
     private const string Bounded2D = "Bounded2D";

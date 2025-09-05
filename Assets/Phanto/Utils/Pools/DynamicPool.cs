@@ -1,9 +1,11 @@
 ﻿// Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine.Pool;
 
 namespace Phanto
 {
+    [MetaCodeSample("Phanto")]
     public class DynamicPool<T> : Pool<T> where T : class
     {
         private readonly ObjectPool<T> pool;

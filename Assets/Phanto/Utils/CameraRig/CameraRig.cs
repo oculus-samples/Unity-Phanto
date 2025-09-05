@@ -1,9 +1,11 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 
 namespace PhantoUtils.VR
 {
+    [MetaCodeSample("Phanto")]
     [SingletonMonoBehaviour.InstantiationSettings(dontDestroyOnLoad = true)]
     [DefaultExecutionOrder(-10)]
     public sealed class CameraRig : SingletonMonoBehaviour<CameraRig>

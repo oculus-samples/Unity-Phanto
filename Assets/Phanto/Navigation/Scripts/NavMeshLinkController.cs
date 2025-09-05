@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Runtime.CompilerServices;
 using Phanto.Enemies.DebugScripts;
 using PhantoUtils;
@@ -12,6 +13,7 @@ using Utilities.XR;
 /// <summary>
 ///     Set start and end points for the navmeshlink
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class NavMeshLinkController : MonoBehaviour
 {
     [SerializeField] private NavMeshLink navMeshLink;

@@ -1,9 +1,11 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 
 namespace PhantoUtils.VR
 {
+    [MetaCodeSample("Phanto")]
     public class FloatingUI : MonoBehaviour
     {
         [SerializeField] private Vector3 targetPosition = new(0.0f, 0.1f, 1.0f);

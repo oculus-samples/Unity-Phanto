@@ -1,9 +1,11 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using Oculus.Interaction;
 
 namespace PhantoUtils.VR
 {
+    [MetaCodeSample("Phanto")]
     public static class InteractionExtensions
     {
         public static RayInteractable GetHoveredInteractable(this RayInteractor interactor)

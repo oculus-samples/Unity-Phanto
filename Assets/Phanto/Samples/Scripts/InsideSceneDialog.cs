@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using Utilities.XR;
 using Phanto.Enemies.DebugScripts;
@@ -8,6 +9,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
 
+[MetaCodeSample("Phanto")]
 public class InsideSceneDialog : MonoBehaviour
 {
     private const string In = "In";

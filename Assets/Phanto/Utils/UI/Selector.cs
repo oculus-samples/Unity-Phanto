@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections.Generic;
 using TMPro;
@@ -9,6 +10,7 @@ using UnityEngine.UI;
 
 namespace PhantoUtils
 {
+    [MetaCodeSample("Phanto")]
     public class Selector : MonoBehaviour
     {
         [SerializeField] private Button leftButton;

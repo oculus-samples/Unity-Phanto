@@ -1,8 +1,10 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 using UnityEngine.Events;
 
+[MetaCodeSample("Phanto")]
 public class HMDChecker : MonoBehaviour
 {
     [SerializeField] private UnityEvent HMDDetectedEvent;

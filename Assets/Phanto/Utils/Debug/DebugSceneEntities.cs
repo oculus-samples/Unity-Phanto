@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using System.Collections.Generic;
 using Common;
@@ -8,6 +9,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using Utilities.XR;
 
+[MetaCodeSample("Phanto")]
 [RequireComponent(typeof(MRUK))]
 public class DebugSceneEntities : MonoBehaviour
 {

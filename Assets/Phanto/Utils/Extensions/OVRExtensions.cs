@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using System.Collections.Generic;
 using Meta.XR.MRUtilityKit;
@@ -7,6 +8,7 @@ using UnityEngine;
 
 namespace PhantoUtils
 {
+    [MetaCodeSample("Phanto")]
     public static class OVRExtensions
     {
         public static bool ContainsAny(this MRUKAnchor.SceneLabels classification, IReadOnlyList<string> comparison)

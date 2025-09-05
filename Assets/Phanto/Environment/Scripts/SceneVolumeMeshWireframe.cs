@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using System.Collections.Generic;
 using Meta.XR.MRUtilityKit;
@@ -9,6 +10,7 @@ using UnityEngine.Rendering;
 /// <summary>
 /// Creates a volume mesh wireframe for the scene.
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class SceneVolumeMeshWireframe : MonoBehaviour
 {
     [Tooltip("The mesh filter containing the mesh to be rendered.")]

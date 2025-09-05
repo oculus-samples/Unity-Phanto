@@ -1,8 +1,10 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using Phantom;
 using UnityEngine;
 
+[MetaCodeSample("Phanto")]
 public class ShowWireframe : MonoBehaviour
 {
     private void Awake()

@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 
 namespace Phanto
@@ -7,6 +8,7 @@ namespace Phanto
     /// <summary>
     ///     Proximity sensor for enemies. This will use the IProximityTrigger in the game
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class EnemyProximitySensor : MonoBehaviour
     {
         [SerializeField] private SphereCollider sphereCollider;

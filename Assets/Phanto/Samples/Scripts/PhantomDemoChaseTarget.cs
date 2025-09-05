@@ -1,6 +1,7 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using Meta.XR.MRUtilityKit;
+using Meta.XR.Samples;
 using Phanto.Enemies.DebugScripts;
 using Phantom;
 using PhantoUtils;
@@ -8,6 +9,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using Utilities.XR;
 
+[MetaCodeSample("Phanto")]
 public class PhantomDemoChaseTarget : PhantomTarget
 {
     private Collider[] _colliders;

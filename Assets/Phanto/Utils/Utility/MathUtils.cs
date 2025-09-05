@@ -1,8 +1,10 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
+[MetaCodeSample("Phanto")]
 public static class MathUtils
 {
     /// <summary>Returns the result of a non-clamping linear remapping of a value x from source range [a, b] to the destination range [c, d].</summary>

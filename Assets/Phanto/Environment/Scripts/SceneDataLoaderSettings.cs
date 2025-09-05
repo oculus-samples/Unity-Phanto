@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using System.Collections.Generic;
 using Phantom.Environment.Scripts;
@@ -7,6 +8,7 @@ using UnityEngine;
 
 namespace Phantom.Environment.Scripts
 {
+    [MetaCodeSample("Phanto")]
     public class SceneDataLoaderSettings : ScriptableObject
     {
 

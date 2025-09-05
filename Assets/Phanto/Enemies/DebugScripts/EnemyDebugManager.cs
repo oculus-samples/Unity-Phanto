@@ -1,11 +1,13 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using Phantom;
 using PhantoUtils;
 using UnityEngine;
 
 namespace Phanto.Enemies.DebugScripts
 {
+    [MetaCodeSample("Phanto")]
     public class EnemyDebugManager : MonoBehaviour
     {
         [SerializeField] private PhantomManager phantomManager;

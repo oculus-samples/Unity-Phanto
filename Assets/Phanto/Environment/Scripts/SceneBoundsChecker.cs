@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace Phantom.Environment.Scripts
     /// <summary>
     ///     This script checks the bounds of the scene against the floor
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class SceneBoundsChecker : MonoBehaviour
     {
         private static Bounds? _currentBounds;
@@ -277,6 +279,7 @@ namespace Phantom.Environment.Scripts
     }
 
 #if UNITY_EDITOR
+    [MetaCodeSample("Phanto")]
     [CustomEditor(typeof(SceneBoundsChecker))]
     public class SceneBoundsCheckerEditor : Editor
     {

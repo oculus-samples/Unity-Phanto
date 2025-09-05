@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -13,6 +14,7 @@ using Random = UnityEngine.Random;
 /// <summary>
 /// Represents a triangle in a NavMesh
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class NavMeshTriangle : IEquatable<NavMeshTriangle>
 {
     private readonly bool[] _borderEdges;

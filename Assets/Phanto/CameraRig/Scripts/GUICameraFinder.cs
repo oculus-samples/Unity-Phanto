@@ -1,10 +1,12 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 
 /// <summary>
 /// Finds the camera rig from the scene
 /// </summary>
+[MetaCodeSample("Phanto")]
 [RequireComponent(typeof(Canvas))]
 public class GUICameraFinder : MonoBehaviour
 {

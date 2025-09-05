@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections.Generic;
 using Phantom;
@@ -14,6 +15,7 @@ namespace Phanto
     /// <summary>
     ///     This class implements a "goo-ball" that bounces around a virtual environment and spreads goo.
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class PhantoGooBall : MonoBehaviour
     {
         private static readonly Dictionary<Object, PhantoGooBall> _gooBalls = new Dictionary<Object, PhantoGooBall>();

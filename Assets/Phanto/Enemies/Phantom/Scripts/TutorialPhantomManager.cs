@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using System.Collections.Generic;
 using Phantom.Environment.Scripts;
@@ -12,6 +13,7 @@ using Debug = UnityEngine.Debug;
 
 namespace Phantom
 {
+    [MetaCodeSample("Phanto")]
     class TutorialPhantomManager : PhantomManager
     {
         private Coroutine _tutorialCoroutine;

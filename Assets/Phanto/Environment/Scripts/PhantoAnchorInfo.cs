@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace Phantom.Environment.Scripts
     /// <summary>
     ///     Represents a scene anchor, holding relevant information.
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class PhantoAnchorInfo : MonoBehaviour
     {
         [SerializeField, HideInInspector] private Transform _transform;

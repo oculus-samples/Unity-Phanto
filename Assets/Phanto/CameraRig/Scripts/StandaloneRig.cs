@@ -1,11 +1,13 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using PhantoUtils.VR;
 using UnityEngine;
 
 /// <summary>
 /// Instantiates a CameraRig object if not present
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class StandaloneRig : MonoBehaviour
 {
     [SerializeField] private GameObject CameraRigPrefab;

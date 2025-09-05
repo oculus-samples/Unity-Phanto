@@ -1,10 +1,12 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 
 /// <summary>
 /// This script manages the Ecto Blaster game object visibility based on app input focus status
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class EctoBlasterManager : MonoBehaviour
 {
     [SerializeField] private GameObject[] EctoBlaster;

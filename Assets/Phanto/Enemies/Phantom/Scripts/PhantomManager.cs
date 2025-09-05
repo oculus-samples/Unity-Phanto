@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -21,6 +22,7 @@ namespace Phantom
     /// <summary>
     ///     Spawns and keeps track of a flock of phantoms.
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class PhantomManager : SingletonMonoBehaviour<PhantomManager>, IPhantomManager
     {
         // Objects that should be appropriate for placing a crystal on.

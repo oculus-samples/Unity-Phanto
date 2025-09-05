@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using Oculus.Haptics;
 using Phanto.Audio.Scripts;
@@ -12,6 +13,7 @@ namespace Phantom.EctoBlaster.Scripts
     /// <summary>
     /// Spawns blaster on click
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class EctoBlasterSpawner : MonoBehaviour
     {
         [Tooltip("A reference to the blaster prefab")]

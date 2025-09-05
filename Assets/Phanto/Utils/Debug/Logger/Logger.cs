@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -10,6 +11,7 @@ using Object = UnityEngine.Object;
 
 namespace PhantoUtils
 {
+    [MetaCodeSample("Phanto")]
     public static class Logger
     {
         public enum Severity

@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using UnityEngine.Assertions;
 /// <summary>
 /// Manages statistics
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class StatisticsManager : MonoBehaviour
 {
     public static StatisticsManager Instance;
@@ -56,6 +58,7 @@ public class StatisticsManager : MonoBehaviour
 /// <summary>
 /// Object to Manages statistics
 /// </summary>
+[MetaCodeSample("Phanto")]
 [Serializable]
 public class Statistics
 {

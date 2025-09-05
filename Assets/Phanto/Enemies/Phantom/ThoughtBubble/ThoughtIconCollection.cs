@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,9 +30,11 @@ namespace Phantom
         Angry,
     }
 
+    [MetaCodeSample("Phanto")]
     [CreateAssetMenu]
     public class ThoughtIconCollection : ScriptableObject
     {
+        [MetaCodeSample("Phanto")]
         [Serializable]
         private class ThoughtIcon
         {

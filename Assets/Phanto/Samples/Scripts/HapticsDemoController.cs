@@ -1,9 +1,11 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using Oculus.Haptics;
 using TMPro;
 using UnityEngine;
 
+[MetaCodeSample("Phanto")]
 public class HapticsDemoController : MonoBehaviour
 {
     private const string Instructions1 = "Squeeze the hand grip to start the haptic effect.";

@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using static NavMeshConstants;
 
 namespace Phantom
 {
+    [MetaCodeSample("Phanto")]
     public class SceneVisualizationManager : MonoBehaviour
     {
         [SerializeField] private Transform leftHand;

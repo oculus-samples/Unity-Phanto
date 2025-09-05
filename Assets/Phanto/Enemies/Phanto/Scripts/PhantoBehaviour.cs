@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Phanto;
@@ -18,6 +19,7 @@ namespace Phanto
     /// <summary>
     /// Base class for Phanto behaviours.
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class PhantoBehaviour : EnemyBehaviour<PhantoBehaviour>
     {
         // Phanto's states
@@ -208,10 +210,12 @@ namespace Phanto
         /// <summary>
         /// The "Nova" state is a simple "spitfire".
         /// </summary>
+        [MetaCodeSample("Phanto")]
         public class Nova : BasePhantoState
         {
             public const float MIN_SQR_GOO_DIST = 0.04f;
 
+            [MetaCodeSample("Phanto")]
             [System.Serializable]
             public class NovaSettings
             {
@@ -309,8 +313,10 @@ namespace Phanto
         /// <summary>
         /// The "Spit Goo Ball" state.
         /// </summary>
+        [MetaCodeSample("Phanto")]
         public class SpitGooBall : BasePhantoState
         {
+            [MetaCodeSample("Phanto")]
             [System.Serializable]
             public class SpitGooBallSettings
             {
@@ -403,8 +409,10 @@ namespace Phanto
         /// <summary>
         /// The "Pain" state.
         /// </summary>
+        [MetaCodeSample("Phanto")]
         public class Pain : BasePhantoState
         {
+            [MetaCodeSample("Phanto")]
             [System.Serializable]
             public class PainSettings
             {
@@ -465,8 +473,10 @@ namespace Phanto
         /// <summary>
         /// The "Go Ethereal" state.
         /// </summary>
+        [MetaCodeSample("Phanto")]
         public class GoEthereal : BasePhantoState
         {
+            [MetaCodeSample("Phanto")]
             [System.Serializable]
             public class GoEtherealSettings
             {
@@ -529,10 +539,12 @@ namespace Phanto
         /// <summary>
         /// The "Dodge" state.
         /// </summary>
+        [MetaCodeSample("Phanto")]
         public class Dodge : BasePhantoState
         {
             public const float X_DIST = 0.3f;
 
+            [MetaCodeSample("Phanto")]
             [System.Serializable]
             public class DodgeSettings
             {
@@ -618,8 +630,10 @@ namespace Phanto
         /// <summary>
         /// The "Roam" state.
         /// </summary>
+        [MetaCodeSample("Phanto")]
         public class Roam : BasePhantoState
         {
+            [MetaCodeSample("Phanto")]
             [System.Serializable]
             public class RoamSettings
             {
@@ -762,6 +776,7 @@ namespace Phanto
         /// <summary>
         /// The "Die" state.
         /// </summary>
+        [MetaCodeSample("Phanto")]
         private class Die : BasePhantoState
         {
             public const float DEATH_TIME = 11f;
@@ -853,6 +868,7 @@ namespace Phanto
         /// <summary>
         ///     Roams silently forever. Spooky.
         /// </summary>
+        [MetaCodeSample("Phanto")]
         private class DemoRoam : BasePhantoState
         {
             private const float thinkTimePerWave = 0.6f;
@@ -1003,6 +1019,7 @@ namespace Phanto
 /// <summary>
 ///     Base behaviour class for all Phanto states.
 /// </summary>
+[MetaCodeSample("Phanto")]
 public abstract class BasePhantoState : IEnemyState<PhantoBehaviour>
 {
     protected static readonly Vector3 CubeSize = new(0.05f, 0.1f, 0.05f);

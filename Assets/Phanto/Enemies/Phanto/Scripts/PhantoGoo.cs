@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using System.Collections.Generic;
 using Phanto.Audio.Scripts;
@@ -8,6 +9,7 @@ using UnityEngine;
 /// <summary>
 /// Class containing logic for the "Goo"
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class PhantoGoo : MonoBehaviour
 {
     private static readonly HashSet<PhantoGoo> GooCollection = new();

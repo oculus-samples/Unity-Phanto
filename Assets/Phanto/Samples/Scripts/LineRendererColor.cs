@@ -1,9 +1,11 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using PhantoUtils;
 using UnityEditor;
 using UnityEngine;
 
+[MetaCodeSample("Phanto")]
 public class LineRendererColor : MonoBehaviour
 {
     [SerializeField] private Color color = MSPalette.Aqua;

@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ using UnityEngine.AI;
 using UnityEngine.Assertions;
 using static NavMeshConstants;
 
+[MetaCodeSample("Phanto")]
 [RequireComponent(typeof(MRUKRoom))]
 public class SceneQuery : MonoBehaviour
 {

@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using PhantoUtils.VR;
 using UnityEngine;
@@ -10,6 +11,7 @@ namespace Phantom.EctoBlaster.Scripts
     /// <summary>
     ///     Points the turret towards the user if they are in range.
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class EctoBlasterDemoRadar : MonoBehaviour
     {
         [Tooltip("The barrel transform")]

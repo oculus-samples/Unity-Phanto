@@ -1,4 +1,5 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -10,6 +11,7 @@ namespace Phanto.Audio.Scripts
     /// A MonoBehavior attached to GameObjects which will play a sound
     /// when receiving a 'PhantoLoopSfxBehavior' event.
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class PhantoLoopSfxBehavior : MonoBehaviour
     {
         public bool isOn;

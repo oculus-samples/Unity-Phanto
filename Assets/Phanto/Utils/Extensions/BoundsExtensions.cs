@@ -1,10 +1,12 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace PhantoUtils
 {
+    [MetaCodeSample("Phanto")]
     public static class BoundsExtensions
     {
         /// <summary>

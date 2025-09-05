@@ -1,11 +1,13 @@
 ﻿// Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Phanto
 {
+    [MetaCodeSample("Phanto")]
     public static class PhysicsUtils
     {
         public const int MAX_RAYCAST_RESULTS = 256;

@@ -1,8 +1,10 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using UnityEngine;
 
+[MetaCodeSample("Phanto")]
 public class SetFPS : MonoBehaviour
 {
     [SerializeField] private int requestedFps = 72;

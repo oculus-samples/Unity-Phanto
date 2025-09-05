@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using Oculus.Interaction;
 using UnityEngine;
@@ -9,6 +10,7 @@ using UnityEngine.UI;
 
 namespace PhantoUtils.VR
 {
+    [MetaCodeSample("Phanto")]
     public class ScrollviewControls : MonoBehaviour
     {
         private const float InputDeadzone = 0.05f;

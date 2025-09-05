@@ -1,11 +1,13 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using PhantoUtils;
 using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace Phanto
 {
+    [MetaCodeSample("Phanto")]
     [RequireComponent(typeof(PoolManagerComponent))]
     [SingletonMonoBehaviour.InstantiationSettings(dontDestroyOnLoad = false)]
     public class PoolManagerSingleton : SingletonMonoBehaviour<PoolManagerSingleton>

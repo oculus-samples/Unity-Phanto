@@ -1,9 +1,11 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections.Generic;
 
 namespace Phanto
 {
+    [MetaCodeSample("Phanto")]
     public class PoolManager<K, P> where K : class
         where P : Pool<K>
     {

@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,6 +18,7 @@ namespace Phantom
     /// <summary>
     ///     Spawns and keeps track of a flock of phantoms.
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class PhantomDemoManager : MonoBehaviour, IPhantomManager
     {
         [SerializeField] private PhantomController phantomPrefab;

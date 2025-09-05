@@ -2,6 +2,7 @@
 
 #if UNITY_EDITOR
 
+using Meta.XR.Samples;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -12,6 +13,7 @@ using UnityEngine;
 /// The changes are removed at the end of the build, but
 /// that second modification doesn't get written to disk (until now).
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class SaveProjectAfterBuild : IPostprocessBuildWithReport
 {
     public int callbackOrder => int.MaxValue; // execute last

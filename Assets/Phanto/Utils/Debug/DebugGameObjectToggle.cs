@@ -1,8 +1,10 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 using Common;
+using Meta.XR.Samples;
 using UnityEngine;
 
+[MetaCodeSample("Phanto")]
 public class DebugGameObjectToggle : MonoBehaviour
 {
     private void Awake()

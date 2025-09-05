@@ -1,10 +1,12 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[MetaCodeSample("Phanto")]
 [SelectionBase]
 public class TableCrystal : Crystal
 {

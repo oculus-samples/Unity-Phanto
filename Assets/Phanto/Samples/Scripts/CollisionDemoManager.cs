@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Phanto.Enemies.DebugScripts;
@@ -10,6 +11,7 @@ using Utilities.XR;
 
 namespace Phantom
 {
+    [MetaCodeSample("Phanto")]
     public class CollisionDemoManager : MonoBehaviour, ICollisionDemo
     {
         [SerializeField] protected Transform leftHand;

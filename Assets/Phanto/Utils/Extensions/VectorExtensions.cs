@@ -1,10 +1,12 @@
 ﻿// Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace PhantoUtils
 {
+    [MetaCodeSample("Phanto")]
     public static class VectorExtensions
     {
         private const MethodImplOptions MethodOptions = MethodImplOptions.AggressiveInlining;

@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections.Generic;
 using PhantoUtils;
@@ -11,6 +12,7 @@ namespace Phantom
     /// stores a queue of targets.
     /// phantoms spawned from this crystal are assigned targets from this queue.
     /// </summary>
+    [MetaCodeSample("Phanto")]
     [SelectionBase]
     public class OriginCrystal : Crystal
     {

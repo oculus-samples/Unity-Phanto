@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections;
 using Oculus.Interaction;
 using UnityEngine;
@@ -7,6 +8,7 @@ using UnityEngine;
 /// <summary>
 ///     This script resets the transform back to where it started.
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class TransformReset : MonoBehaviour
 {
     public float returnHomeTime = 1.5f;

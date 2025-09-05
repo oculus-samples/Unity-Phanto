@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using Phantom;
 using UnityEngine;
@@ -7,6 +8,7 @@ using UnityEngine;
 /// <summary>
 /// This script manages the Polterblast game object visibility based on app input focus status
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class PolterblastManager : MonoBehaviour
 {
     [SerializeField] private GameObject Polterblast;

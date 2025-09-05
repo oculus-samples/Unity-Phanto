@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using Oculus.Haptics;
@@ -11,6 +12,7 @@ namespace Phanto.Audio.Scripts
     /// <summary>
     ///     Play a random oneshot sfx on Start.
     /// </summary>
+    [MetaCodeSample("Phanto")]
     [RequireComponent(typeof(AudioSource))]
     public class PhantoRandomOneShotSfxBehavior : MonoBehaviour
     {

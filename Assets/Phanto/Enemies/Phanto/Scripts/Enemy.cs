@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -9,6 +10,7 @@ namespace Phanto
     /// <summary>
     /// Enemy behaviour
     /// </summary>
+    [MetaCodeSample("Phanto")]
     [DefaultExecutionOrder(-1)]
     public class Enemy : MonoBehaviour, IDamageable
     {

@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 
 namespace Phanto.Audio.Scripts
@@ -8,6 +9,7 @@ namespace Phanto.Audio.Scripts
     /// MonoBehavior attached to GameObjects whose AudioSource component has a
     /// PhantoPolterblastSfxBehavior attached
     /// </summary>
+    [MetaCodeSample("Phanto")]
     public class PhantoPolterblastSfxBehavior : PhantoLoopSfxBehavior
     {
         public AnimationCurve distortionResponseCurve;

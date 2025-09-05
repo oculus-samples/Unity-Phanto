@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ using Object = UnityEngine.Object;
 namespace Phantom.Environment.Scripts
 {
     // This class loads scene data from either Scene API or a JSON file.
+    [MetaCodeSample("Phanto")]
     public class SceneDataLoader : MonoBehaviour
     {
         public enum SceneDataSource

@@ -1,11 +1,13 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
 
+[MetaCodeSample("Phanto")]
 public class GameplayManager : MonoBehaviour
 {
     [Header("Logic points")]

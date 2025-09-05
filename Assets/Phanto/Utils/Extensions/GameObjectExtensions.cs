@@ -1,9 +1,11 @@
 ﻿// Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using UnityEngine;
 
 namespace PhantoUtils
 {
+    [MetaCodeSample("Phanto")]
     public static class GameObjectExtensions
     {
         private const string CLONE_SUFFIX = "(Clone)";

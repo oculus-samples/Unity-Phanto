@@ -1,11 +1,13 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using TMPro;
 using UnityEngine;
 
 /// <summary>
 /// Shows the ranking UI when the user presses the change game button
 /// </summary>
+[MetaCodeSample("Phanto")]
 public class UIShowRanking : MonoBehaviour
 {
     [SerializeField] private OVRInput.RawButton changeGameButton;

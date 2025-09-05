@@ -1,9 +1,11 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using System.Collections.Generic;
 using UnityEngine;
 using Oculus.Haptics;
 
+[MetaCodeSample("Phanto")]
 public class HapticsPhantoTouch : MonoBehaviour
 {
     private static readonly Dictionary<Collider, HapticsPhantoTouch> _phantoTouches =

@@ -1,5 +1,6 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
+using Meta.XR.Samples;
 using PhantoUtils.VR;
 using TMPro;
 using UnityEngine;
@@ -9,6 +10,7 @@ namespace Phanto
     /// <summary>
     ///     Scorebar for enemies
     /// </summary>
+    [MetaCodeSample("Phanto")]
     [RequireComponent(typeof(TextMeshPro))]
     public class PhantoScorebar : MonoBehaviour
     {
