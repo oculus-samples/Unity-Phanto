@@ -1,0 +1,43 @@
+# Key Components
+
+The game demonstrates our recommended best practices when using the new scene mesh feature and updated Scene API.
+
+## The Scene Mesh
+
+The [scene mesh](https://developers.meta.com/horizon/documentation/unity/scene-best-practices/#using-the-scene-mesh) is a low-fidelity, high-coverage artifact that defines the boundary between free and occupied space in a room. It is automatically generated during the Space Setup experience and can be queried via the Scene API.
+
+Access the scene mesh in the project using **OVRSceneManager**. Each sample scene creates an **OVRSceneManager** component to automatically load the mesh and room elements captured during the space setup flow. The scene mesh is represented as a standard Unity mesh, which can include a collider and respond to ray casts. In the project, the scene mesh is assigned the **GlobalMesh** layer mask.
+
+For more information on getting started with the scene mesh, visit the [Meta Quest Developer Portal](https://developers.meta.com/horizon/design/haptics-overview/#meta-quest-platform-and-haptic-hardware-considerations).
+
+## The Ectofluid (Ghostly Goo)
+
+![Goo GIF](../Media/Goo.gif 'Goo')
+
+Ectofluid is a ghostly goo created by Phanto and their Phantoms. Beware: if your room becomes too covered with goo, you lose the game.
+
+This element shows how to place virtual content onto the physical environment represented by the scene mesh. Content can attach anywhere within the room reconstruction, adjusting to the real physical environment.
+
+## The Polterblast 3000
+
+![Polterblast image](../Media/Hose.png 'Hose')
+
+This element uses the scene mesh as a physics component, allowing fluid to collide with the mesh and create a splashing effect. We recommend using particles with fast collisions for a more immersive experience.
+
+- Use the Polterblast 3000 to throw Ectofluid and clean the ghostly goo from your room.
+- Press the Right Trigger to throw Ectofluid.
+
+## Phanto and the Phantoms
+
+![Phanto and Phantoms image](../Media/PhantoPhantoms.png 'Phanto and Phantoms')
+
+Watch out! Phantoms are appearing in your room. Use the Polterblast 3000 (RT) and the Ecto Blaster (LT) to defeat them.
+
+- Phanto is an air-navigated NPC that uses the scene mesh as a sensor to find available places to navigate and spawn virtual elements (Ectofluid).
+- Phantoms are small, ground-navigated NPCs that use the scene mesh and room capture data (chairs, couch, desk, windows, etc.) to navigate, jump to targeted places, and spawn content (Ectofluid).
+
+## Ecto Blaster
+
+![Blaster image](../Media/Blaster.png 'Blaster')
+
+The Ecto Blaster allows you to defeat Phantoms. Place it in your room, and it will target and throw Ectofluid at them. To place the Ecto Blaster, point to any location in your room and press the Left Trigger. This element demonstrates tracing and ray casting against the environment, using the scene mesh as a ray cast layer. This allows users to create and place virtual content in mixed reality that responds to the scene.
