@@ -7,6 +7,13 @@
       "dependencies": {},
       "hash": "558f23b6ed48f7aabca66e190dac1a6bcb37bce8"
     },
+    "com.meta.tutorial.framework": {
+      "version": "https://github.com/meta-quest/Unity-UtilityPackages.git?path=com.meta.tutorial.framework#com.meta.tutorial.framework-1.0.2",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "3dd9868902b0da1cd7700c9da725aa9fb1ea5da5"
+    },
     "com.meta.xr.depthapi": {
       "version": "https://github.com/oculus-samples/Unity-DepthAPI.git?path=/Packages/com.meta.xr.depthapi",
       "depth": 0,

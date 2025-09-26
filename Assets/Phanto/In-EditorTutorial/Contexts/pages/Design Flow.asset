@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4510294d23d964fe59443526f1ca7c4b, type: 3}
+  m_Name: Design Flow
+  m_EditorClassIdentifier: 
+  m_displayName: Design Flow
+  m_hierarchyName: Design Flow
+  m_context: {fileID: 11400000, guid: aa5a3203e5d39604fa479e24643b2dae, type: 2}
+  m_markdownFile: {fileID: 0}
+  m_priority: 1003
+  m_overrideMarkdownText: "# Design Flow\n\nThe following diagrams represent the
+    game's main user flow.\n\n## Setup Design\n\nBefore starting the game, the setup
+    flow will verify that the user has:\n\n- Completed **Space Setup** and has a
+    Scene Model\n- Granted **Spatial Data** permission ([implementation instructions](https://developers.meta.com/horizon/documentation/unity/unity-spatial-data-perm/))\n\nWithout
+    these two requirements, the application can't function. Therefore, the user will
+    only be able to advance to the next scene after complying with these requirements.\n\n```mermaid\ngraph
+    TD;\n    Lobby-->SpaceSetup;\n    SpaceSetup-->Lobby;\n    Lobby-->Permission;\n   
+    Permission-->Lobby;\n```\n\nWhen permission is denied, or if no Scene Model is
+    present, the user will be presented with prompts that allow them to rescan their
+    room and grant permissions.\n\n|                      Missing scene prompt                      
+    |                           Permission prompt                           |\n|
+    :-------------------------------------------------------------: | :-------------------------------------------------------------------:
+    |\n| ![RescanScene](../Media/NoSceneModel.png 'Missing scene prompt') | ![PermissionPrompt](../Media/PermissionPrompt.png
+    'Permission Prompt') |\n\n## Gameplay Design\n\nThe following diagram shows the
+    high-level states for the player after they have fulfilled the requirements above.
+    When launching the game for the first time, the player will go through a tutorial.
+    Afterward, the tutorial can be skipped. During gameplay, the player will go through
+    several waves:\n\n1. **Phanto Wave** - requires the player to spray Phanto using
+    the Polterblast 3000 while keeping goo levels low.\n2. **Phantom Wave** - requires
+    the player to protect the green crystal by placing the EctoBlaster in strategic
+    locations using both controllers.\n\n```mermaid\ngraph TD;\n    Lobby-->Tutorial;\n   
+    Lobby-->Game;\n    Tutorial-->Game;\n    Game-->Phanto/PhantomWave;\n    Phanto/PhantomWave-->Phanto/PhantomWave;\n   
+    Phanto/PhantomWave-->Win;\n    Win-->Game;\n    Phanto/PhantomWave-->Lose;\n   
+    Lose-->Game;\n```\n\n## Developer Examples\n\nThese example scenes are available
+    for developers. They showcase best practices with each of the Presence Platform
+    components.\n\n```mermaid\ngraph TD;\n    ContentPlacement;\n    MeshCollisions;\n   
+    AirNavigation;\n    MeshNavigation;\n    SceneVisualization;\n    SemanticSceneQuery;\n   
+    DebugDrawingScene;\n    UserInBounds;\n    DepthOcclusion;\n    HapticsDemo;\n```\n"
+  m_overrideMarkdownRoot: .\Documentation/

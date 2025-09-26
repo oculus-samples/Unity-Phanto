@@ -1,0 +1,111 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4510294d23d964fe59443526f1ca7c4b, type: 3}
+  m_Name: Welcome
+  m_EditorClassIdentifier: 
+  m_displayName: Welcome
+  m_hierarchyName: Welcome
+  m_context: {fileID: 11400000, guid: e97f2c03783e6f84cb1132856df8dd53, type: 2}
+  m_markdownFile: {fileID: 0}
+  m_priority: 1001
+  m_overrideMarkdownText: '# Project Phanto - Presence Platform Reference App
+
+
+    Project
+    Phanto is a Mixed Reality (MR) reference app that highlights the latest Presence
+    Platform features, such as scene mesh, Scene Model, and Scene API objects.
+
+
+    This
+    codebase serves as a reference and template for MR projects. You can test the
+    experience by building and deploying it to your Meta Quest device.
+
+
+
+    ##
+    Project Description
+
+
+    This project showcases scene mesh functionality, Scene
+    Model integration, Scene API objects, haptic feedback, and mixed reality navigation
+    systems.
+
+
+    Built using the <a href="https://unity.com/">Unity engine</a>
+    with Unity 6 or higher, it includes haptic assets designed with <a href="https://developers.meta.com/horizon/documentation/unity/haptics-studio/">Haptics
+    Studio</a> and integrated using the <a href="https://developers.meta.com/horizon/documentation/unity/unity-haptics-sdk/">Haptics
+    SDK for Unity</a>.
+
+
+
+    ## Dependencies
+
+
+    This project uses the following
+    plugins and software:
+
+
+    - <a href="https://unity.com/download">Unity</a>
+    6 or higher
+
+    - <a href="https://developers.meta.com/horizon/downloads/package/meta-xr-interaction-sdk-ovr-integration/67.0">Meta
+    XR Interaction SDK OVR Integration v67</a>
+
+    - <a href="https://developers.meta.com/horizon/documentation/unity/haptics-studio/">Haptics
+    Studio</a>
+
+    - <a href="https://developers.meta.com/horizon/documentation/unity/unity-haptics-sdk/">Haptics
+    SDK for Unity</a>
+
+    - <a href="https://github.com/darktable/XRGizmos.git">XRGizmos</a>
+
+    -
+    <a href="https://github.com/Tayx94/graphy.git">Graphy</a>
+
+
+    To test this
+    project within Unity, you need:
+
+
+    - <a href="https://www.meta.com/quest/setup/">The
+    Meta Quest App</a>
+
+    - Mac or Windows
+
+
+
+    ## Documentation
+
+
+    More information
+    is available in the sections below:
+
+
+    - <a href="./Documentation/HealthAndSafetyGuidelines.md">Health
+    & Safety Guidelines</a>
+
+    - <a href="./Documentation/DesignFlow.md">Design
+    Flow</a>
+
+    - <a href="./#device-compatibility">Device Compatibility</a>
+
+    -
+    <a href="./Documentation/KeyComponents.md">Key Components</a>
+
+    - <a href="./Documentation/MainScenes.md">Main
+    Scenes</a>
+
+    - <a href="./Documentation/ExampleScenes.md.md">Example Scenes</a>
+
+
+'
+  m_overrideMarkdownRoot: ./
