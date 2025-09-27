@@ -15,7 +15,7 @@ Built using the [Unity engine](https://unity.com/) with Unity 6 or higher, it in
 ## How to Run the Project in Unity
 
 1. Use *Unity 6* or higher.
-2. Load a [Main Scene](#main-scenes) or [Example Scene](#example-scenes).
+2. Load a [Main Scene](./Documentation/MainScenes.md) or [Example Scene](./Documentation/ExampleScenes.md).
 3. Choose one of three running options:
     - **Quest 3**: Build, deploy, and run the game on your headset.
     - **Oculus Link** (Windows only):
@@ -69,7 +69,7 @@ More information is available in the sections below:
 - [Device Compatibility](#device-compatibility)
 - [Key Components](./Documentation/KeyComponents.md)
 - [Main Scenes](./Documentation/MainScenes.md)
-- [Example Scenes](./Documentation/ExampleScenes.md.md)
+- [Example Scenes](./Documentation/ExampleScenes.md)
 
 ## Device Compatibility
 
