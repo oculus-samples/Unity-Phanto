@@ -4,7 +4,7 @@ After opening the project, you will find three main scenes:
 
 ## LobbyScene
 
-![RescenScene](../Media/LobbyScene1.PNG 'Rescen Scene') ![StartGame](../Media/LobbyScene2.PNG 'Start Game')
+![RescenScene](../Media/LobbyScene_1.png 'Rescen Scene') ![StartGame](../Media/LobbyScene_2.png 'Start Game')
 
 [LobbyScene.unity](../Assets/Phanto/Scenes/LobbyScene.unity): This self-contained scene includes the introduction, shows the current mesh, and allows the player to start the game. The player can view, scan, and change their scene. If no scene information is provided, the player is guided to the **Space Setup** flow. Options include:
 
@@ -14,7 +14,7 @@ After opening the project, you will find three main scenes:
 
 ## TutorialScene
 
-![Tutorial0](../Media/Tutorial0.PNG 'Tutorial0') ![Tutorial1](../Media/Tutorial1.PNG 'Tutorial1') ![Tutorial2](../Media/Tutorial2.PNG 'Tutorial2') ![Tutorial3](../Media/Tutorial3.PNG 'Tutorial3') ![Tutorial4](../Media/Tutorial4.PNG 'Tutorial4') ![Tutorial5](../Media/Tutorial5.PNG 'Tutorial5')
+![Tutorial0](../Media/Tutorial_0.png 'Tutorial0') ![Tutorial1](../Media/Tutorial_1.png 'Tutorial1') ![Tutorial2](../Media/Tutorial_2.png 'Tutorial2') ![Tutorial3](../Media/Tutorial_3.png 'Tutorial3') ![Tutorial4](../Media/Tutorial_4.png 'Tutorial4') ![Tutorial5](../Media/Tutorial_5.png 'Tutorial5')
 
 [TutorialScene.unity](../Assets/Phanto/Scenes/TutorialScene.unity): Contains the tutorial, presenting controls and game dynamics. The tutorial introduces game mechanics, including:
 
