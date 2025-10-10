@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 645f4231a451006409b7afbabdd9f82d, type: 3}
+  m_Name: Lobby Walkthrough
+  m_EditorClassIdentifier: 
+  m_displayName: Lobby Walkthrough
+  m_hierarchyName: 
+  m_context: {fileID: 11400000, guid: eb307621481a1d044b196f198ef8e4eb, type: 2}
+  m_markdownFile: {fileID: 0}
+  m_priority: 0
+  <References>k__BackingField:
+  - Header: Lobby Scene
+    Description: This self-contained scene includes the introduction, shows the current
+      mesh, and allows the player to start the game. The player can view, scan, and
+      change their scene. If no scene information is provided, the player is guided
+      to the Space Setup flow which includes the tutorial scene, the game scene,
+      and the trigger space setup.
+    Reference:
+      m_referenceType: 0
+      m_obj: {fileID: 102900000, guid: ffa7a77fbeb944c969fcf438d534232b, type: 3}
+      m_classType: 
+      m_scene: {fileID: 0}
+      m_name: 
+      m_path: 
+      m_guid: 
+      m_instanceID: 0
+  - Header: SceneAPIDataLoader
+    Description: This loads scene data from either Scene API or a JSON file.
+    Reference:
+      m_referenceType: 5
+      m_obj: {fileID: 102900000, guid: ffa7a77fbeb944c969fcf438d534232b, type: 3}
+      m_classType: 
+      m_scene: {fileID: 102900000, guid: ffa7a77fbeb944c969fcf438d534232b, type: 3}
+      m_name: SceneAPIDataLoader
+      m_path: 
+      m_guid: 
+      m_instanceID: 0
+  - Header: LobbyManager
+    Description: This manages the state of the Lobby UI.
+    Reference:
+      m_referenceType: 5
+      m_obj: {fileID: 0}
+      m_classType: 
+      m_scene: {fileID: 102900000, guid: ffa7a77fbeb944c969fcf438d534232b, type: 3}
+      m_name: LobbyManager
+      m_path: 
+      m_guid: 
+      m_instanceID: 0

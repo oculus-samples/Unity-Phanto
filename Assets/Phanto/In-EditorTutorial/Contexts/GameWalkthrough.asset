@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee262462c8042e840a3146c602914c9a, type: 3}
+  m_Name: GameWalkthrough
+  m_EditorClassIdentifier: 
+  m_title: Game Walkthrough
+  m_priority: 1012
+  m_tutorialConfig: {fileID: 11400000, guid: 2655c0b7522ad524b8bc43a3436dd847, type: 2}
+  m_showBanner: 0
+  m_references:
+  - Header: Game Scene
+    Description: This self-contained scene includes assets for gameplay, such as
+      Phanto, Phantoms, and other components.
+    Reference:
+      m_referenceType: 0
+      m_obj: {fileID: 102900000, guid: 9cb40f6d14299429884edf7a38c35ae6, type: 3}
+      m_classType: 
+      m_scene: {fileID: 0}
+      m_name: 
+      m_path: 
+      m_guid: 
+      m_instanceID: 0
+  - Header: Experience
+    Description: Contains 'GamplayManager.cs' which handles the scores and the win
+      or loss event.
+    Reference:
+      m_referenceType: 5
+      m_obj: {fileID: 0}
+      m_classType: 
+      m_scene: {fileID: 102900000, guid: 9cb40f6d14299429884edf7a38c35ae6, type: 3}
+      m_name: Experience
+      m_path: 
+      m_guid: 
+      m_instanceID: 0
+  - Header: Polterblast
+    Description: This script manages the Polterblast game object visibility based
+      on app input focus status
+    Reference:
+      m_referenceType: 5
+      m_obj: {fileID: 0}
+      m_classType: 
+      m_scene: {fileID: 102900000, guid: 9cb40f6d14299429884edf7a38c35ae6, type: 3}
+      m_name: Polterblast
+      m_path: 
+      m_guid: 
+      m_instanceID: 0
+  - Header: PhantomManager
+    Description: Handles spawning and keeping track phantoms as well as advancing
+      the waves.
+    Reference:
+      m_referenceType: 5
+      m_obj: {fileID: 0}
+      m_classType: 
+      m_scene: {fileID: 102900000, guid: 9cb40f6d14299429884edf7a38c35ae6, type: 3}
+      m_name: PhantomManager
+      m_path: 
+      m_guid: 
+      m_instanceID: 0
+  - Header: PoolManager
+    Description: Handles object pooling for optimized performance.
+    Reference:
+      m_referenceType: 5
+      m_obj: {fileID: 0}
+      m_classType: 
+      m_scene: {fileID: 102900000, guid: 9cb40f6d14299429884edf7a38c35ae6, type: 3}
+      m_name: PoolManager
+      m_path: 
+      m_guid: 
+      m_instanceID: 0

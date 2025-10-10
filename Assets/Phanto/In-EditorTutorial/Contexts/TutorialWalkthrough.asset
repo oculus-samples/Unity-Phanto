@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee262462c8042e840a3146c602914c9a, type: 3}
+  m_Name: TutorialWalkthrough
+  m_EditorClassIdentifier: 
+  m_title: Tutorial Walkthrough
+  m_priority: 1011
+  m_tutorialConfig: {fileID: 11400000, guid: 2655c0b7522ad524b8bc43a3436dd847, type: 2}
+  m_showBanner: 0
+  m_references:
+  - Header: Tutorial Scene
+    Description: 'Contains the tutorial, presenting controls and game dynamics. The
+      tutorial introduces game mechanics.
+
+
+      When running the app for the first
+      time, the tutorial is mandatory. Afterward, players can repeat the tutorial
+      or jump into the game.'
+    Reference:
+      m_referenceType: 0
+      m_obj: {fileID: 102900000, guid: 4b65252a0b3a13f49a23daa1dfca485a, type: 3}
+      m_classType: 
+      m_scene: {fileID: 0}
+      m_name: 
+      m_path: 
+      m_guid: 
+      m_instanceID: 0
+  - Header: GUITutorialHand
+    Description: Contains the 'TutorialManager.cs' that handles the tutorial pages
+      and its data.
+    Reference:
+      m_referenceType: 5
+      m_obj: {fileID: 0}
+      m_classType: 
+      m_scene: {fileID: 102900000, guid: 4b65252a0b3a13f49a23daa1dfca485a, type: 3}
+      m_name: GUITutorialHand
+      m_path: 
+      m_guid: 
+      m_instanceID: 0
+  - Header: TutorialPhantomManager
+    Description: Handles the gameplay logic of the tutorial.
+    Reference:
+      m_referenceType: 5
+      m_obj: {fileID: 0}
+      m_classType: 
+      m_scene: {fileID: 102900000, guid: 4b65252a0b3a13f49a23daa1dfca485a, type: 3}
+      m_name: TutorialPhantomManager
+      m_path: 
+      m_guid: 
+      m_instanceID: 0

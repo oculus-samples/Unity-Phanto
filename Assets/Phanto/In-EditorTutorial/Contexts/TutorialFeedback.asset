@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TutorialFeedback
   m_EditorClassIdentifier: 
   m_title: Give Feedback
-  m_priority: 1010
+  m_priority: 1100
   m_tutorialConfig: {fileID: 11400000, guid: 2655c0b7522ad524b8bc43a3436dd847, type: 2}
   m_showBanner: 1
   GitHubUrl: https://github.com/oculus-samples/Unity-Phanto
