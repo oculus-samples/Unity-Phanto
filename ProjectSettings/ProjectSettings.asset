@@ -450,7 +450,7 @@ PlayerSettings:
   - m_BuildTarget: iOSSupport
     m_GraphicsJobs: 0
   - m_BuildTarget: WindowsStandaloneSupport
-    m_GraphicsJobs: 0
+    m_GraphicsJobs: 1
   - m_BuildTarget: XboxOnePlayer
     m_GraphicsJobs: 1
   - m_BuildTarget: LuminSupport
@@ -465,6 +465,8 @@ PlayerSettings:
   - m_BuildTarget: XboxOnePlayer
     m_GraphicsJobMode: 0
   - m_BuildTarget: AndroidPlayer
+    m_GraphicsJobMode: 1
+  - m_BuildTarget: WindowsStandaloneSupport
     m_GraphicsJobMode: 1
   m_BuildTargetGraphicsAPIs:
   - m_BuildTarget: AndroidPlayer
@@ -800,8 +802,8 @@ PlayerSettings:
   webGLCloseOnQuit: 0
   webWasm2023: 0
   scriptingDefineSymbols:
-    Android: XR_GIZMOS;USE_INPUT_SYSTEM_POSE_CONTROL;USE_STICK_CONTROL_THUMBSTICKS
-    Standalone: USE_INPUT_SYSTEM_POSE_CONTROL;USE_STICK_CONTROL_THUMBSTICKS
+    Android: XR_GIZMOS;USE_INPUT_SYSTEM_POSE_CONTROL;USE_STICK_CONTROL_THUMBSTICKS;ISDK_OPENXR_HAND
+    Standalone: USE_INPUT_SYSTEM_POSE_CONTROL;USE_STICK_CONTROL_THUMBSTICKS;ISDK_OPENXR_HAND
     Windows Store Apps: USE_INPUT_SYSTEM_POSE_CONTROL;USE_STICK_CONTROL_THUMBSTICKS
   additionalCompilerArguments: {}
   platformArchitecture: {}
