@@ -19,69 +19,62 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "11f09e231a903f2be3b429f2eaa4ffc575fa6810"
+      "hash": "f30534ff1b3c27624b9226cbff0e53b75a6727dc"
     },
     "com.meta.xr.mrutilitykit": {
-      "version": "77.0.0",
+      "version": "83.0.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
+        "com.meta.xr.sdk.core": "83.0.0",
+        "com.unity.textmeshpro": "3.0.6",
         "com.unity.ai.navigation": "1.1.4",
-        "com.unity.nuget.newtonsoft-json": "3.0.2",
-        "com.meta.xr.sdk.core": "77.0.0",
-        "com.unity.textmeshpro": "3.0.6"
+        "com.unity.nuget.newtonsoft-json": "3.0.2"
       },
-      "url": "https://npm.developer.oculus.com"
+      "url": "https://packages.unity.com"
     },
     "com.meta.xr.sdk.audio": {
-      "version": "77.0.0",
+      "version": "83.0.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
-      "url": "https://npm.developer.oculus.com"
+      "url": "https://packages.unity.com"
     },
     "com.meta.xr.sdk.core": {
-      "version": "77.0.0",
+      "version": "83.0.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
-      "url": "https://npm.developer.oculus.com"
+      "url": "https://packages.unity.com"
     },
     "com.meta.xr.sdk.haptics": {
-      "version": "77.0.0",
+      "version": "83.0.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.meta.xr.sdk.core": "77.0.0"
+        "com.meta.xr.sdk.core": "83.0.0"
       },
-      "url": "https://npm.developer.oculus.com"
+      "url": "https://packages.unity.com"
     },
     "com.meta.xr.sdk.interaction": {
-      "version": "77.0.0",
+      "version": "83.0.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {
-        "com.unity.textmeshpro": "3.0.6",
-        "com.unity.ugui": "1.0.0"
+        "com.unity.ugui": "1.0.0",
+        "com.unity.textmeshpro": "3.0.6"
       },
-      "url": "https://npm.developer.oculus.com"
+      "url": "https://packages.unity.com"
     },
     "com.meta.xr.sdk.interaction.ovr": {
-      "version": "77.0.0",
+      "version": "83.0.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.meta.xr.sdk.interaction": "77.0.0",
-        "com.meta.xr.sdk.core": "77.0.0"
+        "com.meta.xr.sdk.core": "83.0.0",
+        "com.meta.xr.sdk.interaction": "83.0.0"
       },
-      "url": "https://npm.developer.oculus.com"
-    },
-    "com.meta.xr.simulator": {
-      "version": "77.0.0",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://npm.developer.oculus.com"
+      "url": "https://packages.unity.com"
     },
     "com.tayx.graphy": {
       "version": "https://github.com/Tayx94/graphy.git",
@@ -195,6 +188,22 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.unity.sysroot": {
+      "version": "2.0.10",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.sysroot.linux-x86_64": {
+      "version": "2.0.9",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.sysroot": "2.0.10"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.test-framework": {
       "version": "1.6.0",
       "depth": 0,
@@ -232,6 +241,16 @@
         "com.unity.modules.director": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
         "com.unity.modules.particlesystem": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.toolchain.win-x86_64-linux-x86_64": {
+      "version": "2.0.11",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.sysroot": "2.0.10",
+        "com.unity.sysroot.linux-x86_64": "2.0.9"
       },
       "url": "https://packages.unity.com"
     },

@@ -31,7 +31,7 @@ MonoBehaviour:
   disableBackups: 1
   enableNSCConfig: 1
   securityXmlPath: 
-  horizonOsSdkEnabled: 0
+  horizonOsSdkDisabled: 0
   minHorizonOsSdkVersion: 68
   targetHorizonOsSdkVersion: 74
   skipUnneededShaders: 0
@@ -42,6 +42,7 @@ MonoBehaviour:
   experimentalFeaturesEnabled: 0
   insightPassthroughEnabled: 0
   _insightPassthroughSupport: 2
+  isPassthroughCameraAccessEnabled: 0
   _processorFavor: 0
   systemSplashScreen: {fileID: 0}
   systemSplashScreenType: 0

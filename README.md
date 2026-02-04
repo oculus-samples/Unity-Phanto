@@ -35,7 +35,11 @@ Built using the [Unity engine](https://unity.com/) with Unity 6 or higher, it in
 This project uses the following plugins and software:
 
 - [Unity](https://unity.com/download) 6 or higher
-- [Meta XR Interaction SDK OVR Integration v67](https://developers.meta.com/horizon/downloads/package/meta-xr-interaction-sdk-ovr-integration/67.0)
+- [Meta XR Interaction SDK](https://developers.meta.com/horizon/downloads/package/meta-xr-interaction-sdk-ovr-integration/)
+- [Meta MR Utility Kit](https://developers.meta.com/horizon/documentation/unity/unity-mr-utility-kit-overview/)
+- [Meta Core SDK](https://developers.meta.com/horizon/documentation/unity/unity-core-sdk/)
+- [Meta Audio SDK](https://developers.meta.com/horizon/documentation/unity/meta-xr-audio-sdk-unity/)
+- [Meta XR Simulator](https://developers.meta.com/horizon/documentation/unity/xrsim-intro/)
 - [Haptics Studio](https://developers.meta.com/horizon/documentation/unity/haptics-studio/)
 - [Haptics SDK for Unity](https://developers.meta.com/horizon/documentation/unity/unity-haptics-sdk/)
 - [XRGizmos](https://github.com/darktable/XRGizmos.git)
